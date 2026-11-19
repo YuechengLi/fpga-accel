@@ -1,0 +1,26 @@
+=== dw PX=1 stage_mult_dw ===
+                              1.351   data arrival time
+                             -1.351   data arrival time
+                              1.948   slack (MET)
+tns 0.000
+=== dw PX=1 stage_add_dw ===
+                              1.566   data arrival time
+                             -1.566   data arrival time
+                              1.733   slack (MET)
+tns 0.000
+=== dw PX=1 stage_add_wide_dw ===
+                              1.826   data arrival time
+                             -1.826   data arrival time
+                              1.474   slack (MET)
+tns 0.000
+=== dw PX=1 stage_shift_only_dw ===
+                              2.093   data arrival time
+                             -2.093   data arrival time
+                              1.199   slack (MET)
+tns 0.000
+=== dw PX=1 stage_sat_only_dw ===
+                              0.328   data arrival time
+                             -0.328   data arrival time
+                              2.960   slack (MET)
+tns 0.000
+[STA dw PX=1 done]

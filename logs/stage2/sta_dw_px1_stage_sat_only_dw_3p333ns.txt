@@ -1,0 +1,36 @@
+Startpoint: _215_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: _232_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+     Cap     Slew    Delay     Time   Description
+---------------------------------------------------------------------------
+            0.000    0.000    0.000   clock clk (rise edge)
+                     0.000    0.000   clock network delay (ideal)
+            0.000    0.000    0.000 ^ _215_/CK (DFF_X1)
+   1.864    0.006    0.079    0.079 v _215_/Q (DFF_X1)
+            0.006    0.000    0.079 v _187_/A4 (NOR4_X1)
+   1.905    0.044    0.080    0.159 ^ _187_/ZN (NOR4_X1)
+            0.044    0.000    0.159 ^ _190_/A2 (NAND4_X1)
+   1.874    0.021    0.038    0.197 v _190_/ZN (NAND4_X1)
+            0.021    0.000    0.197 v _191_/A2 (NOR2_X1)
+  17.198    0.087    0.112    0.309 ^ _191_/ZN (NOR2_X1)
+            0.087    0.000    0.309 ^ _192_/B1 (AOI21_X1)
+   1.372    0.022    0.019    0.328 v _192_/ZN (AOI21_X1)
+            0.022    0.000    0.328 v _232_/D (DFF_X1)
+                              0.328   data arrival time
+
+            0.000    3.333    3.333   clock clk (rise edge)
+                     0.000    3.333   clock network delay (ideal)
+                     0.000    3.333   clock reconvergence pessimism
+                              3.333 ^ _232_/CK (DFF_X1)
+                    -0.045    3.288   library setup time
+                              3.288   data required time
+---------------------------------------------------------------------------
+                              3.288   data required time
+                             -0.328   data arrival time
+---------------------------------------------------------------------------
+                              2.960   slack (MET)
+
+
+tns 0.000
