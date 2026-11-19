@@ -1,4 +1,4 @@
-# Vivado 生成物与综合产物（不进版本库，由脚本复现）
+# Vivado generated and synthesis products (not in version control, reproduced by scripts)
 *.bit
 *.bin
 *.xsa
@@ -18,19 +18,19 @@
 *.rpt
 *.pb
 checkpoint/
-# Vivado checkpoint 与报告中间产物
+# Vivado checkpoint and report intermediates
 *.dcp
 *_utilization*.rpt
 *_timing*.rpt
 *_power*.rpt
 
-# bitstream 与综合产物目录
+# Bitstream and synthesis product directories
 out/
 build/
 synth_out/
 impl_out/
 
-# 运行日志（logs/ 目录保留，日志文件不进库）
+# Run logs (logs/ directory is kept, log files are not in version control)
 logs/*.log
 logs/*.rpt
 logs/*.txt
@@ -42,7 +42,7 @@ __pycache__/
 .venv/
 venv/
 
-# macOS / 编辑器临时文件
+# macOS / editor temporary files
 .DS_Store
 *.swp
 *.swo
