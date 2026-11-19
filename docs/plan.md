@@ -2,7 +2,7 @@
 
 > 目标板：iW-RainboW-G35D（XCZU19EG-2） · 实现语言：SystemVerilog · 流程：Xilinx 全命令行
 >
-> 本文档是计划 v3 的 Markdown 版（与 12 页 A4 PDF 同内容）。PDF 为生成物，不进版本库。
+> 本文档是计划 v3.1 的 Markdown 版（与 12 页 A4 PDF 同内容）。PDF 为生成物，不进版本库。
 
 ## 系统框图
 
@@ -19,7 +19,7 @@
 
 ## §1 调研结果
 
-调研覆盖图像去噪、超分辨率、低光照增强、通用图像恢复四个领域，另校准目标检测（YOLO）与大核 CNN 文献。结论先行：dense 上限 9×9；大核全是 DW/条带/空洞；通道主流 64ch、瓶颈 256–512ch。
+调研覆盖图像去噪、超分辨率、低光照增强、通用图像恢复、弱小目标检测五个领域，另校准目标检测（YOLO）与大核 CNN 文献。结论先行：dense 上限 9×9；大核全是 DW/条带/空洞；通道主流 64ch、瓶颈 256–512ch；IRSTD 最大 dense 仅 7×7。
 
 ### 1.1 图像去噪
 
@@ -139,9 +139,28 @@ SR 最大核是 31（DW 条带，LKMN/LKFMixer）；最大方形存储核是 17�
 | 逐元素 | SimpleGate（NAFNet，通道对半乘）；门控/注意力缩放 |
 | 上采样 | pixel-shuffle；转置卷积（FSRCNN、HINet）；最近邻/双线性 |
 
+### 1.8 弱小目标检测（红外弱小目标检测 IRSTD）
+
+目标典型 3×3–9×9 px，约占图像面积 0.01%（SDS-Net）；近两年（2024–2026）工作为主。
+
+**表 R9 弱小目标检测**
+
+| 论文（年份） | 最大核 | 类型 | 通道 | 其他算子 / 设计要点 |
+|---|---|---|---|---|
+| SDS-Net (2025) | 21 条带（1×21+21×1）；7×7 dense | 条带 + dense | 32→64→128→128 | MSCA/MSSA 注意力、MDFA、ADSF 融合 |
+| LCRNet (2024) | 7×7 等效（11×11 试过更差） | 分解 DW + 空洞 DW + 1×1 | 16→32→64→64 | DLC-Attention、C2FBlock |
+| RDIAN (2023) | 7×7 dense；空洞等效 17 | dense 多尺度 + 空洞 | 16→32 | CBAM、8 方向卷积 |
+| SWAN (2025) | 5×5 DW | DW + Haar 小波 | 32→64→128→256→512 | Haar 小波卷积、移窗注意力 |
+| SCTransNet (2024) | 5×5 DW | DW + 1×1 | base 32 | 跨层 Transformer 注意力 |
+| SeRankDet (2024) | 3×3 空洞（等效 9） | dense + 差分 + 空洞 | 64→128→256→512→1024 | Top-K 注意力、LSFF 融合 |
+| PConv (2025) | 1×3/3×1（等效感受野 25） | 非对称 pinwheel | YOLOv8n-p2 宿主 | SD Loss；高斯形先验 |
+| MSHNet (2024) | 3×3 | dense | 未确认 | SLS loss；普通 3×3 U-Net + 更好 loss |
+
+IRSTD 最大 dense 仅 7×7（RDIAN、SDS-Net）；最大条带 21（SDS-Net 1×21+21×1）；最大空洞等效 17（RDIAN 3×3、d=8）；无 17×17/31×31 DW/条带（31×31 DW 只在红外超分 LKFormer 里，不算检测）。通道近年更窄更轻（LCRNet 16→32→64→64，SDS-Net 32→64→128→128）。2024–26 的精度增益不在核尺寸：RFONet（2026）仅用 3×3 就达 SOTA（靠 ERF 排序），MSHNet 普通 3×3 U-Net + 更好 loss；更大核反而可能有害（LCRNet 11×11 等效比 7×7 差 1.73 IoU）。
+
 ### 调研结论
 
-Dense 上限 9×9（SRCNN、SRResNet、RetinexNet 首层）；27×27 dense 无依据。大核全是 DW/条带/空洞：SR 最大 31（DW 条带）、方形最大 17×17 DW；恢复最大 63×63 DW 仅 bottleneck（孤例）。通道主流 64ch、瓶颈 256–512ch；大核 DW 只作用于少数通道。层数多（DnCNN 17 层、EDSR 32 块、RCAN 200 RCAB），感受野靠深度。
+Dense 上限 9×9（SRCNN、SRResNet、RetinexNet 首层）；27×27 dense 无依据。大核全是 DW/条带/空洞：SR 最大 31（DW 条带）、方形最大 17×17 DW；恢复最大 63×63 DW 仅 bottleneck（孤例）。弱小目标检测（IRSTD）最大 dense 仅 7×7、最大条带 21、空洞等效 17，通道更窄更轻；2024–26 的增益在 loss/先验/动态核/小波/分辨率保持，不在核尺寸。通道主流 64ch、瓶颈 256–512ch；大核 DW 只作用于少数通道。层数多（DnCNN 17 层、EDSR 32 块、RCAN 200 RCAB），感受野靠深度。
 
 ## §2 设计需求
 
@@ -157,6 +176,7 @@ Dense 上限 9×9（SRCNN、SRResNet、RetinexNet 首层）；27×27 dense 无�
 - **前端视频预处理模块**：基于已冻结流式卷积衍生（SV），降采样、通道 1/3 可配、核 ≤5×5；是整个模型的输入/输出接口；轻量、延时最小。依据：输入/输出几乎都是 RGB 3ch 或灰度 1ch（§1.6），视频流需在接口处降采样与小核滤波。
 - **空间分辨率可调 + 反比原则**：W/H 运行时可配；大核只出现在低分辨率，大核档用折叠/分时 datapath。依据：OKNet 63×63 只在 bottleneck、UIR-PolyKernel 31 在 1/4 分辨率、LKMN/LKFMixer 大核只作用于部分通道（§1.2/§1.4）。
 - **通道 tiling**：C_in 分块累加、C_out 分块复制；64 lane 覆盖绝大多数 dense 层，128 宽裕；256–512ch 只在 bottleneck（低分辨率），分块跑。依据：通道数（§1.6）。
+- **弱小目标检测（IRSTD）感受野已覆盖**：现有算子集（dense 11×11、DW 17×17/31 条带、dilated 等效 ≤35）已超过 IRSTD 全部已验证需求（最大 dense 7×7、最大条带 21、空洞等效 17，§1.8）；更大核反而可能有害（LCRNet 11×11 等效比 7×7 差 1.73 IoU）。
 
 **表 1 存储层次**
 
@@ -222,6 +242,7 @@ AXI 是 Xilinx IP 核的通用标准，无更通用的替代总线；Versal NoC 
 - 浮点；全定点。
 - 不做通用 NPU/可编程指令集；做专用可重构加速器 + 运行时可配参数 + 层表驱动的配置序列。
 - 不再用 Verilog 写新模块：全部实现一律 SystemVerilog；原版 Verilog 流式卷积已冻结，只作参考基线，不修改；预处理模块以后实现时也用 SV 写。
+- IRSTD 2024–26 的增益点（loss 设计、目标/背景先验、动态核与注意力、Haar 小波/频域、ERF 排序、非卷积上下文）不在卷积引擎规格内；分辨率保持是系统级要求：前端预处理与层切分不要对小目标做激进下采样（一般不超过 1/16，不做到 1/32），保留高分辨率浅层分支。
 
 ## §3 带宽分析与模型切分
 
@@ -439,7 +460,7 @@ DRAM 带宽需求：融合后 DnCNN 1080p60 约 0.81 GB/s、4K60 约 3.05 GB/s�
 
 ## 附：决策依据（文献）
 
-Dense 最大 9×9（SRCNN、SRResNet、RetinexNet 首层）；SR 最大方核 17×17 DW（PLKSR）；条带 31（LKMN/LKFMixer）；恢复最大 63×63 DW 仅 bottleneck（OKNet）；dilated 存储核 ≤9、d≤4、等效 ≤35（MAN/VAN）。
+Dense 最大 9×9（SRCNN、SRResNet、RetinexNet 首层）；SR 最大方核 17×17 DW（PLKSR）；条带 31（LKMN/LKFMixer）；恢复最大 63×63 DW 仅 bottleneck（OKNet）；dilated 存储核 ≤9、d≤4、等效 ≤35（MAN/VAN）。弱小目标检测（IRSTD）：最大 dense 7×7、最大条带 21、空洞等效 17；2024–26 增益在 loss/先验/动态核/小波/分辨率保持，不在核尺寸。
 
 通道数：RGB 3ch；特征宽度主流 64ch；轻量 36–64ch；Transformer SR 180ch；EDSR 256ch；U 形恢复 bottleneck 256–512ch；64 lane 覆盖绝大多数 dense 层，128 宽裕。
 
@@ -453,6 +474,7 @@ Dense 最大 9×9（SRCNN、SRResNet、RetinexNet 首层）；SR 最大方核 17
 | DW 最大方核 | 17×17 | PLKSR（SR） |
 | DW 条带 | 31 | LKMN / LKFMixer |
 | 恢复最大 DW | 63×63，仅 bottleneck | OKNet |
+| IRSTD 最大核 | dense 7×7 / 条带 21 / 空洞等效 17 | SDS-Net、LCRNet、RDIAN |
 | Dilated | 存储核 ≤9、d≤4、等效 ≤35 | MAN / VAN |
 | 通道宽度 | 主流 64ch；bottleneck 256–512ch | 轻量 36–64ch；Transformer SR 180ch；EDSR 256ch |
 | 模块复用 | 统一引擎分时复用，不每层单独建模块 | 17 层 DnCNN 单独建要 4896 DSP，超 1968 上限（§2） |
