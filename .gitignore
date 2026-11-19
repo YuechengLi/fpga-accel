@@ -49,3 +49,9 @@ venv/
 *~
 .vscode/
 .idea/
+
+# Stage run logs are traceability evidence: version them (overrides *.log
+# and logs/*.log / logs/*.txt above)
+!logs/stage*/
+!logs/stage*/*.log
+!logs/stage*/*.txt

@@ -37,7 +37,8 @@ fpga-accel/
 
 - **Plan v3.2 complete** (2026-11-19): system block diagram + research results driving the design requirements.
 - **Phase 0 baseline done**: SV parameterized PX=1/2/4, dense 9×9, golden + STA + resources verified.
-- **Phases 1–7 (on the VM)**: in progress — module design + individual verification + model numerical verification.
+- **Stage 1 done** (2026-11-19): dense 11x11 + arbitrary padding/stride, PX=1, SystemVerilog (`rtl/conv2d_dense.sv`). Golden 14/14 PASS pixel-exact, framing errors 0; per-stage STA (Nangate45, 300 MHz) Fmax 469 MHz (barrel shifter critical, 2.093 ns); DSP 121, BRAM36 10, LUT ~5,300 (inferred), FF ~8,750. Details + logs in `rtl/README.md` and `logs/stage1/`.
+- **Phases 1–7 (on the VM)**: in progress — module design + individual verification + model numerical verification (Stage 1 done, Stages 2–7 to go).
 - **Phases 8–11 (Pittsburgh, after 11/26)**: board-level synthesis / integration / on-board testing.
 
 ## How to Use / Reproduce
