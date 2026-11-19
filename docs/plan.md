@@ -2,7 +2,7 @@
 
 > 目标板：iW-RainboW-G35D（XCZU19EG-2） · 实现语言：SystemVerilog · 流程：Xilinx 全命令行
 >
-> 本文档是计划 v3.1 的 Markdown 版（与 12 页 A4 PDF 同内容）。PDF 为生成物，不进版本库。
+> 本文档是计划 v3.2 的 Markdown 版（与 12 页 A4 PDF 同内容）。PDF 为生成物，不进版本库。
 
 ## 系统框图
 
@@ -19,94 +19,73 @@
 
 ## §1 调研结果
 
-调研覆盖图像去噪、超分辨率、低光照增强、通用图像恢复、弱小目标检测五个领域，另校准目标检测（YOLO）与大核 CNN 文献。结论先行：dense 上限 9×9；大核全是 DW/条带/空洞；通道主流 64ch、瓶颈 256–512ch；IRSTD 最大 dense 仅 7×7。
+调研覆盖图像去噪、超分辨率、低光照增强、通用图像恢复、弱小目标检测五个领域，另校准目标检测（YOLO）与大核 CNN 文献。下面先给核心结论（每条都标注它驱动 §2 的哪条需求），再按设计问题展开证据，最后用一张全景表收束。
 
-### 1.1 图像去噪
+### 核心结论
 
-**表 R1 图像去噪**
+- Dense 上限 9×9：标准 dense 核最大 9×9，只在 SRCNN、SRResNet、RetinexNet 的首层出现；其余全部 ≤7×7，绝大多数是 3×3。→ §2.2 Dense 最大 11×11（文献 9×9 + 一档余量）
+- 大核全是 DW/条带/空洞：方形最大 17×17 DW（PLKSR/EchoSR）、条带最大 31（LKMN/LKFMixer）、空洞等效 ≤35（MAN，存储核 9×9、d=4）；63×63 DW（OKNet）仅 bottleneck，是孤例。→ §2.2 DW 17×17 / 条带 31 / 空洞
+- 通道主流 64ch、瓶颈 256–512ch：去噪/经典 SR/轻量 SR 都是 64ch；Transformer SR 180ch、EDSR 256ch；U 形恢复 bottleneck 256–512ch；轻量与 IRSTD 更窄更轻（36–64ch，LCRNet 16→32→64→64）。→ §2.1 通道 tiling
+- 层数多、感受野靠深度：DnCNN 17 层、EDSR 32 块、RCAN 200 RCAB；去噪是 3×3 的世界，感受野靠深度与下采样，不靠核尺寸。→ §2.1 统一引擎 / 模块复用
+- 2024–26 的精度增益不在核尺寸：RFONet（2026）仅用 3×3 就达 SOTA（72.14 IoU，IRSTD-1k）；LCRNet 11×11 等效比 7×7 差 1.73 IoU；增益在 loss、先验、动态核、小波、分辨率保持。→ §2.2 明确边界
+- 大核 DW 只作用于少数通道：PLKSR 16/64ch、ESC 16ch、LKMN/LKFMixer 前 1/4 通道。→ §2.1 DW 折叠/分时
 
-| 论文（年份） | 最大核 | 类型 | 通道 / 备注 |
+### 1.1 Dense 核上限是多少
+
+结论：标准 dense 上限 9×9，只出现在三个首层；其余全部 ≤7×7，绝大多数是 3×3。
+
+- 去噪全 3×3：DnCNN（17 层，64ch）、FFDNet（64/96ch）、RIDNet（64ch，EAM 用空洞卷积、存储核仍 3×3）、NAFNet（3×3 DW，base 32→瓶颈 512）、Restormer（3×3 DW，base 48→384）。
+- 超分经典 CNN 除 9×9/5×5 外全 3×3：VDSR（20 层，64ch）、EDSR（16–32 块，64–256ch）、RCAN（64ch）；低光照与恢复也全 3×3：Zero-DCE（7 层，32ch）、Zero-DCE++（3×3 DW，32ch）、EnlightenGAN（32→512）、MPRNet（40/80/96ch）。
+- 检测也一样：YOLO 最大 7×7，IRSTD 最大 dense 7×7；MSHNet、RFONet 都是普通 3×3（RFONet 仅 3×3 就达 SOTA）。
+
+**表 RD Dense 核上限：超过 3×3 的例外**
+
+| 论文（年份） | 最大 dense | 类型 | 备注 |
 |---|---|---|---|
-| DnCNN (2017) | 3×3 | dense | 64ch；17 层（感受野 35×35）；无 pooling |
-| FFDNet (2018) | 3×3 | dense | 64ch（灰度）/ 96ch（RGB）；可逆下采样 ×2 |
-| RIDNet (2019) | 3×3 | dense (+1×1) | 64ch；EAM 用空洞卷积（存储核仍 3×3） |
-| NAFNet (2022) | 3×3 | DW (+1×1) | base 32ch → 瓶颈 512ch；U-Net |
-| Restormer (2022) | 3×3 | DW (+1×1) | base 48ch → 384ch；U-Net |
-
-去噪是 3×3 的世界：感受野靠深度（17–20 层）与下采样，不靠核尺寸；无 pooling。
-
-### 1.2 超分辨率
-
-**表 R2 经典 CNN 超分**
-
-| 论文（年份） | 最大核 | 类型 | 通道 / 备注 |
-|---|---|---|---|
-| SRCNN (2014) | 9×9 | dense | 9-1-5：9×9（3→64）、1×1、5×5；SR 最大 dense |
+| SRCNN (2014) | 9×9 | dense | SR 最大 dense；9-1-5 |
+| SRResNet (2017) | 9×9 | dense | 9×9 输入/输出；16 残差块全 3×3 |
+| RetinexNet (2018) | 9×9 | dense | Decom-Net 首层 9×9（4ch→64）；其余 3×3 |
 | FSRCNN (2016) | 5×5 | dense | 5×5 + 薄层；末端反卷积上采样 |
-| VDSR (2016) | 3×3 | dense | 20 层 × 3×3，64ch，全局残差 |
-| SRResNet (2017) | 9×9 | dense | 9×9 输入/输出；16 残差块全 3×3，64ch；pixel-shuffle ×4 |
-| EDSR (2017) | 3×3 | dense | baseline 16 块/64ch；最终 32 块/256ch（最宽 dense 体） |
-| RCAN (2018) | 3×3 | dense | 64ch；通道注意力用 1×1 |
+| HINet (2021) | 4×4 | dense | 仅下采样卷积；3×3 首/末 |
+| RDIAN (2023) | 7×7 | dense | IRSTD 最大 dense；平行 1/3/5/7 |
+| SDS-Net (2025) | 7×7 | dense | IRSTD；另有 21 条带（见 1.2） |
+| YOLOv12 | 7×7 | DW | Position Perceiver；消融到 9×9 后变慢 |
+| YOLOv1 | 7×7 | dense | 首层 7×7 stride 2；其余 YOLO 只用 3×3 与 1×1 |
 
-**表 R3 Transformer 超分**
+唯一超过 9×9 的 dense 是 ESC 的 13×13，但它是 16 通道共享核、可分解为 1×1 + 13×13 DW（见 1.2），不算标准 dense。→ §2.2 Dense 最大 11×11
 
-| 论文（年份） | 最大卷积核 | 类型 | 窗口 / 通道 |
-|---|---|---|---|
-| SwinIR (2021) | 3×3 | dense | 窗口 8×8；180ch 经典 / 60ch 轻量；pixel-shuffle |
-| HAT (2023) | 3×3 | dense | 窗口 16×16；180ch（HAT-S 144）；重叠交叉注意力 |
-| SRFormer (2023) | 3×3 | dense | 窗口 24×24（注意力窗口，非卷积核）；pixel-shuffle |
-| DAT (2023) | 3×3 | DW | 3×3 DW（SGFN）；180ch 家族 |
+### 1.2 大核怎么实现
 
-Transformer SR 靠注意力窗口（8→16→24）买长程，卷积不超过 3×3。
+结论：大核全是 DW/条带/空洞/分解四类，dense 27×27 无依据；等效感受野靠条带长度与空洞倍率买，不靠 dense 窗口。
 
-**表 R4 大核超分**
+**表 RL 大核实现方式**
 
-| 论文（年份） | 最大核（存储） | 等效 | 类型 | 通道 |
+| 论文（年份） | 最大核（存储） | 等效 | 类型 | 通道 / 备注 |
 |---|---|---|---|---|
 | PLKSR (2024) | 17×17 | 17 | DW，部分（16/64ch） | 64ch |
-| LKMN (2025) | 31（条带） | 31 | DW 条带 31×1+1×31，部分 | 36ch / 64ch |
-| LKFMixer (2025) | 31（条带） | 31 | DW 条带，部分（α=0.25）；>31 性能下降 | 36/64ch 家族 |
-| ESC (2025) | 13×13 | 13 | dense 16→16 共享，仅 16ch | 16ch 大核子集 |
-| SeemoRe (2024) | 11×11 | 11 | DW 条带 | 36ch / 48ch |
-| MAN (2024) | 9×9（存储） | 35 | DW + DW 空洞（d=4） | — |
-| ALKDNet (2024) | 9（条带） | 9 | 条带 9×1+1×9；11 无增益 | 64ch |
 | EchoSR (2026) | 17×17 | 17 | DW | — |
+| OKNet (2024) | 63×63 | 63 | DW（+条带），仅 bottleneck | 孤例 |
+| UIR-PolyKernel (2024) | 31×31 | 31 | DW（+条带），瓶颈 1/4 分辨率；试过 63 选 31 | — |
+| LKMN (2025) | 31（条带） | 31 | DW 条带 31×1+1×31，部分通道 | 36ch / 64ch |
+| LKFMixer (2025) | 31（条带） | 31 | DW 条带，部分（α=0.25）；>31 性能下降 | 36/64ch 家族 |
+| SDS-Net (2025) | 21（条带） | 21 | 条带 1×21+21×1；另有 7×7 dense | 32→64→128→128 |
+| ESC (2025) | 13×13 | 13 | dense 16→16 共享，仅 16ch；可分解为 1×1 + 13×13 DW | 16ch |
+| SeemoRe (2024) | 11×11 | 11 | DW 条带 | 36ch / 48ch |
+| ALKDNet (2024) | 9（条带） | 9 | 条带 9×1+1×9；11 无增益 | 64ch |
+| LaKDNet (2023) | 9×9 | 9 | DW（+1×1）；去焦 9×9 / 运动 7×7 | 32/48ch → 瓶颈 256/384ch |
+| MAN (2024) | 9×9（存储） | 35 | DW + DW 空洞（d=4） | — |
+| LKD-Net (2023) | 21（等效） | 21 | DW 分解（小 DW + DW 空洞） | — |
+| RDIAN (2023) | 3×3（存储） | 17 | dense + 空洞（d=1,2,4,8） | 16→32ch |
+| LCRNet (2024) | 等效 7×7 | 7 | 分解 DW + 空洞 DW + 1×1；11×11 更差（-1.73 IoU） | 16→32→64→64 |
+| PConv (2025) | 1×3/3×1 | 25 | 非对称 pinwheel；等效感受野 | YOLOv8n-p2 宿主 |
 
-SR 最大核是 31（DW 条带，LKMN/LKFMixer）；最大方形存储核是 17×17 DW（PLKSR/EchoSR）；最大 dense 是 9×9（SRCNN/SRResNet）。
+Transformer SR（SwinIR/HAT/SRFormer/DAT）卷积不超过 3×3，靠注意力窗口 8→16→24 买长程；IRSTD 的 SWAN、SCTransNet 最大 DW 仅 5×5，SeRankDet 3×3 空洞等效 9/层，VAN 7×7 存储、等效 21。
 
-### 1.3 低光照增强
+→ §2.2 DW 17×17 / 条带 31 / 空洞等效 ≤35；63×63 DW 仅 bottleneck，不列入规格。
 
-**表 R5 低光照增强**
+### 1.3 通道数
 
-| 论文（年份） | 最大核 | 类型 | 通道 / 备注 |
-|---|---|---|---|
-| RetinexNet (2018) | 9×9 | dense | Decom-Net 首层 9×9（4ch→64）；其余 3×3 |
-| EnlightenGAN (2021) | 3×3 | dense | 注意力 U-Net：32→512；判别器 4×4 stride 2 |
-| Zero-DCE (2020) | 3×3 | dense | 7 层全 3×3，32ch；末层 tanh |
-| Zero-DCE++ (2020) | 3×3 | DW (+1×1) | 3×3 DW + 1×1，32ch |
-
-低光照是 3×3，只有 RetinexNet 首层一个 9×9 dense；其余 3×3。
-
-### 1.4 通用图像恢复
-
-**表 R6 通用图像恢复**
-
-| 论文（年份） | 最大核 | 类型 | 通道 / 备注 |
-|---|---|---|---|
-| MPRNet (2021) | 3×3 | dense | 40/80/96ch（任务相关）；U-Net |
-| HINet (2021) | 4×4（下采样卷积） | dense | 3×3 首/末；2×2 转置卷积上采样 |
-| LaKDNet (2023) | 9×9 | DW (+1×1) | 9×9 去焦 / 7×7 运动；32/48ch → 瓶颈 256/384ch |
-| LKD-Net (2023) | 21（等效） | DW 分解 | 21×21 DW 分解为小 DW + DW 空洞 |
-| OKNet (2024) | 63×63 | DW（+条带） | 仅 bottleneck；去雾/去雪/去焦模糊 |
-| UIR-PolyKernel (2024) | 31×31 | DW（+条带） | 瓶颈（1/4 分辨率）；试过 63 选 31 |
-
-恢复最大 63×63 DW 仅 bottleneck（OKNet），是孤例；其余 ≤21（等效）。
-
-### 1.5 目标检测（YOLO）
-
-最大核 7×7：YOLOv12 的 Position Perceiver 用 7×7 depthwise 可分离卷积（消融到 9×9 后变慢、定为 7×7）；YOLOv1 首层 7×7 stride 2；YOLOv2/v3/v5/v8/v11 只用 3×3 与 1×1。现有 9×9 已覆盖全部 YOLO；YOLOv12 的 7×7 是 depthwise，不是 dense。
-
-### 1.6 通道数
+结论：主流 64ch；64 lane 覆盖绝大多数 dense 层，128 宽裕；256–512ch 只在 bottleneck（低分辨率），分块跑。
 
 **表 R7 通道数**
 
@@ -121,10 +100,13 @@ SR 最大核是 31（DW 条带，LKMN/LKFMixer）；最大方形存储核是 17�
 | Transformer SR（SwinIR/HAT） | 180（HAT-S 144） | 需 tile 到 192 |
 | U 形恢复 base | 32–48 | NAFNet 32；Restormer/LaKDNet 48 |
 | U 形恢复 bottleneck | 256–512 | NAFNet 512；Restormer 384；EnlightenGAN 512 |
+| 弱小目标检测 IRSTD | 16→32→64→64（LCRNet）；32→64→128→128（SDS-Net） | 近年更窄更轻；重型 SeRankDet 64→…→1024 |
 
-大核 DW 只作用于少数通道（PLKSR 16/64ch；ESC 16ch；LKMN/LKFMixer 前 1/4 通道）。
+大核 DW 只作用于少数通道（PLKSR 16/64ch；ESC 16ch；LKMN/LKFMixer 前 1/4 通道）。→ §2.1 通道 tiling
 
-### 1.7 除卷积外的算子
+### 1.4 卷积外的算子
+
+结论：卷积外的算子都是小单元（比较器/加法树/PWL LUT/重排），不占 MAC 阵列；1×1 与 FC 复用 dense datapath。
 
 **表 R8 除卷积外的算子**
 
@@ -139,28 +121,22 @@ SR 最大核是 31（DW 条带，LKMN/LKFMixer）；最大方形存储核是 17�
 | 逐元素 | SimpleGate（NAFNet，通道对半乘）；门控/注意力缩放 |
 | 上采样 | pixel-shuffle；转置卷积（FSRCNN、HINet）；最近邻/双线性 |
 
-### 1.8 弱小目标检测（红外弱小目标检测 IRSTD）
+→ §2.2 算子集（表 OP）。
 
-目标典型 3×3–9×9 px，约占图像面积 0.01%（SDS-Net）；近两年（2024–2026）工作为主。
+### 1.5 各应用一览
 
-**表 R9 弱小目标检测**
+**表 RP 各应用一览**
 
-| 论文（年份） | 最大核 | 类型 | 通道 | 其他算子 / 设计要点 |
-|---|---|---|---|---|
-| SDS-Net (2025) | 21 条带（1×21+21×1）；7×7 dense | 条带 + dense | 32→64→128→128 | MSCA/MSSA 注意力、MDFA、ADSF 融合 |
-| LCRNet (2024) | 7×7 等效（11×11 试过更差） | 分解 DW + 空洞 DW + 1×1 | 16→32→64→64 | DLC-Attention、C2FBlock |
-| RDIAN (2023) | 7×7 dense；空洞等效 17 | dense 多尺度 + 空洞 | 16→32 | CBAM、8 方向卷积 |
-| SWAN (2025) | 5×5 DW | DW + Haar 小波 | 32→64→128→256→512 | Haar 小波卷积、移窗注意力 |
-| SCTransNet (2024) | 5×5 DW | DW + 1×1 | base 32 | 跨层 Transformer 注意力 |
-| SeRankDet (2024) | 3×3 空洞（等效 9） | dense + 差分 + 空洞 | 64→128→256→512→1024 | Top-K 注意力、LSFF 融合 |
-| PConv (2025) | 1×3/3×1（等效感受野 25） | 非对称 pinwheel | YOLOv8n-p2 宿主 | SD Loss；高斯形先验 |
-| MSHNet (2024) | 3×3 | dense | 未确认 | SLS loss；普通 3×3 U-Net + 更好 loss |
+| 应用 | 最大 dense | 最大 DW/条带 | 最大空洞等效 | 通道 | 一句话要点 |
+|---|---|---|---|---|---|
+| 图像去噪 | 3×3 | 3×3 DW | — | 64ch | 3×3 的世界；感受野靠深度（17–20 层） |
+| 超分辨率 | 9×9 | 17×17 DW / 31 条带 | 35 | 64ch（EDSR 256；轻量 36–64） | 大核 DW/条带/空洞；ESC 13×13 仅 16ch 共享 |
+| 低光照增强 | 9×9（仅首层） | 3×3 DW | — | 32–64ch | 3×3 为主；仅 RetinexNet 首层 9×9 |
+| 通用图像恢复 | 4×4（仅下采样） | 63×63 DW（仅 bottleneck） | 21 | 32–48ch → 瓶颈 256–512ch | 63 是孤例；其余 ≤21 等效 |
+| 目标检测（YOLO） | 7×7（首层） | 7×7 DW | — | — | 9×9 已覆盖全部 YOLO |
+| 弱小目标检测（IRSTD） | 7×7 | 21 条带 | 17 | 轻量 16→64ch | 增益在 loss/先验/小波，不在核尺寸 |
 
-IRSTD 最大 dense 仅 7×7（RDIAN、SDS-Net）；最大条带 21（SDS-Net 1×21+21×1）；最大空洞等效 17（RDIAN 3×3、d=8）；无 17×17/31×31 DW/条带（31×31 DW 只在红外超分 LKFormer 里，不算检测）。通道近年更窄更轻（LCRNet 16→32→64→64，SDS-Net 32→64→128→128）。2024–26 的精度增益不在核尺寸：RFONet（2026）仅用 3×3 就达 SOTA（靠 ERF 排序），MSHNet 普通 3×3 U-Net + 更好 loss；更大核反而可能有害（LCRNet 11×11 等效比 7×7 差 1.73 IoU）。
-
-### 调研结论
-
-Dense 上限 9×9（SRCNN、SRResNet、RetinexNet 首层）；27×27 dense 无依据。大核全是 DW/条带/空洞：SR 最大 31（DW 条带）、方形最大 17×17 DW；恢复最大 63×63 DW 仅 bottleneck（孤例）。弱小目标检测（IRSTD）最大 dense 仅 7×7、最大条带 21、空洞等效 17，通道更窄更轻；2024–26 的增益在 loss/先验/动态核/小波/分辨率保持，不在核尺寸。通道主流 64ch、瓶颈 256–512ch；大核 DW 只作用于少数通道。层数多（DnCNN 17 层、EDSR 32 块、RCAN 200 RCAB），感受野靠深度。
+六个应用的最大 dense 都 ≤9×9，最大 DW/条带 ≤31（63 仅 bottleneck 孤例），空洞等效 ≤35；通道主流 64ch。→ §2 全部需求。
 
 ## §2 设计需求
 
@@ -168,15 +144,15 @@ Dense 上限 9×9（SRCNN、SRResNet、RetinexNet 首层）；27×27 dense 无�
 
 ### 2.1 架构需求
 
-- **统一可重构计算引擎**：dense/DW/dilated/1×1/FC 五模式复用同一 MAC 阵列（PX=1/2/4 编译时参数化），层间分时复用。依据：模型层数多（DnCNN 17 层、EDSR 32 块、RCAN 200 RCAB，§1.1/§1.2）；每层单独建要 4896 DSP，超 ZU19EG 1968 上限（§5）。
+- **统一可重构计算引擎**：dense/DW/dilated/1×1/FC 五模式复用同一 MAC 阵列（PX=1/2/4 编译时参数化），层间分时复用。依据：模型层数多（DnCNN 17 层、EDSR 32 块、RCAN 200 RCAB，§1.1）；每层单独建要 4896 DSP，超 ZU19EG 1968 上限（§5）。
 - **模块复用（循环处理）为默认做法**：单引擎轮流跑各层；浅层模型（≤3–4 层，如 SRCNN）可用流式小 pipeline。依据：层数多 + DSP 上限（同上）。
 - **存储层次与层融合**：寄存器/行缓存 → tile 缓存（64×64×64ch=256 KB）→ 权重缓存（双缓冲）→ PL DDR4 → PS DDR4；连续层融成一组，tile 在片上走多层，中间结果不上 DRAM。依据：不融合 DnCNN 1080p60 要 271 GB/s（§3），超 PL DDR4 理论峰值 38.4 GB/s。
 - **共享 DRAM 访问架构**：AXI SmartConnect 仲裁；优先级 VDMA（实时视频）> 计算引擎（吞吐）> PS 控制（尽力而为）；地址分区；异步 FIFO；带宽分配。依据：计算引擎、VDMA、PS 三方访 DRAM；实时视频防下溢（§3）。
 - **AXI 接口**：AXI4-Lite（控制/配置寄存器）、AXI4-Stream（像素流）、AXI4-MM（DDR 搬运）。依据：Xilinx IP 通用标准，便于系统集成。
-- **前端视频预处理模块**：基于已冻结流式卷积衍生（SV），降采样、通道 1/3 可配、核 ≤5×5；是整个模型的输入/输出接口；轻量、延时最小。依据：输入/输出几乎都是 RGB 3ch 或灰度 1ch（§1.6），视频流需在接口处降采样与小核滤波。
-- **空间分辨率可调 + 反比原则**：W/H 运行时可配；大核只出现在低分辨率，大核档用折叠/分时 datapath。依据：OKNet 63×63 只在 bottleneck、UIR-PolyKernel 31 在 1/4 分辨率、LKMN/LKFMixer 大核只作用于部分通道（§1.2/§1.4）。
-- **通道 tiling**：C_in 分块累加、C_out 分块复制；64 lane 覆盖绝大多数 dense 层，128 宽裕；256–512ch 只在 bottleneck（低分辨率），分块跑。依据：通道数（§1.6）。
-- **弱小目标检测（IRSTD）感受野已覆盖**：现有算子集（dense 11×11、DW 17×17/31 条带、dilated 等效 ≤35）已超过 IRSTD 全部已验证需求（最大 dense 7×7、最大条带 21、空洞等效 17，§1.8）；更大核反而可能有害（LCRNet 11×11 等效比 7×7 差 1.73 IoU）。
+- **前端视频预处理模块**：基于已冻结流式卷积衍生（SV），降采样、通道 1/3 可配、核 ≤5×5；是整个模型的输入/输出接口；轻量、延时最小。依据：输入/输出几乎都是 RGB 3ch 或灰度 1ch（§1.3），视频流需在接口处降采样与小核滤波。
+- **空间分辨率可调 + 反比原则**：W/H 运行时可配；大核只出现在低分辨率，大核档用折叠/分时 datapath。依据：OKNet 63×63 只在 bottleneck、UIR-PolyKernel 31 在 1/4 分辨率、LKMN/LKFMixer 大核只作用于部分通道（§1.2）。
+- **通道 tiling**：C_in 分块累加、C_out 分块复制；64 lane 覆盖绝大多数 dense 层，128 宽裕；256–512ch 只在 bottleneck（低分辨率），分块跑。依据：通道数（§1.3）。
+- **弱小目标检测（IRSTD）感受野已覆盖**：现有算子集（dense 11×11、DW 17×17/31 条带、dilated 等效 ≤35）已超过 IRSTD 全部已验证需求（最大 dense 7×7、最大条带 21、空洞等效 17，§1.1/§1.2）；更大核反而可能有害（LCRNet 11×11 等效比 7×7 差 1.73 IoU）。
 
 **表 1 存储层次**
 
@@ -222,17 +198,17 @@ AXI 是 Xilinx IP 核的通用标准，无更通用的替代总线；Versal NoC 
 
 | 算子 | 规格 | 需要它的模型 / 论文 | 实现 / 资源 |
 |---|---|---|---|
-| Dense 卷积 | 最大 11×11 | SRCNN/SRResNet/RetinexNet 首层用 9×9 dense（文献 dense 上限，§1.2/§1.3），留一档余量到 11 | 121 乘法器/lane；32 位累加器 |
+| Dense 卷积 | 最大 11×11 | SRCNN/SRResNet/RetinexNet 首层用 9×9 dense（文献 dense 上限，§1.1），留一档余量到 11 | 121 乘法器/lane；32 位累加器 |
 | DW 方核 | 17×17 | PLKSR/EchoSR 用 17×17 DW（SR 最大方形存储核，§1.2） | 289 乘法器/lane；只作用于部分通道 |
 | DW 条带 | 31×1 / 1×31 | LKMN/LKFMixer 用 31 条带（SR 最大核，§1.2） | 31 乘法器/方向 |
 | Dilated DW | 存储核 3–9、d≤4、等效 ≤35 | MAN/VAN/LKA（等效 35/21，§1.2） | 抽头间距可配；不加大窗口 |
-| 1×1 pointwise | 1×1 | SRCNN 1×1；NAFNet/Restormer 1×1；RCAN 通道注意力 1×1（§1.1/§1.2） | 复用 dense datapath（K=1） |
+| 1×1 pointwise | 1×1 | SRCNN 1×1；NAFNet/Restormer 1×1；RCAN 通道注意力 1×1（§1.4） | 复用 dense datapath（K=1） |
 | FC | 全连接 | 检测/分类头（YOLO，§1.5）与通用全连接层 | 复用 1×1 MAC 阵列（H=W=1） |
-| Pooling | max/avg 2×2、GAP | 下采样（stride-2 卷积、pixel-unshuffle、max-pool，§1.1/§1.4）；GAP 用于通道注意力 | 比较器/加法树；无 DSP |
-| 激活 | ReLU/Leaky/GELU/sigmoid/tanh | ReLU 通用；GELU（Transformer SR，§1.2）；tanh（Zero-DCE 末层，§1.3）；sigmoid（门控/注意力） | ReLU 零成本；PWL 近似（sigmoid/tanh/GELU） |
-| 归一化 | BatchNorm/LayerNorm | BatchNorm（CNN，折叠进卷积系数）；LayerNorm（Restormer/NAFNet，§1.1） | BatchNorm 无硬件；LayerNorm 专用单元 |
-| 逐元素 | 残差加法/乘/拼接 | 残差加法（VDSR/SRResNet/EDSR/RCAN/DnCNN，§1.1/§1.2）；拼接（U-Net 跳连：NAFNet/Restormer/MPRNet，§1.1/§1.4）；乘（SimpleGate，NAFNet，§1.1） | 加法器/小乘法阵列；拼接纯搬运 |
-| 上采样 | pixel-shuffle/最近邻/双线性/转置卷积 | pixel-shuffle（SRResNet/SwinIR/EDSR，§1.2）；转置卷积（FSRCNN、HINet，§1.2/§1.4） | 通道-空间重排；转置卷积复用卷积阵列 |
+| Pooling | max/avg 2×2、GAP | 下采样（stride-2 卷积、pixel-unshuffle、max-pool，§1.4）；GAP 用于通道注意力 | 比较器/加法树；无 DSP |
+| 激活 | ReLU/Leaky/GELU/sigmoid/tanh | ReLU 通用；GELU（Transformer SR，§1.4）；tanh（Zero-DCE 末层，§1.4）；sigmoid（门控/注意力） | ReLU 零成本；PWL 近似（sigmoid/tanh/GELU） |
+| 归一化 | BatchNorm/LayerNorm | BatchNorm（CNN，折叠进卷积系数）；LayerNorm（Restormer/NAFNet，§1.4） | BatchNorm 无硬件；LayerNorm 专用单元 |
+| 逐元素 | 残差加法/乘/拼接 | 残差加法（VDSR/SRResNet/EDSR/RCAN/DnCNN，§1.4）；拼接（U-Net 跳连：NAFNet/Restormer/MPRNet，§1.4）；乘（SimpleGate，NAFNet，§1.4） | 加法器/小乘法阵列；拼接纯搬运 |
+| 上采样 | pixel-shuffle/最近邻/双线性/转置卷积 | pixel-shuffle（SRResNet/SwinIR/EDSR，§1.4）；转置卷积（FSRCNN、HINet，§1.4） | 通道-空间重排；转置卷积复用卷积阵列 |
 
 ### 不做（明确边界）
 
