@@ -140,7 +140,7 @@ Across all six applications, max dense is ≤9×9, max DW/strip is ≤31 (63 onl
 
 ## §2 Design Requirements
 
-Goal: one FPGA accelerator that runs complete image enhancement / restoration / super-resolution models (pixel pipeline at 4K60 real time; complete multi-channel models at the operating points §3's roofline gives; verified on board). Every requirement in this section traces to a research result in §1 (the source is noted in parentheses).
+Goal: one FPGA accelerator that runs complete image-processing models — enhancement / restoration / super-resolution, object detection (YOLO), infrared small target detection (IRSTD), and other CNN models (pixel pipeline at 4K60 real time; complete multi-channel models at the operating points §3's roofline gives; verified on board). Every requirement in this section traces to a research result in §1 (the source is noted in parentheses).
 
 ### 2.1 Architecture Requirements
 
@@ -401,7 +401,7 @@ Input (full-time-equivalent estimates; actual calendar time depends on the pace 
 
 Output:
 
-- An FPGA accelerator that runs complete image enhancement / restoration / super-resolution models (pixel pipeline 4K60, complete models at the §3 operating points), implemented in SystemVerilog.
+- An FPGA accelerator that runs complete image-processing models — enhancement / restoration / super-resolution, object detection (YOLO), infrared small target detection (IRSTD), and other CNN models (pixel pipeline 4K60, complete models at the §3 operating points), implemented in SystemVerilog.
 - Complete verification: golden (function), STA (timing), on-board measurement (frame rate / power / timing closure), measured DRAM traffic (checked against the §3 budget).
 - A reproducible full command-line flow (§7) and updated project reports.
 

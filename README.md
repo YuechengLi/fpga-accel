@@ -1,6 +1,6 @@
 # fpga-accel
 
-FPGA accelerator for multi-function image processing models (image enhancement / restoration / super-resolution): a unified reconfigurable compute engine that runs complete models.
+FPGA accelerator for multi-function image processing models — image enhancement / restoration / super-resolution, object detection (YOLO), infrared small target detection (IRSTD), and other CNN models: a unified reconfigurable compute engine that runs complete models.
 
 - **Target board**: iW-RainboW-G35D (XCZU19EG-2, Zynq UltraScale+)
 - **Implementation language**: SystemVerilog (all new modules in SV; the original Verilog streaming convolution is frozen and kept only as a reference baseline)
