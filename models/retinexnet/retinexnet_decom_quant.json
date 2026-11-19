@@ -1,0 +1,128 @@
+{
+  "conv0": {
+    "shift": 15,
+    "weight_exp_e": 15,
+    "r_in": 0,
+    "r_out": 0,
+    "scale": 3.0517578125e-05,
+    "max_abs_W": 0.1791476458311081,
+    "max_act": 0.30688473167783564,
+    "W_q_range": [
+      -4975,
+      5870
+    ],
+    "b_q_range": [
+      -1208308,
+      1051549
+    ],
+    "activation": "int8-signed"
+  },
+  "conv1": {
+    "shift": 15,
+    "weight_exp_e": 15,
+    "r_in": 0,
+    "r_out": 0,
+    "scale": 3.0517578125e-05,
+    "max_abs_W": 0.33548858761787415,
+    "max_act": 0.4722820601968562,
+    "W_q_range": [
+      -9487,
+      10993
+    ],
+    "b_q_range": [
+      -1693614,
+      1025469
+    ],
+    "activation": "uint8"
+  },
+  "conv2": {
+    "shift": 15,
+    "weight_exp_e": 15,
+    "r_in": 0,
+    "r_out": 0,
+    "scale": 3.0517578125e-05,
+    "max_abs_W": 0.8796990513801575,
+    "max_act": 0.5359287052296899,
+    "W_q_range": [
+      -16677,
+      28826
+    ],
+    "b_q_range": [
+      -1740613,
+      838156
+    ],
+    "activation": "uint8"
+  },
+  "conv3": {
+    "shift": 15,
+    "weight_exp_e": 15,
+    "r_in": 0,
+    "r_out": 0,
+    "scale": 3.0517578125e-05,
+    "max_abs_W": 0.6556183099746704,
+    "max_act": 0.916307510083888,
+    "W_q_range": [
+      -18724,
+      21483
+    ],
+    "b_q_range": [
+      -2009019,
+      625164
+    ],
+    "activation": "uint8"
+  },
+  "conv4": {
+    "shift": 15,
+    "weight_exp_e": 14,
+    "r_in": 0,
+    "r_out": 1,
+    "scale": 6.103515625e-05,
+    "max_abs_W": 0.6272620558738708,
+    "max_act": 1.4509553650349436,
+    "W_q_range": [
+      -7228,
+      10277
+    ],
+    "b_q_range": [
+      -811390,
+      530775
+    ],
+    "activation": "uint8"
+  },
+  "conv5": {
+    "shift": 15,
+    "weight_exp_e": 14,
+    "r_in": 1,
+    "r_out": 2,
+    "scale": 6.103515625e-05,
+    "max_abs_W": 0.7435336709022522,
+    "max_act": 2.577143215269929,
+    "W_q_range": [
+      -9689,
+      12182
+    ],
+    "b_q_range": [
+      -185167,
+      412355
+    ],
+    "activation": "uint8"
+  },
+  "recon": {
+    "shift": 13,
+    "weight_exp_e": 15,
+    "r_in": 2,
+    "r_out": 0,
+    "scale": 3.0517578125e-05,
+    "max_abs_W": 0.4154050052165985,
+    "max_act": 2.7850122174208507,
+    "W_q_range": [
+      -7246,
+      13612
+    ],
+    "b_q_range": [
+      -51950,
+      8262
+    ],
+    "activation": "int32-signed"
+  }
+}
