@@ -1,0 +1,26 @@
+=== Stage 3 stage_mc_accum ===
+                              1.797   data arrival time
+                             -1.797   data arrival time
+                              1.495   slack (MET)
+tns 0.000
+=== Stage 3 stage_pool_max ===
+                              0.787   data arrival time
+                             -0.787   data arrival time
+                              2.506   slack (MET)
+tns 0.000
+=== Stage 3 stage_pool_gap ===
+                              0.658   data arrival time
+                             -0.658   data arrival time
+                              2.634   slack (MET)
+tns 0.000
+=== Stage 3 stage_act_leaky ===
+                              2.248   data arrival time
+                             -2.248   data arrival time
+                              1.046   slack (MET)
+tns 0.000
+=== Stage 3 stage_act_pwl ===
+                              1.656   data arrival time
+                             -1.656   data arrival time
+                              1.634   slack (MET)
+tns 0.000
+[STA Stage 3 done]

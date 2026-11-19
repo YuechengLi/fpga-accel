@@ -1,0 +1,3 @@
+tb_pool.sv:25: warning: Port 5 (cfg_addr) of module pool expects 8 bit(s), given 16.
+tb_pool.sv:25:        : Pruning 8 high bits of the expression.
+../rtl/pool.sv:78: vvp.tgt sorry: Case unique/unique0 qualities are ignored.

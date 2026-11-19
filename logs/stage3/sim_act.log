@@ -1,0 +1,10 @@
+TB act: 7 cases
+case 0 (mode=0): 12 outputs, framing errors=0
+case 1 (mode=1): 12 outputs, framing errors=0
+case 2 (mode=1): 8 outputs, framing errors=0
+case 3 (mode=2): 87 outputs, framing errors=0
+case 4 (mode=3): 87 outputs, framing errors=0
+case 5 (mode=4): 87 outputs, framing errors=0
+case 6 (mode=5): 87 outputs, framing errors=0
+TB act DONE
+tb_act.sv:148: $finish called at 18755000 (1ps)

@@ -1,0 +1,11 @@
+TB pool: 8 cases
+case 0 (mode=0 16x16 -> 8x8): 64 outputs, framing errors=0
+case 1 (mode=0 15x13 -> 8x7): 56 outputs, framing errors=0
+case 2 (mode=0 1x1 -> 1x1): 1 outputs, framing errors=0
+case 3 (mode=1 16x16 -> 8x8): 64 outputs, framing errors=0
+case 4 (mode=1 15x13 -> 8x7): 56 outputs, framing errors=0
+case 5 (mode=2 16x16 -> 1x1): 1 outputs, framing errors=0
+case 6 (mode=2 15x13 -> 1x1): 1 outputs, framing errors=0
+case 7 (mode=2 1x1 -> 1x1): 1 outputs, framing errors=0
+TB pool DONE
+tb_pool.sv:136: $finish called at 43685000 (1ps)

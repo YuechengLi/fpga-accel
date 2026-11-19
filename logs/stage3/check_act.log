@@ -1,0 +1,8 @@
+case 0 (ReLU): PASS (12 values)
+case 1 (Leaky): PASS (12 values)
+case 2 (Leaky): PASS (8 values)
+case 3 (sigmoid): PASS (87 values)
+case 4 (tanh): PASS (87 values)
+case 5 (GELU): PASS (87 values)
+case 6 (SiLU): PASS (87 values)
+GOLDEN CHECK PASSED

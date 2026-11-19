@@ -243,3 +243,255 @@ multi-channel DW (Stage 3) reuses this datapath per channel tile.
 - Config bus uses a 9-bit address (289 coefficients do not fit in an
   8-bit address space starting at 0x10); control registers keep the
   Stage 1 layout (0x00-0x09) plus mode (0x0A) and dilation (0x0B).
+
+---
+
+# Stage 3 — Multi-channel tiling + 1x1 + residual + pooling + activation
+
+SystemVerilog streaming multi-channel convolution (`rtl/conv2d_mc.sv`),
+plus pooling (`rtl/pool.sv`), elementwise residual (`rtl/residual.sv`),
+and activations (`rtl/act.sv`). Same AXI4-Stream-style pixel interface,
+config bus, stall behavior, and framing conventions as Stages 1-2.
+
+## conv2d_mc — multi-channel tiling (C_PAR=4)
+
+C_in is tiled by C_PAR=4 parallel dense lanes and accumulated across
+tiles (one output = sum over all input channels); C_out is serial via
+host kernel-swap (input tile buffered on-chip and reused across all
+output channels, so the input is streamed once, not C_out times). The
+datapath is NOT sized for 256-512 parallel channels: total mults per
+output pixel = C_in x K^2, processed C_PAR at a time.
+
+- Tile size 32x32 (one tile per invocation; larger images are tiled by
+  the host in Stage 5). Input tile buffer: C_PAR BRAM banks, bank =
+  channel % C_PAR, bank depth 16384 = 16 tiles x 1024 px.
+- Dense K=1/3/5/7/9/11 (121 mults/lane), arbitrary per-side padding
+  0..K, arbitrary per-axis stride 1..K (decimate), 32-bit accumulator.
+  K=1 is the 1x1 pointwise convolution; K=1 with W=H=1 is the FC path
+  (input vector as a 1x1 feature map).
+- C_IN_MAX=64, C_OUT_MAX=32 (runtime-configurable via config bus;
+  hardware sized for the max, config selects actual).
+- Per-tile 32-bit accumulator is a register array (`acc_mem`, 1024x32,
+  combinational read); first tile overwrites, later tiles add. Stage 5
+  will move it to BRAM with pipelined read-modify-write for large tiles.
+- Output is emitted during the LAST tile's compute (final sum captured
+  with its output position, emitted shift+saturate one cycle later);
+  no separate EMIT state. Flush 24 cycles after the last fetch
+  (fetch->window 11 + MAC 6 + cross-lane 1 = 18, plus margin).
+- Config: 0x00 ksize, 0x01 shift, 0x02/0x03 tile W/H, 0x04-0x07 pads,
+  0x08/0x09 stride, 0x0A C_in, 0x0B C_out, 0x0C GO, 0x0D out_w, 0x0E
+  out_h, 0x0F sign mode, 0x100+l*128+k coeffs (stride 128, so
+  lane/index decode is bit-slicing, not a divider).
+- `busy` is high only during LOAD and COMPUTE (low in IDLE and
+  WAIT_GO), so the testbench can poll it to know a compute pass ended.
+
+### Signed intermediate activations (config 0x0F)
+
+Bit0 = signed input, bit1 = signed output, reset default 0 (unsigned,
+preserves existing behavior). When sign_in is set, the pixel is
+sign-extended (`$signed(win)`) instead of zero-extended; when sign_out
+is set, the output saturates to [-128, 127] (int8 two's complement in
+the same 8-bit port) instead of [0, 255]. Zero padding stays correct
+(a padded 0 is 0.0 in signed too; the window mask forces out-of-bounds
+products to 0 either way).
+
+This is required by the Stage 6 weights prep: RetinexNet Decom-Net
+conv0 has no activation and its output is ~50% negative (range about
+[-0.33, +0.31]). A ReLU after conv0 destroys the signal, and uint8+offset
+encoding is incompatible with zero padding (zero-padded pixels carry no
+offset while the bias correction assumes all pixels do; verified on
+RetinexNet: conv1 max error 215, end-to-end R PSNR 14.65 dB). The
+correct scheme is signed int8 for signed intermediates, which works
+under zero padding. The Stage 2 DW module (`conv2d_dw.sv`) is
+unsigned-only and would need the same signed treatment if used on
+signed feature maps (Stage 4 follow-up).
+
+### Files
+
+| File | What |
+|---|---|
+| `rtl/conv2d_mc.sv` | Multi-channel tiling datapath + tile buffer + BRAM line buffers |
+| `rtl/pool.sv` | Max/avg 2x2 pooling + global average pooling (GAP) |
+| `rtl/residual.sv` | Two-stream elementwise add/sub/bypass with saturation |
+| `rtl/act.sv` | ReLU, Leaky/PReLU, PWL sigmoid/tanh/GELU/SiLU |
+| `tb/golden_mc.py` | Python golden model, vector gen, result check (12 cases) |
+| `tb/tb_conv2d_mc.sv` | SystemVerilog testbench (random gaps + backpressure) |
+| `tb/golden_pool.py` / `tb_pool.sv` | Pool golden + testbench (8 cases) |
+| `tb/golden_residual.py` / `tb_residual.sv` | Residual golden + testbench (7 cases) |
+| `tb/golden_act.py` / `tb_act.sv` | Activation golden + testbench (7 cases) |
+| `tb/run_stage3.sh` | Golden run script (logs to `logs/stage3/`), incl. Stage 1+2 regressions |
+| `sta/critpath_mc.sv` | Per-stage STA modules (mc_accum / pool_max / pool_gap / act_leaky / act_pwl) |
+| `sta/run_sta_mc.sh` | Per-stage STA run script (logs to `logs/stage3/`) |
+
+## Measured results (freshly run, traceable to `logs/stage3/`)
+
+### Golden MC (pixel-exact, framing errors 0) — 12/12 PASS
+
+| Case | Config | Output | Result |
+|---|---|---|---|
+| 0 | K=3 16x16 C_in=3 C_out=2 shift 8, no pad, stride 1 | 14x14 | PASS (392 px) |
+| 1 | K=3 16x16 C_in=8 C_out=2 shift 8, pad 1, stride 1 | 16x16 | PASS (512 px) |
+| 2 | K=3 16x16 C_in=16 C_out=8 shift 8, pad 1, stride 1 | 16x16 | PASS (2048 px) |
+| 3 | K=3 16x16 C_in=64 C_out=2 shift 8, no pad, stride 1 | 14x14 | PASS (392 px) |
+| 4 | K=5 16x16 C_in=8 C_out=4 shift 8, pad 2, stride 1 | 16x16 | PASS (1024 px) |
+| 5 | K=1 16x16 C_in=16 C_out=16 shift 8, no pad | 16x16 | PASS (4096 px) |
+| 6 | K=1 16x16 C_in=64 C_out=32 shift 8, no pad | 16x16 | PASS (8192 px) |
+| 7 | K=1 1x1 C_in=8 C_out=4 shift 8 (FC) | 1x1 | PASS (4 px) |
+| 8 | K=3 15x13 C_in=3 C_out=2 shift 8, pad 1, stride 2x2 | 8x7 | PASS (112 px) |
+| 9 | K=3 16x16 C_in=8 C_out=4 shift 0, no pad | 14x14 | PASS (784 px) |
+| 10 | K=3 16x16 C_in=4 C_out=2 shift 8, pad 1, signed in+out | 16x16 | PASS (512 px) |
+| 11 | K=3 16x16 C_in=8 C_out=2 shift 8, pad 1, signed in, unsigned out | 16x16 | PASS (512 px) |
+
+Total 18,580 output pixels, all pixel-exact. Coverage: C_in 3/8/16/64
+(tiled, C_PAR=4), C_out 2/8/16/32, K=1/3/5, 1x1 pointwise C_in=64
+C_out=32, FC (W=H=1), stride 2x2, shift 0, signed intermediates
+(cases 10-11: ~48% negative input pixels; case 10 has negative
+outputs, so the signed saturation path is exercised). Random in_valid
+gaps and random out_ready backpressure on every case. Simulation wall
+time ~15 min (vvp; case 6, C_in=64 C_out=32, dominates).
+
+### Golden pool (pixel-exact, framing errors 0) — 8/8 PASS
+
+| Case | Config | Output | Result |
+|---|---|---|---|
+| 0 | max 2x2, 16x16 | 8x8 | PASS (64 px) |
+| 1 | max 2x2, 15x13 (odd) | 8x7 | PASS (56 px) |
+| 2 | max 2x2, 1x1 | 1x1 | PASS (1 px) |
+| 3 | avg 2x2, 16x16 | 8x8 | PASS (64 px) |
+| 4 | avg 2x2, 15x13 (odd) | 8x7 | PASS (56 px) |
+| 5 | GAP, 16x16 | 1x1 | PASS (1 px) |
+| 6 | GAP, 15x13 (odd) | 1x1 | PASS (1 px) |
+| 7 | GAP, 1x1 | 1x1 | PASS (1 px) |
+
+Max/avg 2x2 zero-pads to even W/H on the fly; AVG = sum>>2; GAP sums
+real pixels only (>> gap_shift config, single output).
+
+### Golden residual (pixel-exact, framing errors 0) — 7/7 PASS
+
+| Case | Config | Output | Result |
+|---|---|---|---|
+| 0 | add, 16x16 | 16x16 | PASS (256 px) |
+| 1 | add, 15x13 (odd) | 15x13 | PASS (195 px) |
+| 2 | add, 16x16 (saturation/overflow) | 16x16 | PASS (256 px) |
+| 3 | sub, 16x16 | 16x16 | PASS (256 px) |
+| 4 | sub, 15x13 (odd) | 15x13 | PASS (195 px) |
+| 5 | bypass, 16x16 | 16x16 | PASS (256 px) |
+| 6 | add, 1x1 | 1x1 | PASS (1 px) |
+
+Two-stream elementwise add/sub/bypass with saturation; FIFO depth 4
+per stream aligns independent random gaps.
+
+### Golden act (pixel-exact, framing errors 0) — 7/7 PASS
+
+| Case | Config | Result |
+|---|---|---|
+| 0 | ReLU (incl. negative saturation) | PASS (12 values) |
+| 1 | Leaky ReLU | PASS (12 values) |
+| 2 | Leaky ReLU | PASS (8 values) |
+| 3 | PWL sigmoid (32 segments over [-8,8]) | PASS (87 values) |
+| 4 | PWL tanh | PASS (87 values) |
+| 5 | PWL GELU | PASS (87 values) |
+| 6 | PWL SiLU | PASS (87 values) |
+
+ReLU and Leaky/PReLU are fully verified. PWL sigmoid/tanh/GELU/SiLU
+are a single configurable module with a coefficient table loaded via
+config bus (32 segments over [-8,8], width 0.5; y0 + dslope per
+segment, Q1.15); all four functions verified pixel-exact on 87 sample
+points each.
+
+### Regressions (run by `tb/run_stage3.sh`)
+
+Stage 1: 14/14 PASS. Stage 2: 23/23 PASS. No regression.
+
+### Per-stage STA (Nangate45, 3.333 ns / 300 MHz, OpenSTA 2.2.0, tns 0)
+
+| Stage | Arrival (ns) | Slack (ns) |
+|---|---|---|
+| mc_accum (4x32-bit cross-lane sum + acc add) | 1.797 | +1.495 |
+| pool_max (2x2 max compare tree) | 0.787 | +2.506 |
+| pool_gap (18-bit accumulate add) | 0.658 | +2.634 |
+| act_leaky (32x16-bit slope multiply) | 2.248 | +1.046 |
+| act_pwl (16x11-bit interpolation + 32-bit add) | 1.656 | +1.634 |
+
+All stages MET at 300 MHz. The new bottleneck is the Leaky ReLU
+32x16-bit slope multiply (2.248 ns): Fmax = 1 / (2.248 + 0.041 setup)
+= **437 MHz**. The conv datapath itself is still limited by the
+Stage 1 barrel shifter at 469 MHz, so the Stage 3 system Fmax (same
+clock domain) is ~437 MHz, well above the 300 MHz operating point.
+(The shift-only and saturate-only stages are identical to Stage 1's
+and are not re-measured here.)
+
+### Resources
+
+| Module | DSP | BRAM36 | LUT | FF | Method |
+|---|---|---|---|---|---|
+| conv2d_mc (C_PAR=4, K<=11) | 484 | 36 | ~19,000 | ~65,800 | DSP exact; BRAM measured; LUT inferred; FF counted |
+| pool | 0 | ~1 | ~500 | ~500 | inferred |
+| residual | 0 | 0 | ~300 | ~300 | inferred |
+| act | 2 | 0 | ~800 | ~400 | inferred |
+
+conv2d_mc detail: DSP = C_PAR x 121 = 484 (each an 8/9-bit x 16-bit
+multiply, 1 DSP48 each), exact from RTL structure. BRAM36 = 36,
+measured: tile buffer 4 banks x 16384x8 = 4 x 4 RAMB36 = 16
+(Yosys `synth_xilinx` on a standalone 16384x8 bank: 4 RAMB36E1);
+line buffers 40 x 64x8 = 40 x 1 RAMB18E1 = 20 BRAM36 (Yosys
+`synth_xilinx` on the standalone line-buffer module: 1 RAMB18E1).
+LUT inferred: per-lane adder tree 4x~3,300 (Stage 1's 121-product
+tree) + tap select 4x~1,200 + shift/sat ~230 + cross-lane sum ~200 +
+control ~600. FF counted from RTL structure, dominated by the
+accumulator register array (1024x32 = 32,768) and coefficient regs
+(4x121x16 = 7,744); the rest is the datapath pipeline (~24,000) and
+control (~1,300). Full-module Yosys synth was not run (times out on
+this VM, as in Stages 1-2); LUT is an inferred value, not measured.
+On ZU19EG (522K LUT / 1968 DSP / 984 BRAM36): conv2d_mc DSP 25%,
+BRAM 4%, LUT ~4%, FF ~6%. On Z020 (220 DSP): 484 DSP does NOT fit;
+conv2d_mc targets the ZU19EG (the C_PAR=4 / K=11 max configuration).
+A K=3-only build would need 4x9 = 36 DSPs.
+
+## Notes
+
+- Bug found and fixed during verification (in `rtl/conv2d_mc.sv`,
+  the tile-buffer BRAM read): the read `tb_pix <= tb_mem[tb_raddr]`
+  was NOT gated by `stall`, while its valid flag `pos_real_d1` was.
+  During an output stall, `tb_raddr` is frozen, but the ungated read
+  still advances `tb_pix` to the next pixel (the address was already
+  presented), so `lane_pix` delivered the NEXT pixel and the current
+  one was lost -- a one-pixel shift in the data relative to the
+  coordinates. It reproduced with backpressure only (68/4096
+  mismatches on the case-5 isolation, 16/512 on a 1-tile K=1 case),
+  not with input gaps alone (0/4096) and not without backpressure
+  (0/4096). The symptom was intermittent: a few pixels per frame got
+  the next pixel's value (e.g. ch1 (1,11) got (1,12)'s acc, -8 instead
+  of 487). Fixed by gating the read with `!stall`, like every other
+  pipeline register. After the fix the full suite passes (MC 12/12,
+  pool 8/8, residual 7/7, act 7/7, Stage 1 14/14, Stage 2 23/23).
+  Every other state element in the module was already stall-gated;
+  `tb_pix` was the only ungated one.
+- Signed-mode rounding: the RTL uses round-half-up shift (add
+  2^(shift-1), then arithmetic shift), matching Stages 1-2. The
+  Stage 6 golden (`models/common.py`) uses floor shift (no rounding);
+  the <=1 LSB difference is expected and must be noted in the Stage 6
+  comparison, not "fixed" by changing the RTL.
+- The DW module (`conv2d_dw.sv`, Stage 2) is unsigned-only. If it is
+  used on signed feature maps, it needs the same signed treatment as
+  conv2d_mc (Stage 4 follow-up).
+- Stage 4/5 design inputs (recorded for the next stages, not
+  implemented here): (1) In time-multiplexed mode the weight registers
+  need ping-pong (double) buffering -- while the current tile computes,
+  the next tile's weights are loaded into the other buffer, so the
+  switch is immediate and the load time is hidden; cost is 2x weight
+  storage. Coefficients currently load via the config bus (AXI-Lite),
+  which is too slow for frequent time-multiplexed switching; weights
+  should stream from DRAM via AXI-MM into the ping-pong buffer
+  (Stage 5). Pre-compilation should search the optimal
+  time-multiplexed tile granularity per layer (cost model: compute
+  time, load time, overlap) under DSP/BRAM/DRAM-bandwidth constraints,
+  so load time <= compute time (fully hidden) or the two are balanced;
+  the optimum varies per layer shape (K/C_in/C_out/H/W), not one
+  global value. (2) A separate compiler module is needed, based on
+  the PyTorch compile graph (torch.compile / TorchDynamo FX graph;
+  torch.export for AOT): capture graph -> fusion (conv+relu etc.,
+  Stage 5 layer fusion) -> tiling (the per-layer granularity search
+  above) -> scheduling (tile order, ping-pong weight buffer
+  management, DRAM) -> output a program (layer descriptors) for the
+  accelerator.
