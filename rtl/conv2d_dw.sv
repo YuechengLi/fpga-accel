@@ -57,6 +57,14 @@
 //   addr 0x0A : mode (0=DW-SQUARE, 1=DW-STRIP-H, 2=DW-STRIP-V,
 //                      3=DW-DILATED)
 //   addr 0x0B : dilation d (1..4, DW-DILATED only)
+//   addr 0x0F : sign mode, bit0 = signed input, bit1 = signed output.
+//     Same convention as conv2d_mc (Stage 3): when signed input is set,
+//     the input pixel is sign-extended instead of zero-extended, and the
+//     output saturates to [-128, 127] instead of [0, 255] when signed
+//     output is set. Zero padding stays correct (a padded 0 is 0.0 in
+//     signed too). Needed so DW can run on signed feature maps (the
+//     output of a signed conv / activation); without it, negative
+//     activations are misread as large positive values.
 //   addr 0x10+i : coeff[i], i = 0..288. Layout depends on the mode:
 //     DW-SQUARE : 17x17 grid, coeff[i*17+j] (top-left KxK is the kernel)
 //     DW-STRIP-H/V : coeff[j], j = 0..L-1 (1-D, left-to-right / top-to-bottom)
@@ -149,6 +157,7 @@ module conv2d_dw #(
     localparam logic [8:0] CFG_DIL    = 9'h00B;
     localparam logic [8:0] CFG_COEFF_BASE = 9'h010;
     localparam logic [8:0] CFG_COEFF_LAST = 9'h130;  // 0x10 + 288
+    localparam logic [8:0] CFG_SIGN = 9'h00F;  // bit0: signed in, bit1: signed out
 
     // Modes.
     localparam logic [1:0] MODE_SQUARE = 2'd0;
@@ -172,6 +181,7 @@ module conv2d_dw #(
     logic [11:0] width_r, height_r;
     logic [5:0]  pad_t, pad_b, pad_l, pad_r;
     logic [5:0]  stride_x, stride_y;
+    logic        sign_in_r, sign_out_r;
     logic signed [15:0] coeff [0:MAX_COEFF-1];
     int ci;
 
@@ -185,6 +195,8 @@ module conv2d_dw #(
             height_r <= 12'd480;
             pad_t <= 6'd0; pad_b <= 6'd0; pad_l <= 6'd0; pad_r <= 6'd0;
             stride_x <= 6'd1; stride_y <= 6'd1;
+            sign_in_r <= 1'b0;
+            sign_out_r <= 1'b0;
             for (ci = 0; ci < MAX_COEFF; ci++) coeff[ci] <= '0;
             // default: 3x3 identity (centre 256, shift 8). The 3x3 kernel
             // occupies the top-left 3x3 of the 17x17 coeff grid, so its
@@ -204,6 +216,10 @@ module conv2d_dw #(
                 CFG_STRIDE_Y: stride_y <= cfg_data[5:0];
                 CFG_MODE  : mode     <= cfg_data[1:0];
                 CFG_DIL   : dil      <= cfg_data[2:0];
+                CFG_SIGN  : begin
+                    sign_in_r  <= cfg_data[0];
+                    sign_out_r <= cfg_data[1];
+                end
                 default: begin
                     if (cfg_addr >= CFG_COEFF_BASE && cfg_addr <= CFG_COEFF_LAST)
                         coeff[cfg_addr - CFG_COEFF_BASE] <= cfg_data;
@@ -566,9 +582,12 @@ module conv2d_dw #(
                 end
                 default: begin end
             endcase
-            if (act)
-                prod_comb[m] = $signed({1'b0, win[tr][tc]}) * coeff[cidx];
-            else
+            if (act) begin
+                if (sign_in_r)
+                    prod_comb[m] = $signed(win[tr][tc]) * coeff[cidx];
+                else
+                    prod_comb[m] = $signed({1'b0, win[tr][tc]}) * coeff[cidx];
+            end else
                 prod_comb[m] = 25'sd0;
         end
     end
@@ -683,11 +702,22 @@ module conv2d_dw #(
     end
 
     //------------------------- output stage 2: saturate + framing -------
+    // Unsigned output saturates to [0, 255]; signed output (sign_out_r)
+    // to [-128, 127], emitted as a two's-complement byte. The shift is
+    // round-half-up (acc + 2^(shift-1)) >> shift; the Stage 6 golden
+    // uses floor shift, so a <=1 LSB difference is expected there and
+    // is NOT a bug in this module.
     logic [7:0] px_sat;
     always @* begin
-        if (shifted > 32'sd255)      px_sat = 8'd255;
-        else if (shifted < 32'sd0)   px_sat = 8'd0;
-        else                          px_sat = shifted[7:0];
+        if (sign_out_r) begin
+            if (shifted > 32'sd127)       px_sat = 8'd127;
+            else if (shifted < -32'sd128) px_sat = 8'h80;  // -128
+            else                           px_sat = shifted[7:0];
+        end else begin
+            if (shifted > 32'sd255)      px_sat = 8'd255;
+            else if (shifted < 32'sd0)   px_sat = 8'd0;
+            else                          px_sat = shifted[7:0];
+        end
     end
 
     always_ff @(posedge clk or negedge rst_n) begin

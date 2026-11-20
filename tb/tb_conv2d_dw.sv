@@ -68,6 +68,7 @@ module tb_conv2d_dw;
 
     int fvec, fout, code, ncases, ci;
     int mode, k, dil, sh, w, h, pt, pb, pl, pr, sx, sy;
+    int sign_in, sign_out;
     int spx, spy, pw, ph, ow, oh;
     int i, p;
     int coeff_v [0:288];
@@ -87,8 +88,9 @@ module tb_conv2d_dw;
         $display("TB dw: %0d cases", ncases);
 
         for (ci = 0; ci < ncases; ci++) begin
-            code = $fscanf(fvec, "%d %d %d %d %d %d %d %d %d %d %d %d",
-                           mode, k, dil, sh, w, h, pt, pb, pl, pr, sx, sy);
+            code = $fscanf(fvec, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d",
+                           mode, k, dil, sh, w, h, pt, pb, pl, pr, sx, sy,
+                           sign_in, sign_out);
             for (i = 0; i < 289; i++)
                 code = $fscanf(fvec, "%d", coeff_v[i]);
             for (i = 0; i < w*h; i++)
@@ -115,6 +117,7 @@ module tb_conv2d_dw;
             cfg_wr(9'h009, sy[15:0]);
             cfg_wr(9'h00A, mode[15:0]);
             cfg_wr(9'h00B, dil[15:0]);
+            cfg_wr(9'h00F, (sign_out << 1) | sign_in);
             for (i = 0; i < 289; i++)
                 cfg_wr(9'h010 + i[8:0], coeff_v[i][15:0]);
 

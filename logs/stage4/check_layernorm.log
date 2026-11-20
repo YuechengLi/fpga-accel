@@ -1,0 +1,7 @@
+case 0 (8x8 sign=0/0 gamma=1.000 beta=0): PASS (64 pixels) mean=114 var=4451 inv_std_q=491 max|fixed-float|=0.93
+case 1 (16x16 sign=0/0 gamma=0.500 beta=10): PASS (256 pixels) mean=119 var=5452 inv_std_q=443 max|fixed-float|=0.98
+case 2 (8x8 sign=1/1 gamma=1.000 beta=0): PASS (64 pixels) mean=-16 var=12709 inv_std_q=291 max|fixed-float|=0.99
+case 3 (4x4 sign=0/0 gamma=1.000 beta=5): PASS (16 pixels) mean=100 var=0 inv_std_q=5793 max|fixed-float|=0.00
+case 4 (16x16 sign=0/0 gamma=0.250 beta=-5): PASS (256 pixels) mean=138 var=5473 inv_std_q=443 max|fixed-float|=0.00
+case 5 (8x16 sign=0/0 gamma=1.000 beta=0): PASS (128 pixels) mean=127 var=245 inv_std_q=2189 max|fixed-float|=1.36
+GOLDEN CHECK PASSED

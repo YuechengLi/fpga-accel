@@ -72,8 +72,9 @@ module tb_act;
     int mode, slope_fp, nvals;
     int i, n_out, tb_err, cycles;
     int tmp;
-    int vals [0:1023];
+    int vals [0:8191];
     int y0v, dsv;
+    int h1, h2, nbands, t, nc, nf;
 
     initial begin
         repeat (5) @(posedge clk);
@@ -88,7 +89,29 @@ module tb_act;
 
         for (ci = 0; ci < ncases; ci++) begin
             code = $fscanf(fvec, "%d %d %d", mode, slope_fp, nvals);
-            if (mode >= 2) begin
+            if (mode == 6) begin
+                // Multi-level LUT: slope_fp is the function id; read
+                // H1 H2 nbands, then the coarse base / coarse select /
+                // fine tables, and load them via the config bus.
+                code = $fscanf(fvec, "%d %d %d", h1, h2, nbands);
+                nc = 1 << h1;
+                nf = 1 << h2;
+                for (i = 0; i < nc; i++) begin
+                    code = $fscanf(fvec, "%d", tmp);
+                    cfg_wr(16'h0200 + i, tmp[15:0]);
+                end
+                for (i = 0; i < nc; i++) begin
+                    code = $fscanf(fvec, "%d", tmp);
+                    cfg_wr(16'h0300 + i, tmp[15:0]);
+                end
+                for (t = 0; t < nbands; t++) begin
+                    for (i = 0; i < nf; i++) begin
+                        code = $fscanf(fvec, "%d", tmp);
+                        cfg_wr(16'h0400 + t*64 + i, tmp[15:0]);
+                    end
+                end
+                cfg_wr(16'h0002, ((h2 << 5) | h1));
+            end else if (mode >= 2 && mode <= 5) begin
                 // load the 32-segment PWL table
                 for (i = 0; i < 32; i++) begin
                     code = $fscanf(fvec, "%d %d", y0v, dsv);

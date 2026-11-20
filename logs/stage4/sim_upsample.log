@@ -1,0 +1,13 @@
+TB upsample: 10 cases
+case 0 (mode=0 16x16 -> 32x32): 1024 outputs, framing errors=0
+case 1 (mode=0 15x13 -> 30x26): 780 outputs, framing errors=0
+case 2 (mode=0 4x4 -> 8x8): 64 outputs, framing errors=0
+case 3 (mode=1 16x16 -> 32x32): 1024 outputs, framing errors=0
+case 4 (mode=1 15x13 -> 30x26): 780 outputs, framing errors=0
+case 5 (mode=1 4x4 -> 8x8): 64 outputs, framing errors=0
+case 6 (mode=1 1x1 -> 2x2): 4 outputs, framing errors=0
+case 7 (mode=2 16x16 -> 32x32): 1024 outputs, framing errors=0
+case 8 (mode=2 15x13 -> 30x26): 780 outputs, framing errors=0
+case 9 (mode=2 4x4 -> 8x8): 64 outputs, framing errors=0
+TB upsample DONE
+tb_upsample.sv:141: $finish called at 154735000 (1ps)

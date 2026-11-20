@@ -1,0 +1,8 @@
+case 0 (8x8): 64 outputs, framing errors=0
+case 1 (16x16): 256 outputs, framing errors=0
+case 2 (8x8): 64 outputs, framing errors=0
+case 3 (4x4): 16 outputs, framing errors=0
+case 4 (16x16): 256 outputs, framing errors=0
+case 5 (8x16): 128 outputs, framing errors=0
+TB layernorm DONE
+tb_layernorm.sv:161: $finish called at 70265000 (1ps)

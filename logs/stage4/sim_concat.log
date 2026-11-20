@@ -1,0 +1,9 @@
+TB concat: 6 cases
+case 0 (mode=0 16x16 out=512): 512 outputs, framing errors=0
+case 1 (mode=0 15x13 out=390): 390 outputs, framing errors=0
+case 2 (mode=0 4x4 out=32): 32 outputs, framing errors=0
+case 3 (mode=1 16x16 out=512): 512 outputs, framing errors=0
+case 4 (mode=1 15x13 out=390): 390 outputs, framing errors=0
+case 5 (mode=1 4x4 out=32): 32 outputs, framing errors=0
+TB concat DONE
+tb_concat.sv:167: $finish called at 43455000 (1ps)

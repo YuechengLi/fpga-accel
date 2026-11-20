@@ -44,6 +44,17 @@
 //     representation is NOT supported: it is incompatible with zero
 //     padding (Stage 6 weights prep: offset scheme gave conv1 max error
 //     215, R PSNR 14.65 dB; signed int8 gives R PSNR 28.95 dB).
+//   addr 0x10 : fused activation (Stage 4): 0=none, 1=ReLU, 2=Leaky.
+//     Applied to the shifted accumulator value BEFORE saturation.
+//     ReLU is a comparator + mux (free: for unsigned output the [0,255]
+//     saturation already clamps negatives to 0, so fused ReLU only
+//     changes signed output). Leaky needs one 32x16 multiply, slope
+//     from addr 0x11 (Q0.16). Simple activations are fused here to save
+//     a pipeline stage and a module traversal; complex activations
+//     (sigmoid/tanh/GELU/SiLU) go through the separate act module
+//     (whose BYPASS mode covers the fused / no-activation cases). The
+//     compiler (Stage 5) decides per layer which path to use.
+//   addr 0x11 : fused Leaky slope_fp (16-bit Q0.16, default 8192 = 0.125)
 //   addr 0x0C : GO (write 1 = start the next (o,t) compute pass)
 //   addr 0x0D : output width  (host-computed, for emit framing)
 //   addr 0x0E : output height (host-computed, for emit framing)
@@ -145,6 +156,8 @@ module conv2d_mc #(
     localparam logic [15:0] CFG_OUT_W   = 16'h000D;
     localparam logic [15:0] CFG_OUT_H   = 16'h000E;
     localparam logic [15:0] CFG_SIGN    = 16'h000F;  // bit0: signed in, bit1: signed out
+    localparam logic [15:0] CFG_ACT     = 16'h0010;  // fused activation: 0=none, 1=ReLU, 2=Leaky
+    localparam logic [15:0] CFG_ACT_SLOPE = 16'h0011;  // Leaky slope_fp (Q0.16)
     localparam logic [15:0] CFG_COEFF_BASE = 16'h0100;
     localparam logic [15:0] CFG_COEFF_LAST = 16'h02FF;  // 0x100 + 4*128 - 1
 
@@ -165,6 +178,8 @@ module conv2d_mc #(
     logic [6:0]  cin_r, cout_r;
     logic [12:0] out_w_r, out_h_r;
     logic        sign_in_r, sign_out_r;
+    logic [1:0]  fuse_act_r;  // fused activation: 0=none, 1=ReLU, 2=Leaky
+    logic signed [15:0] act_slope_r;  // Leaky slope_fp (Q0.16)
     logic signed [15:0] coeff [0:C_PAR-1][0:MAX_COEFF-1];
     int ci, cj;
 
@@ -189,6 +204,8 @@ module conv2d_mc #(
             out_h_r <= 13'd16;
             sign_in_r <= 1'b0;
             sign_out_r <= 1'b0;
+            fuse_act_r <= 2'd0;
+            act_slope_r <= 16'sd8192;  // 0.125
             for (ci = 0; ci < C_PAR; ci++)
                 for (cj = 0; cj < MAX_COEFF; cj++) coeff[ci][cj] <= '0;
             coeff[0][1*11+1] <= 16'sd256;
@@ -212,6 +229,8 @@ module conv2d_mc #(
                     sign_in_r  <= cfg_data[0];
                     sign_out_r <= cfg_data[1];
                 end
+                CFG_ACT   : fuse_act_r <= cfg_data[1:0];
+                CFG_ACT_SLOPE : act_slope_r <= cfg_data;
                 default: begin
                     if (cfg_addr >= CFG_COEFF_BASE && cfg_addr <= CFG_COEFF_LAST) begin
                         // Stride 128: offset = addr - 0x100 = l*128 + k, so
@@ -740,15 +759,40 @@ module conv2d_mc #(
                                (32'sd1 <<< (shift_r - 1'b1)));
     end
     assign emit_sh = emit_rnd >>> shift_r;
+    // Fused activation (Stage 4): ReLU/Leaky applied to the shifted
+    // accumulator value, BEFORE saturation. ReLU is a comparator + mux
+    // (free: for unsigned output the [0,255] saturation already clamps
+    // negatives to 0, so fused ReLU only changes signed output, where
+    // negatives would otherwise be kept as [-128,127]). Leaky needs one
+    // 32x16 multiply (the same shape as act.sv's Leaky path). The
+    // separate act module (with its BYPASS mode) is reserved for complex
+    // activations (sigmoid/tanh/GELU/SiLU); the compiler (Stage 5)
+    // decides per layer whether to fuse ReLU/Leaky here or route the
+    // complex activation through act.
+    logic signed [47:0] emit_leaky_prod;
+    logic signed [31:0] emit_leaky_neg;
+    logic signed [31:0] emit_act;
+    assign emit_leaky_prod = emit_sh *
+        $signed({{16{act_slope_r[15]}}, act_slope_r});
+    // (emit_sh * slope_fp) >> 16: take bits [47:16] of the 48-bit product.
+    assign emit_leaky_neg = emit_leaky_prod[47:16];
+    always @* begin
+        if (fuse_act_r == 2'd1)
+            emit_act = (emit_sh < 32'sd0) ? 32'sd0 : emit_sh;
+        else if (fuse_act_r == 2'd2)
+            emit_act = (emit_sh < 32'sd0) ? emit_leaky_neg : emit_sh;
+        else
+            emit_act = emit_sh;
+    end
     always @* begin
         if (sign_out_r) begin
-            if (emit_sh > 32'sd127)       emit_px = 8'd127;
-            else if (emit_sh < -32'sd128) emit_px = 8'h80;  // -128
-            else                           emit_px = emit_sh[7:0];
+            if (emit_act > 32'sd127)       emit_px = 8'd127;
+            else if (emit_act < -32'sd128) emit_px = 8'h80;  // -128
+            else                           emit_px = emit_act[7:0];
         end else begin
-            if (emit_sh > 32'sd255)      emit_px = 8'd255;
-            else if (emit_sh < 32'sd0)   emit_px = 8'd0;
-            else                          emit_px = emit_sh[7:0];
+            if (emit_act > 32'sd255)      emit_px = 8'd255;
+            else if (emit_act < 32'sd0)   emit_px = 8'd0;
+            else                          emit_px = emit_act[7:0];
         end
     end
 

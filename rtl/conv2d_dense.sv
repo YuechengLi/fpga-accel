@@ -34,8 +34,22 @@
 //   addr 0x06 : pad_left   (0..K)            addr 0x07 : pad_right  (0..K)
 //   addr 0x08 : stride_x   (1..K)            addr 0x09 : stride_y   (1..K)
 //   addr 0x10+i : coeff[i], i = 0..120, row-major, row stride 11.
+//   addr 0x0A : fused act (0=none, 1=ReLU, 2=Leaky) -- Stage 4
+//   addr 0x0B : Leaky slope_fp (Q0.16) -- Stage 4
+//   addr 0x0F : sign (bit0 signed in, bit1 signed out) -- Stage 4
 // Reset defaults: ksize=3, shift=8, W=640, H=480, all pads 0,
-//   stride_x=stride_y=1, 3x3 identity (centre tap 256 at index 1*11+1=12).
+//   stride_x=stride_y=1, 3x3 identity (centre tap 256 at index 1*11+1=12),
+//   sign 0, fused act 0, slope 0.125.
+// Stage 4 additions (mirroring conv2d_mc / conv2d_dw): signed
+// intermediates (sign-extend MAC when sign_in, saturate to [-128,127]
+// when sign_out; zero padding stays correct because padded 0 is 0.0 in
+// signed too) and fused ReLU/Leaky in the output stage (applied to the
+// shifted accumulator BEFORE saturation; ReLU is a comparator + mux,
+// Leaky needs one 32x16 multiply, bits [47:16]). The fused act is what
+// lets the unified engine cover the FC/MLP path: FC reuses this 1x1
+// datapath, so a ReLU after an MLP fuses here exactly as after a conv.
+// The separate act module (bypass mode) is reserved for complex
+// activations (sigmoid/tanh/GELU/SiLU).
 //
 // Stage 1 verifies PX=1. PX is a parameter (window/MAC generalize), but the
 // stride-decimation / framing logic is written and verified for PX=1; PX=2
@@ -58,6 +72,9 @@ package conv2d_dense_pkg;
     localparam logic [7:0] CFG_PAD_R  = 8'h07;
     localparam logic [7:0] CFG_STRIDE_X = 8'h08;
     localparam logic [7:0] CFG_STRIDE_Y = 8'h09;
+    localparam logic [7:0] CFG_ACT     = 8'h0A;  // fused act: 0=none, 1=ReLU, 2=Leaky
+    localparam logic [7:0] CFG_ACT_SLOPE = 8'h0B;  // Leaky slope_fp (Q0.16)
+    localparam logic [7:0] CFG_SIGN    = 8'h0F;  // bit0: signed in, bit1: signed out
     localparam logic [7:0] CFG_COEFF_BASE = 8'h10;
     localparam logic [7:0] CFG_COEFF_LAST = 8'h88;  // 0x10 + 120
 
@@ -143,6 +160,9 @@ module conv2d_dense #(
     localparam logic [7:0] CFG_PAD_R  = 8'h07;
     localparam logic [7:0] CFG_STRIDE_X = 8'h08;
     localparam logic [7:0] CFG_STRIDE_Y = 8'h09;
+    localparam logic [7:0] CFG_ACT     = 8'h0A;  // fused act: 0=none, 1=ReLU, 2=Leaky
+    localparam logic [7:0] CFG_ACT_SLOPE = 8'h0B;  // Leaky slope_fp (Q0.16)
+    localparam logic [7:0] CFG_SIGN    = 8'h0F;  // bit0: signed in, bit1: signed out
     localparam logic [7:0] CFG_COEFF_BASE = 8'h10;
     localparam logic [7:0] CFG_COEFF_LAST = 8'h88;  // 0x10 + 120
 
@@ -163,6 +183,9 @@ module conv2d_dense #(
     logic [11:0] width_r, height_r;
     logic [3:0]  pad_t, pad_b, pad_l, pad_r;
     logic [3:0]  stride_x, stride_y;
+    logic        sign_in_r, sign_out_r;  // Stage 4: signed intermediates
+    logic [1:0]  fuse_act_r;             // Stage 4: 0=none, 1=ReLU, 2=Leaky
+    logic [15:0] act_slope_r;            // Stage 4: Leaky slope_fp (Q0.16)
     logic signed [15:0] coeff [0:MAX_COEFF-1];
     int ci;
 
@@ -174,6 +197,8 @@ module conv2d_dense #(
             height_r <= 12'd480;
             pad_t <= 4'd0; pad_b <= 4'd0; pad_l <= 4'd0; pad_r <= 4'd0;
             stride_x <= 4'd1; stride_y <= 4'd1;
+            sign_in_r <= 1'b0; sign_out_r <= 1'b0;
+            fuse_act_r <= 2'd0; act_slope_r <= 16'd8192;
             for (ci = 0; ci < MAX_COEFF; ci++) coeff[ci] <= '0;
             // default: 3x3 identity (centre 256, shift 8). The 3x3 kernel
             // occupies the top-left 3x3 of the 11x11 coeff grid, so its
@@ -191,6 +216,12 @@ module conv2d_dense #(
                 CFG_PAD_R : pad_r    <= cfg_data[3:0];
                 CFG_STRIDE_X: stride_x <= cfg_data[3:0];
                 CFG_STRIDE_Y: stride_y <= cfg_data[3:0];
+                CFG_ACT   : fuse_act_r <= cfg_data[1:0];
+                CFG_ACT_SLOPE: act_slope_r <= cfg_data;
+                CFG_SIGN  : begin
+                    sign_in_r <= cfg_data[0];
+                    sign_out_r <= cfg_data[1];
+                end
                 default: begin
                     if (cfg_addr >= CFG_COEFF_BASE && cfg_addr <= CFG_COEFF_LAST)
                         coeff[cfg_addr - CFG_COEFF_BASE] <= cfg_data;
@@ -508,7 +539,9 @@ module conv2d_dense #(
                         wr = 11 - ksize + li;
                         wc = 11 - ksize + p + lj;
                         if ((li < ksize) && (lj < ksize))
-                            prod_comb[lk] = $signed({1'b0, win[wr][wc]}) * coeff[lk];
+                            prod_comb[lk] = (sign_in_r ?
+                                $signed(win[wr][wc]) :
+                                $signed({1'b0, win[wr][wc]})) * coeff[lk];
                         else
                             prod_comb[lk] = 25'sd0;
                     end
@@ -603,14 +636,42 @@ module conv2d_dense #(
         end
     endgenerate
 
-    //------------------------- output stage 2: saturate + framing -------
+    //------------------------- output stage 2: fused act + saturate -----
+    // Fused ReLU/Leaky (Stage 4): applied to the shifted accumulator
+    // value, BEFORE saturation (mirrors conv2d_mc). ReLU is a comparator
+    // + mux; Leaky needs one 32x16 multiply per lane (48-bit product,
+    // take bits [47:16] = (shifted * slope_fp) >> 16). The separate act
+    // module (bypass mode) is reserved for complex activations.
+    logic signed [31:0] act_val [0:PX-1];
+    logic signed [47:0] leaky_prod [0:PX-1];
+    int fi;
+    always @* begin
+        for (fi = 0; fi < PX; fi++) begin
+            leaky_prod[fi] = shifted[fi] *
+                $signed({{16{act_slope_r[15]}}, act_slope_r});
+            if (fuse_act_r == 2'd1)
+                act_val[fi] = (shifted[fi] < 32'sd0) ? 32'sd0 : shifted[fi];
+            else if (fuse_act_r == 2'd2)
+                act_val[fi] = (shifted[fi] < 32'sd0) ?
+                    leaky_prod[fi][47:16] : shifted[fi];
+            else
+                act_val[fi] = shifted[fi];
+        end
+    end
+
     logic [7:0] px_sat [0:PX-1];
     int oi;
     always @* begin
         for (oi = 0; oi < PX; oi++) begin
-            if (shifted[oi] > 32'sd255)      px_sat[oi] = 8'd255;
-            else if (shifted[oi] < 32'sd0)   px_sat[oi] = 8'd0;
-            else                               px_sat[oi] = shifted[oi][7:0];
+            if (sign_out_r) begin
+                if (act_val[oi] > 32'sd127)       px_sat[oi] = 8'd127;
+                else if (act_val[oi] < -32'sd128) px_sat[oi] = 8'h80;
+                else                                px_sat[oi] = act_val[oi][7:0];
+            end else begin
+                if (act_val[oi] > 32'sd255)      px_sat[oi] = 8'd255;
+                else if (act_val[oi] < 32'sd0)   px_sat[oi] = 8'd0;
+                else                               px_sat[oi] = act_val[oi][7:0];
+            end
         end
     end
 

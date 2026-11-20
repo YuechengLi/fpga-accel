@@ -1,0 +1,9 @@
+case 0 (mode=0 16x16 -> 16x16): 256 outputs, framing errors=0
+case 1 (mode=1 16x16 -> 16x16): 256 outputs, framing errors=0
+case 2 (mode=0 16x16 -> 16x16): 256 outputs, framing errors=0
+case 3 (mode=1 16x16 -> 16x16): 256 outputs, framing errors=0
+case 4 (mode=5 1x1 -> 1x1): 1 outputs, framing errors=0
+case 5 (mode=2 15x13 -> 15x13): 195 outputs, framing errors=0
+case 6 (mode=4 16x16 -> 16x16): 256 outputs, framing errors=0
+TB unified_engine DONE
+tb_unified_engine.sv:189: $finish called at 88115000 (1ps)

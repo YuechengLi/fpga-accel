@@ -1,0 +1,9 @@
+TB simplegate: 6 cases
+case 0 (shift=8 16x16 sign=(0,0)): 256 outputs, framing errors=0
+case 1 (shift=0 16x16 sign=(0,0)): 256 outputs, framing errors=0
+case 2 (shift=4 15x13 sign=(0,0)): 195 outputs, framing errors=0
+case 3 (shift=8 4x4 sign=(0,0)): 16 outputs, framing errors=0
+case 4 (shift=8 16x16 sign=(1,1)): 256 outputs, framing errors=0
+case 5 (shift=4 15x13 sign=(1,1)): 195 outputs, framing errors=0
+TB simplegate DONE
+tb_simplegate.sv:140: $finish called at 71935000 (1ps)

@@ -1,0 +1,7 @@
+case 0 (mode=0 16x16): PASS (512 pixels)
+case 1 (mode=0 15x13): PASS (390 pixels)
+case 2 (mode=0 4x4): PASS (32 pixels)
+case 3 (mode=1 16x16): PASS (512 pixels)
+case 4 (mode=1 15x13): PASS (390 pixels)
+case 5 (mode=1 4x4): PASS (32 pixels)
+GOLDEN CHECK PASSED

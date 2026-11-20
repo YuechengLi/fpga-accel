@@ -1,0 +1,7 @@
+run 0 layer 0 (dense): PASS (256 pixels)
+run 0 layer 1 (DW-sq): PASS (256 pixels)
+run 0 layer 2 (dense): PASS (256 pixels)
+run 1 layer 0 (dense): PASS (256 pixels)
+run 1 layer 1 (DW-sq): PASS (256 pixels)
+run 1 layer 2 (dense): PASS (256 pixels)
+GOLDEN CHECK PASSED

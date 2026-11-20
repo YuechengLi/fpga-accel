@@ -1,0 +1,4 @@
+run 0 (late=0): 768 outputs, sched done, layer2 eng_start at cycle 3626 (start 928)
+run 1 (late=1): 768 outputs, sched done, layer2 eng_start at cycle 8705 (start 5612)
+TB layer_scheduler DONE
+tb_layer_scheduler.sv:283: $finish called at 97905000 (1ps)

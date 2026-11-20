@@ -96,6 +96,7 @@ module tb_conv2d_mc;
     int n_out, tb_err;
     int cycles;
     int sgn_in, sgn_out;
+    int fuse_act, act_slope;
 
     initial begin
         repeat (5) @(posedge clk);
@@ -109,9 +110,10 @@ module tb_conv2d_mc;
         $display("TB mc: %0d cases", ncases);
 
         for (ci = 0; ci < ncases; ci++) begin
-            code = $fscanf(fvec, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
+            code = $fscanf(fvec, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
                            k, sh, w, h, pt, pb, pl, pr, sx, sy,
-                           cin, cout, ow, oh, sgn_in, sgn_out);
+                           cin, cout, ow, oh, sgn_in, sgn_out,
+                           fuse_act, act_slope);
             for (o = 0; o < cout; o++)
                 for (c = 0; c < cin; c++) begin
                     for (i = 0; i < 121; i++) coeff_v[o][c][i] = 0;
@@ -143,6 +145,8 @@ module tb_conv2d_mc;
             cfg_wr(16'h000D, ow[15:0]);
             cfg_wr(16'h000E, oh[15:0]);
             cfg_wr(16'h000F, {14'd0, (sgn_out != 0), (sgn_in != 0)});
+            cfg_wr(16'h0010, fuse_act[15:0]);
+            cfg_wr(16'h0011, act_slope[15:0]);
 
             // ---- LOAD: stream C_in frames, channel-major ----
             for (c = 0; c < cin; c++) begin

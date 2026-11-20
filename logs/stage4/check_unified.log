@@ -1,0 +1,8 @@
+case 0 (dense 16x16): PASS (256 pixels)
+case 1 (DW-square 16x16): PASS (256 pixels)
+case 2 (dense 16x16): PASS (256 pixels)
+case 3 (DW-square 16x16): PASS (256 pixels)
+case 4 (FC 1x1): PASS (1 pixels)
+case 5 (DW-strip-H 15x13): PASS (195 pixels)
+case 6 (DW-dilated 16x16): PASS (256 pixels)
+GOLDEN CHECK PASSED

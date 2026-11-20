@@ -87,7 +87,8 @@ def make_cases():
     cases = []
 
     def add(k, shift, w, h, cin, cout, kind="rand",
-            pt=0, pb=0, pl=0, pr=0, sx=1, sy=1, sgn_in=0, sgn_out=0):
+            pt=0, pb=0, pl=0, pr=0, sx=1, sy=1, sgn_in=0, sgn_out=0,
+            fuse_act=0, act_slope=8192):
         pw = w + pl + pr
         ph = h + pt + pb
         ow = (pw - k) // sx + 1
@@ -103,7 +104,8 @@ def make_cases():
         cases.append(dict(k=k, shift=shift, w=w, h=h, cin=cin, cout=cout,
                           kind=kind, pt=pt, pb=pb, pl=pl, pr=pr,
                           sx=sx, sy=sy, ow=ow, oh=oh, sgn_in=sgn_in,
-                          sgn_out=sgn_out, kernels=kernels, images=images))
+                          sgn_out=sgn_out, kernels=kernels, images=images,
+                          fuse_act=fuse_act, act_slope=act_slope))
 
     # 0: C_in=3, C_out=2, K=3, box-ish random, no pad, stride 1
     add(3, 8, 16, 16, 3, 2, "rand")
@@ -133,6 +135,25 @@ def make_cases():
     # (next layer: signed intermediate into a ReLU / unsigned output)
     add(3, 8, 16, 16, 8, 2, "rand", pt=1, pb=1, pl=1, pr=1,
         sgn_in=1, sgn_out=0)
+    # 12: FUSED ReLU (Stage 4), signed in + signed out, K=3, C_in=4,
+    # C_out=2, pad 1. Without the fuse, negatives would be kept as
+    # [-128,127]; with fused ReLU they are clamped to 0. The act
+    # module is bypassed for this layer (mode 7).
+    add(3, 8, 16, 16, 4, 2, "rand", pt=1, pb=1, pl=1, pr=1,
+        sgn_in=1, sgn_out=1, fuse_act=1)
+    # 13: FUSED Leaky (Stage 4), slope 0.125, signed in + signed out,
+    # K=3, C_in=4, C_out=2, pad 1. Negatives are scaled by 0.125.
+    add(3, 8, 16, 16, 4, 2, "rand", pt=1, pb=1, pl=1, pr=1,
+        sgn_in=1, sgn_out=1, fuse_act=2, act_slope=8192)
+    # 14: FUSED ReLU after an FC/MLP layer (Stage 4 steer). FC reuses
+    # the 1x1 datapath (K=1, W=H=1, C_in=8, C_out=4), so the fused
+    # ReLU in the conv output stage covers the MLP path exactly as it
+    # covers the conv path -- no separate FC activation is needed.
+    # Signed in/out so the pre-ReLU values can be negative (with
+    # unsigned output the [0,255] saturation would already clip them
+    # and the fuse would be a no-op). The act module is bypassed.
+    add(1, 8, 1, 1, 8, 4, "rand",
+        sgn_in=1, sgn_out=1, fuse_act=1)
     return cases
 
 
@@ -148,6 +169,8 @@ def golden(cs):
     pt, pl, sx, sy = cs["pt"], cs["pl"], cs["sx"], cs["sy"]
     ow, oh = cs["ow"], cs["oh"]
     sgn_out = cs.get("sgn_out", 0)
+    fuse_act = cs.get("fuse_act", 0)
+    act_slope = cs.get("act_slope", 8192)
     frames = []
     for o in range(cout):
         out = []
@@ -167,6 +190,12 @@ def golden(cs):
                 rnd = acc + (1 << (shift - 1)) if shift > 0 else acc
                 rnd = wrap32(rnd)
                 v = rnd >> shift
+                # Fused activation (Stage 4): applied to the shifted
+                # value, BEFORE saturation (mirrors the RTL emit stage).
+                if fuse_act == 1:
+                    v = max(0, v)
+                elif fuse_act == 2:
+                    v = v if v >= 0 else (v * act_slope) >> 16
                 if sgn_out:
                     out.append(max(-128, min(127, v)))
                 else:
@@ -184,7 +213,8 @@ def gen():
                     f"{cs['pt']} {cs['pb']} {cs['pl']} {cs['pr']} "
                     f"{cs['sx']} {cs['sy']} {cs['cin']} {cs['cout']} "
                     f"{cs['ow']} {cs['oh']} "
-                    f"{cs.get('sgn_in', 0)} {cs.get('sgn_out', 0)}\n")
+                    f"{cs.get('sgn_in', 0)} {cs.get('sgn_out', 0)} "
+                    f"{cs.get('fuse_act', 0)} {cs.get('act_slope', 8192)}\n")
             # coefficients: (o, c) order, KxK row-major each
             for o in range(cs["cout"]):
                 for c in range(cs["cin"]):
@@ -221,6 +251,8 @@ def check():
             p += len(fr)
         tag = (f"sgn_in={cs.get('sgn_in', 0)} "
                f"sgn_out={cs.get('sgn_out', 0)} ") if cs.get('sgn_in', 0) or cs.get('sgn_out', 0) else ""
+        if cs.get('fuse_act', 0):
+            tag += f"fuse_act={cs['fuse_act']} slope={cs.get('act_slope', 8192)} "
         if bad:
             nerr += bad
             print(f"case {idx} (K={cs['k']} {cs['w']}x{cs['h']} "

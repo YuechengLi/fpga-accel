@@ -86,11 +86,22 @@ def span(mode, k, d):
 def make_cases():
     cases = []
 
-    def add(mode, k, d, shift, kern, w, h, pt=0, pb=0, pl=0, pr=0, sx=1, sy=1):
+    def add(mode, k, d, shift, kern, w, h, pt=0, pb=0, pl=0, pr=0, sx=1, sy=1,
+            sign_in=0, sign_out=0, img_fn=None):
         cases.append(dict(mode=mode, k=k, d=d, shift=shift,
                           coeff=coeff_array(mode, k, kern),
-                          img=img(w, h), w=w, h=h,
-                          pt=pt, pb=pb, pl=pl, pr=pr, sx=sx, sy=sy))
+                          img=img_fn(w, h) if img_fn else img(w, h), w=w, h=h,
+                          pt=pt, pb=pb, pl=pl, pr=pr, sx=sx, sy=sy,
+                          sign_in=sign_in, sign_out=sign_out))
+
+    def img_signed(w, h):
+        # Signed feature map: ~50% negative (two's-complement bytes).
+        p = []
+        for r in range(h):
+            for c in range(w):
+                v = (r * 53 + c * 29 + 7) % 256
+                p.append(v)
+        return p
 
     # ---- DW-SQUARE ----
     # 0: K=17 box, no pad, stride 1 (max square kernel)
@@ -164,6 +175,21 @@ def make_cases():
     add(MODE_DILATED, 7, 2, 8, s7, 15, 13, pt=6, pb=6, pl=6, pr=6)
     # 22: K=9 d=2 box, pad 8, stride 1 (span 17)
     add(MODE_DILATED, 9, 2, 6, [1] * 81, 16, 16, pt=8, pb=8, pl=8, pr=8)
+
+    # ---- SIGNED (Stage 4) ----
+    # 23: K=3 Sobel X on a signed feature map (~50% negative bytes),
+    #     pad 1, stride 1, signed in + signed out. A 3x3 Sobel on signed
+    #     data exercises sign-extension in the MAC and the [-128,127]
+    #     saturation; unsigned handling would read negatives as 128..255.
+    add(MODE_SQUARE, 3, 1, 0, [-1, 0, 1, -2, 0, 2, -1, 0, 1],
+        16, 16, pt=1, pb=1, pl=1, pr=1, sign_in=1, sign_out=1,
+        img_fn=img_signed)
+    # 24: K=5 Gaussian on signed data, pad 2, stride 1, signed in/out.
+    add(MODE_SQUARE, 5, 1, 8, g5, 16, 16, pt=2, pb=2, pl=2, pr=2,
+        sign_in=1, sign_out=1, img_fn=img_signed)
+    # 25: L=7 strip-H on signed data, pad 3, stride 1, signed in/out.
+    add(MODE_STRIP_H, 7, 1, 3, [1, 2, 3, 4, 3, 2, 1], 15, 13,
+        pl=3, pr=3, sign_in=1, sign_out=1, img_fn=img_signed)
     return cases
 
 
@@ -205,6 +231,8 @@ def golden(cs):
     w, h, shift = cs["w"], cs["h"], cs["shift"]
     im = cs["img"]
     pt, pl, sx, sy = cs["pt"], cs["pl"], cs["sx"], cs["sy"]
+    sign_in = cs.get("sign_in", 0)
+    sign_out = cs.get("sign_out", 0)
     ow, oh = out_size(cs)
     tl = list(taps(cs))
     out = []
@@ -215,12 +243,21 @@ def golden(cs):
                 rr = orow * sy + dr - pt
                 cc = ocol * sx + dc - pl
                 if 0 <= rr < h and 0 <= cc < w:
-                    acc += im[rr * w + cc] * cv
+                    pv = im[rr * w + cc]
+                    if sign_in and pv >= 128:
+                        pv -= 256
+                    acc += pv * cv
             acc = wrap32(acc)
             rnd = acc + (1 << (shift - 1)) if shift > 0 else acc
             rnd = wrap32(rnd)
             v = rnd >> shift
-            out.append(max(0, min(255, v)))
+            if sign_out:
+                # Saturate to [-128, 127], emitted as a two's-complement
+                # byte (the TB prints pixel_out as an unsigned byte).
+                v = max(-128, min(127, v)) & 0xFF
+            else:
+                v = max(0, min(255, v))
+            out.append(v)
     return out
 
 
@@ -236,7 +273,8 @@ def gen():
             f.write(f"{cs['mode']} {cs['k']} {cs['d']} {cs['shift']} "
                     f"{cs['w']} {cs['h']} "
                     f"{cs['pt']} {cs['pb']} {cs['pl']} {cs['pr']} "
-                    f"{cs['sx']} {cs['sy']}\n")
+                    f"{cs['sx']} {cs['sy']} "
+                    f"{cs.get('sign_in', 0)} {cs.get('sign_out', 0)}\n")
             f.write(" ".join(str(v) for v in cs["coeff"]) + "\n")
             f.write(" ".join(str(v) for v in cs["img"]) + "\n")
     print(f"wrote {VEC}: {len(cases)} cases")
@@ -262,7 +300,9 @@ def check():
             print(f"case {idx} ({mode_name(cs['mode'])} k={cs['k']} d={cs['d']} "
                   f"{cs['w']}x{cs['h']} shift={cs['shift']} "
                   f"pad=({cs['pt']},{cs['pb']},{cs['pl']},{cs['pr']}) "
-                  f"stride=({cs['sx']},{cs['sy']}) out={ow}x{oh}): "
+                  f"stride=({cs['sx']},{cs['sy']}) "
+                  f"sign=({cs.get('sign_in', 0)},{cs.get('sign_out', 0)}) "
+                  f"out={ow}x{oh}): "
                   f"{len(bad)}/{n} mismatches, first 5:")
             for i, e, g in bad[:5]:
                 print(f"  pixel {i} (r={i // ow}, c={i % ow}): expected {e}, got {g}")
@@ -270,7 +310,9 @@ def check():
             print(f"case {idx} ({mode_name(cs['mode'])} k={cs['k']} d={cs['d']} "
                   f"{cs['w']}x{cs['h']} shift={cs['shift']} "
                   f"pad=({cs['pt']},{cs['pb']},{cs['pl']},{cs['pr']}) "
-                  f"stride=({cs['sx']},{cs['sy']}) out={ow}x{oh}): PASS ({n} pixels)")
+                  f"stride=({cs['sx']},{cs['sy']}) "
+                  f"sign=({cs.get('sign_in', 0)},{cs.get('sign_out', 0)}) "
+                  f"out={ow}x{oh}): PASS ({n} pixels)")
     if len(got) > pos:
         print(f"WARNING: {len(got) - pos} extra outputs in {OUT}")
         nerr += len(got) - pos

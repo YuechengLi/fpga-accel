@@ -1,0 +1,7 @@
+case 0 (shift=8 16x16 sign=(0,0)): PASS (256 pixels)
+case 1 (shift=0 16x16 sign=(0,0)): PASS (256 pixels)
+case 2 (shift=4 15x13 sign=(0,0)): PASS (195 pixels)
+case 3 (shift=8 4x4 sign=(0,0)): PASS (16 pixels)
+case 4 (shift=8 16x16 sign=(1,1)): PASS (256 pixels)
+case 5 (shift=4 15x13 sign=(1,1)): PASS (195 pixels)
+GOLDEN CHECK PASSED

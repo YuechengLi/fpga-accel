@@ -1,0 +1,5 @@
+wrote vectors_act.txt: 12 cases
+MLUT sigmoid: approx error vs float: max 5.5 Q5.11 LSBs (0.0027), RMS 1.0 LSBs
+MLUT tanh: approx error vs float: max 38.1 Q5.11 LSBs (0.0186), RMS 5.3 LSBs
+MLUT GELU: approx error vs float: max 55.0 Q5.11 LSBs (0.0269), RMS 5.9 LSBs
+MLUT SiLU: approx error vs float: max 48.0 Q5.11 LSBs (0.0234), RMS 6.6 LSBs

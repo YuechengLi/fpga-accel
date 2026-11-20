@@ -495,3 +495,367 @@ A K=3-only build would need 4x9 = 36 DSPs.
   above) -> scheduling (tile order, ping-pong weight buffer
   management, DRAM) -> output a program (layer descriptors) for the
   accelerator.
+
+## Stage 4: remaining operators + unified engine + layer scheduler
+
+### New operators
+
+**LayerNorm (`rtl/layernorm.sv`).** Normalizes one frame (W x H pixels =
+one "layer" of activations): mean = sum(x)/N, var = sum(x^2)/N - mean^2,
+y = (x - mean) * inv_std * gamma + beta, inv_std = 1/sqrt(var + eps).
+W and H must be powers of two so N is a power of two and the divisions
+are arithmetic right shifts by log2(N) (no divider synthesized). Two
+passes: pass 1 streams the frame in, buffers it on-chip (up to 4096
+entries, 1 BRAM36), and accumulates sum (signed 32-bit) and sumsq
+(signed 32-bit); pass 2 streams it out, one pixel per cycle,
+normalizing each. The reciprocal square root comes from a 256-entry
+LUT (Q1.15) loaded via the config bus, indexed by (var + eps) >>
+isqrt_shift, clamped to [0,255]; the compiler owns the LUT contents
+and the shift (it picks the shift so the index spans the expected var
+range). Approximation: inv_std is quantized to Q1.15 and to the LUT bin
+width (2^isqrt_shift in var); the golden reports the error vs the true
+float LayerNorm (max |fixed - float| <= 1.36 LSBs across the 6 cases,
+dominated by the LUT quantization, not by the fixed-point arithmetic).
+The normalize path is PIPELINED into two registered stages (Stage A:
+diff x inv_std >> 7 -> norm_q; Stage B: norm_q x gamma >> 23 + beta),
+because the unpipelined two-multiply chain violates 3.333 ns (see STA
+below). Throughput stays 1 pixel/cycle; latency is +1 cycle. Config
+(16-bit address): 0x01 W, 0x02 H, 0x03 sign, 0x04 isqrt_shift, 0x05 eps,
+0x06 gamma_q (Q1.15), 0x07 beta, 0x100+i inv_std LUT entry i (0..255).
+Golden 6/6 PASS, framing 0.
+
+**Upsample (`rtl/upsample.sv`).** Scale factor 2, three modes, one
+shared structure: load an input row into buffer(s), emit two output
+rows; input paused (in_ready low) while emitting. Line buffers are
+register arrays sized by MAX_W (default 64); the scheduler tiles the
+frame so the tile width fits (a BRAM line buffer is the production
+choice for large W). Mode 0 nearest: each pixel replicated 2x2. Mode 1
+bilinear: out[2r,2c]=in[r,c], out[2r,2c+1]=(in[r,c]+in[r,c+1])/2,
+out[2r+1,2c]=(in[r,c]+in[r+1,c])/2,
+out[2r+1,2c+1]=(in[r,c]+in[r,c+1]+in[r+1,c]+in[r+1,c+1])/4, edges
+replicate, divisions round-half-up ((a+b+1)>>1, (a+b+c+d+2)>>2); two
+input rows are ping-pong buffered (a `cur` bit selects which holds the
+current row, no row copy). Mode 2 pixel-shuffle (depth-to-space, r=2):
+input is W x H positions x 4 channels in (H,W,C) order; output 2W x
+2H, 1 channel (out[2r,2c]=ch0, out[2r,2c+1]=ch1, out[2r+1,2c]=ch2,
+out[2r+1,2c+1]=ch3). Config: 0x00 mode, 0x01 W, 0x02 H. Golden 10/10
+PASS, framing 0.
+
+**Concat (`rtl/concat.sv`).** Two input streams A and B (same W/H), one
+output. Mode 0 sequential: out = A frame followed by B frame, channel
+order (C,H,W). Mode 1 interleave: out = A and B interleaved per pixel
+(H,W,C order). Small FIFOs (depth 4 each) align A/B (independent
+random gaps); a single stall freezes output; each input's in_ready is
+high while its FIFO has space. If B arrives early it waits in its FIFO
+until A is fully output (sequential) or its pair is ready (interleave);
+backpressure on B is correct, not a deadlock. Config: 0x00 mode, 0x01
+W, 0x02 H. Golden 6/6 PASS, framing 0.
+
+**SimpleGate (`rtl/simplegate.sv`).** Elementwise multiply (NAFNet).
+Input is a single stream of 2*W*H pixels: first W*H = half A, next
+W*H = half B. Output W*H pixels: out[i] = (A[i] * B[i]) >> shift,
+saturated. First half buffered on-chip (up to 4096 entries; the
+scheduler tiles the frame so the tile fits); when the second half
+arrives, each B pixel is multiplied by buffered A at the same index
+and emitted. One pixel/cycle in steady state (second half streams
+through); first half is load-only; 1-cycle latency from a B pixel to
+its output. Config: 0x00 shift (0..8), 0x01 W, 0x02 H, 0x03 sign.
+Golden 6/6 PASS, framing 0.
+
+### Signed DW
+
+`rtl/conv2d_dw.sv` was unsigned-only (Stage 2). Stage 4 adds the same
+signed intermediate support Stage 3 added to conv2d_mc: config 0x0F
+(bit0 signed in, bit1 signed out), sign-extend MAC, saturate to
+[-128,127] when signed out (emitted as a two's-complement byte).
+Zero padding stays correct (padded 0 is 0.0 in signed too). Golden
+26/26 PASS (23 original unsigned + 3 signed: K=3 Sobel, K=5 Gaussian,
+L=7 strip-H, all signed in/out, ~50% negative bytes), framing 0.
+Note: the RTL uses round-half-up shift; the Stage 6 golden uses floor
+shift -- the <=1 LSB difference is expected and must be noted in the
+Stage 6 comparison, not "fixed" in the RTL.
+
+### Multi-level LUT activation (act.sv mode 6) -- supersedes direct LUT
+
+Stage 3 act.sv uses a PWL unit (16-32 segment table + 1 interpolation
+multiply). A flat 256-entry direct LUT was considered and then
+corrected: a flat table cannot guarantee precision for steep functions
+without becoming huge (a 12-bit input would need 4096 entries for full
+precision). The activation LUT is therefore MULTI-LEVEL, not flat.
+Input is split into bit-fields: Level 1 (coarse, high bits) gives a
+base value and/or selects a fine table; Level 2 (fine, low bits) gives
+the delta; output = base + delta (an addition, NOT a multiply). Three
+levels are possible if needed. A 12-bit input needs 64+64 entries, not
+4096; the lookup is table reads + one add, no multiply, so it stays
+fast. Hardware is fully configurable: the number of levels, the
+bit-split (how many bits per level), and all table contents are loaded
+via the config bus. The COMPILER decides the levels/splits/lookup: the
+number of levels, the bit-splits (uniform or non-uniform -- steep
+regions of the function get finer resolution, flat regions coarser),
+and the table contents, driven by the function's curvature and the
+accuracy budget; the compiler verifies accuracy (software functional
+simulator + fixed-point golden, per the Stage 5 compiler verification
+flow). Implemented as mode 6 in act.sv: input is a 12-bit offset-binary
+value in data_in[11:0], Q4.8 ([-8, 8)); config 0x02 MLUT control (H1
+coarse bits 1..8, H2 fine bits 1..6, H1+H2 <= 12); coarse base table
+0x200+idx, coarse select table 0x300+idx (fine table id 0..7), fine
+tables 0x400+t*64+idx. Chosen golden split: H1=8, H2=4, 8 bands,
+mean-based fine tables (least-squares fit); max error vs float:
+sigmoid 0.0027, tanh 0.0186, GELU 0.0269, SiLU 0.0234 (comparable to
+PWL's ~0.024). Total table 256 coarse + 8x16 fine = 384 entries, ~10x
+smaller than a flat 4096 table. Golden: 4 MLUT cases (sigmoid/tanh/
+GELU/SiLU, 4096 values each), all PASS. The direct-LUT vs PWL
+trade-off is superseded by this multi-level correction; the PWL mode
+remains for functions where the compiler prefers interpolation.
+
+### Bypass mode + fused ReLU/Leaky (act.sv mode 7, conv output stage)
+
+act.sv stays a separate module and has a BYPASS mode (mode 7, config):
+output = input unchanged, framing passes through unchanged. Bypass is
+used when the activation is fused into the conv module, or when the
+layer has no activation at all. Fused ReLU (and fused Leaky ReLU) is
+in the conv datapath (conv2d_mc and conv2d_dense and therefore the
+unified engine): after accumulator + shift, optionally apply ReLU
+(max(0,x)) / Leaky (shift-add) directly in the conv output stage,
+controlled by config (0x10 fused act, 0x11 slope). ReLU is trivial
+(comparator + mux) and fusing it saves a pipeline stage and a module
+traversal; the separate LUT module is reserved for complex activations
+(sigmoid/tanh/GELU/SiLU). The compiler (Stage 5) decides per layer:
+fuse ReLU/Leaky into conv, or route complex activations through the
+separate LUT act module; the act module's bypass covers the fused and
+no-activation cases. Golden: act bypass case (12 values, PASS); MC
+fused ReLU (case 12) and fused Leaky (case 13) PASS.
+**FC/MLP path:** after an MLP (fully-connected) layer there may also
+be a ReLU. FC reuses the 1x1 conv datapath (and the unified engine's
+1x1/FC mode), so the fused ReLU in the conv output stage already
+covers FC/MLP -- confirmed, not assumed. Golden: MC case 14 (FC,
+K=1, W=H=1, C_in=8, C_out=4, signed in/out, fused ReLU, act bypassed)
+PASS; unified-engine case 4 (FC 1x1, signed, fused ReLU, byte 200 =
+-56 clipped to 0) PASS. Only complex activations after FC/MLP (e.g.
+GELU in a transformer MLP) go through the separate LUT act module.
+conv2d_dense also gained the Stage 4 signed + fused-act additions
+(config 0x0F sign, 0x0A fused act, 0x0B slope) so the unified engine's
+dense path has them; Stage 1 regression still 14/14 PASS (defaults
+off, backward compatible).
+
+### Unified reconfigurable engine (`rtl/unified_engine.sv`)
+
+One engine, five modes, one-click switch via config 0x0C (mode):
+0=dense (conv2d_dense, K=1/3/5/7/9/11), 1=DW-square, 2=DW-strip-H,
+3=DW-strip-V, 4=DW-dilated (conv2d_dw), 5=FC/1x1 (conv2d_dense, K=1).
+It wraps the Stage 1 dense and Stage 2 DW modules (reference
+implementations, datapath unmodified) and does NOT duplicate five
+datapaths: the dense submodule's one 121-mult MAC serves dense and
+FC/1x1, and the DW submodule's one 289-mult MAC serves the three DW
+modes via its own mode select. The engine provides the unified
+stream/config interface and the mode mux. Its config map IS the
+submodules' shared map (0x00 K, 0x01 shift, 0x02 W, 0x03 H, 0x04-0x07
+pads, 0x08-0x09 strides, 0x0A fused act [dense] / DW mode [DW],
+0x0B act slope [dense] / dilation [DW], 0x0F sign, 0x100+i
+coefficients), so forwarding is a pure router (truncate the address
+to the active submodule's bus width; coefficients translate
+0x100+i -> 0x10+i). The mode write (0x0C) is consumed by the engine
+and, for a DW mode, programs the DW submodule's mode register in the
+same write.
+**Mode-switch latency and state:** the switch takes effect on the
+next clock (1 cycle) and MUST be done between frames (no frame may be
+in flight); the stream mux is combinational, so there is no added
+pipeline latency for the pixel stream. Switching back to a previous
+mode does NOT require reloading its coefficients IF the intervening
+modes used the other submodule: each submodule keeps its own
+coefficient/config registers, so the inactive submodule's state
+(coefficients, K, pad, stride, shift, sign, fused act) is preserved
+across a switch. Dense and FC share one submodule/MAC, and the three
+DW modes share the other, so coefficients are NOT preserved across
+modes that share a submodule (each layer loads its own weights -- the
+expected layer-switch behaviour). Verified by the golden: cases 2 and
+3 re-run dense / DW-square with NO coefficient reload and PASS.
+Golden 7/7 PASS (dense -> DW-sq -> dense -> DW-sq -> FC+ReLU ->
+DW-strip-H -> DW-dilated, no reset between frames), framing 0.
+
+### Layer scheduler (`rtl/layer_scheduler.sv`)
+
+Steps through a layer configuration sequence: for each layer it
+programs the layer's config (mode, K, pad, stride, shift, sign,
+fused act), triggers execution, and waits for completion. Weight
+double-buffering (ping-pong): two weight register banks (A and B,
+289 coefficients each, 16-bit). Layer L's weights live in bank
+(L % 2): while bank A drives layer 0, bank B is loaded with layer 1's
+weights, so the load time is hidden; while bank B drives layer 1,
+bank A is reloaded with layer 2's weights, and so on. The scheduler
+never touches a bank while it is driving the engine. Weights stream
+in through the scheduler's own config bus in this stage (0x0200+i
+bank A, 0x0400+i bank B); the DRAM/AXI-MM streaming that fills the
+banks is Stage 5 -- the boundary is explicit (the scheduler only
+knows "write coefficient i of bank X", not where the coefficients
+come from). A write to a bank that is currently driving the engine is
+ignored and `wfull` pulses (backpressure on the weight stream).
+**Ping-pong timing:** when the next layer's weights are fully loaded
+before the current layer finishes, the switch is immediate (no stall
+-- the next layer starts on the next cycle after the current one
+completes). When they arrive late, the scheduler waits in ST_WAIT_W
+(it does NOT start the next layer with a half-loaded bank, and it
+does not corrupt the active bank). The TB verifies both: run 0
+(on-time, layer 2's weights loaded into bank A while layer 1 runs
+via fork/join) and run 1 (late, layer 2's weights loaded only after
+layer 1 finishes, so the scheduler waits in ST_WAIT_W). Both runs
+produce correct outputs. A bank is "ready" for layer L when its
+loaded count >= prog_ncoeff[L]; the count resets when the scheduler
+switches away from that bank. The scheduler drives the engine's
+config bus as a master (14 control writes per layer, then streams the
+active bank's coefficients to 0x100+i, one per cycle) and watches the
+engine's `busy` (with a seen-busy flag, so it does not falsely
+complete before the frame starts streaming). Program: up to 4 layer
+descriptors (fields written via config, one write per field,
+addressed by (layer, field)). Golden: 2 runs x 3 layers (dense 3x3
+Sobel, DW 5x5 Gaussian, dense 3x3 Sobel). **Verified: both runs
+768 outputs, all 6 layers PASS, framing 0.** Ping-pong timing
+(measured): run 0 (on-time) layer-2 eng_start at cycle 3626 (start
+928); run 1 (late) layer-2 eng_start at cycle 8705 (start 5612) --
+the scheduler waited ~395 cycles in ST_WAIT_W for the late weights
+(121 coefficients x 2 cycles each, plus entry/exit overhead) and
+did not start layer 2 with a half-loaded bank; when the weights
+arrived on time (run 0) there was no stall. **Bugs found and fixed:**
+(1) ST_WAIT_W checked `next_ready` (readiness of layer_idx+1),
+but layer_idx has already advanced to the layer being waited for,
+so it checked the layer AFTER that -- whose prog_ncoeff is 0 when
+unprogrammed, hence trivially true. The scheduler left ST_WAIT_W
+immediately, streamed a half-loaded bank, and pulsed eng_start
+while the TB was still loading weights (the TB then deadlocked
+waiting for a 7th pulse). Fixed with a separate `cur_ready`
+(readiness of the current layer_idx), used in ST_WAIT_W; `next_ready`
+is still used at the ST_RUN transition, where layer_idx is still
+the finishing layer and next_layer is correct. (2) Bank address
+overlap: bank A (base 0x0200, 289 entries) spans 0x0200..0x0320,
+so a bank B base of 0x0300 overlapped it in 0x0300..0x0320; the
+else-if checked bank A first, so bank-B writes with index < 33
+were misrouted into bank_a[256+i] (bankA_cnt reached 289 instead
+of 121) and bank_b[0..32] stayed X -- the DW layer then output X
+for all 256 pixels in both runs. Fixed by moving bank B's base to
+0x0400 (bank A 0x0200..0x0320, bank B 0x0400..0x0520, no overlap).
+(3) TB: a plain `wait (eng_start === 1'b1)` can miss the 1-cycle
+pulse if it fires while the TB is between waits; the TB now counts
+eng_start pulses and waits for the count to increase (`wait_start`
+task), which cannot miss a pulse.
+
+### STA (Nangate45 @ 3.333 ns, OpenSTA 2.2.0, logs/stage4/)
+
+| stage | arrival (ns) | slack (ns) | tns | Fmax (MHz) |
+|---|---|---|---|---|
+| ln_norm_a (diff x inv_std >> 7) | 2.137 | +1.162 | 0 | ~468 |
+| ln_norm_b (norm_q x gamma >> 23 + beta) | 2.451 | +0.841 | 0 | ~408 |
+| ln_sumsq (px*px + sumsq) | 2.006 | +1.293 | 0 | ~498 |
+| act_mlut (base + delta, 8:1 mux) | 1.273 | +2.017 | 0 | ~786 |
+| dense_leaky (32x16, bits [47:16]) | 2.248 | +1.046 | 0 | ~445 |
+| sg_mult (8x8 >> shift, saturate) | 1.369 | +1.918 | 0 | ~730 |
+| up_bilin ((a+b+c+d+2) >> 2) | 0.687 | +2.604 | 0 | ~1456 |
+All MET, tns 0. The NEW bottleneck is ln_norm_b (+0.841), so the
+system Fmax is now ~408 MHz (was ~437 MHz with act_leaky as the
+bottleneck in Stage 3). Still well above the 300 MHz target. The
+unpipelined LayerNorm normalize (two 32x16 multiplies in series in
+one cycle) violated at 4.301 ns arrival, slack -1.009, tns -14.250 --
+it would have capped the system Fmax at ~232 MHz; pipelining it into
+two stages (ln_norm_a / ln_norm_b) fixed the violation at the cost of
++1 cycle of LayerNorm latency (throughput unchanged at 1 pixel/cycle).
+
+### Resources (inferred/estimated; full-module Yosys synth times out
+on this VM, as in Stages 1-3; DSP/BRAM exact where counted from RTL
+structure, LUT/FF inferred)
+
+- layernorm: BRAM36 1 (frame buffer 4096x8), DSP ~4 (2 normalize
+  32x16 + var 32x32 + sumsq 16x16), LUT ~2,000, FF ~1,000.
+- upsample: BRAM 0 (register line buffers 2x64x8), DSP 0, LUT ~500,
+  FF ~1,000.
+- concat: BRAM 0 (2x depth-4 FIFOs in registers), DSP 0, LUT ~200,
+  FF ~100.
+- simplegate: BRAM36 1 (buffer 4096x8), DSP 1 (8x8 multiply), LUT
+  ~300, FF ~100.
+- unified engine: DSP 410 (dense 121 + DW 289), BRAM36 42 (dense 10
+  + DW 32), LUT ~18,000 (dense ~5,300 + DW ~12,500 + mux), FF
+  ~42,000. ZU19EG: DSP 21%, BRAM 4%.
+- layer scheduler: BRAM 0 (weight banks 2x289x16 in registers),
+  DSP 0, LUT ~2,000, FF ~10,000 (weight banks dominate: 578x16).
+- conv2d_dense (with Stage 4 sign + fused act): DSP 121 (unchanged;
+  the fused Leaky adds 1 multiply per lane in the emit path, 1 DSP
+  when used), BRAM 10, LUT ~5,300.
+
+### Bugs found and fixed (Stage 4)
+
+- LayerNorm `px_s` race (TB/DUT): a combinational signal computed
+  from `pixel_in` via a ternary/`$signed` continuous `assign` (and
+  later an `always @*` block) lagged `pixel_in` by one cycle in
+  Icarus -- the trace showed px=57 but px_s=0 at the sampling edge,
+  corrupting the sum/mean/var (case 0 mean 110 vs 114) and leaking the
+  previous frame's last pixel into the next frame (case 3 mean 101 vs
+  100). Root cause: the TB drives `pixel_in` in the active region at
+  the same clock edge the DUT samples, so the combinational `px_s`
+  is stale when sampled. Fixed in the TB, not the RTL: a `#1` settle
+  delay after each `@(posedge clk)` before driving `pixel_in` /
+  `in_valid` (acceptance is still checked immediately after the edge,
+  pre-edge `in_ready`, so the check is not disturbed). After the fix
+  px_s matches px at every index and the mean is correct.
+- LayerNorm sumsq unsigned context: `sumsq_acc` was `logic [31:0]`
+  (unsigned), so `px_s * px_s` was evaluated in an unsigned context
+  and a negative pixel (e.g. -108, as unsigned 65428) squared to
+  ~4.28e9 instead of 11664; sumsq_new was 3,754,469,735 instead of
+  ~829,760, var was ~58.6M instead of 12,709, and the isqrt LUT index
+  clamped to 255 (inv_std 256 instead of 291). Fixed by declaring
+  sumsq_acc/sumsq_new signed and using `$signed(px_s) * $signed(px_s)`.
+- LayerNorm TB send-loop re-accept: the original pattern waited for
+  `in_ready` AFTER the accepting edge and held `in_valid` high, so
+  the DUT re-accepted the same pixel as the first pixel of the next
+  frame. Fixed by deasserting `in_valid` immediately on acceptance.
+- Upsample terminal DONE state: the FSM had a terminal `ST_DONE`;
+  after case 0 the module stayed there, `in_ready` never went high
+  for the next frame, and the TB sender blocked forever (TBs in this
+  repo do NOT reset the DUT between cases). Fixed by returning to
+  `ST_LOAD` (idle) on frame completion.
+- Upsample bilinear last-row stall: after emitting for row 14, row 15
+  was already buffered (loaded as "next"), but the FSM went to
+  `ST_LOAD` and waited for a nonexistent row 16. Fixed by going
+  directly to `ST_EMIT` when advancing to the last row (the odd
+  output row replicates the current row).
+- Upsample pixel-shuffle index: using `in_col>>1` as the base gave
+  2c+1 for ch2/ch3 (should be 2c); `odd_buf[0]` was never written (X
+  in output). Fixed with base = `(in_col>>2)<<1`.
+- SimpleGate 16-bit product overflow: 255x255 = 65025 > 32767 wraps
+  to -511 in 16-bit. Product made 32-bit signed.
+- SimpleGate `buf` is a reserved Verilog keyword (gate primitive);
+  renamed to `a_buf`. Also, Icarus rejects a memory-array read in a
+  continuous `assign` -- the read is in an `always @*` block.
+- Concat declaration-before-use: Icarus requires a declaration before
+  its use in the file (`cnt_a`/`cnt_b` were used before the FIFO
+  declarations); moved the FIFO declarations before the sequencing
+  logic.
+- LayerNorm normalize STA violation (see STA above): the unpipelined
+  two-multiply chain violated 3.333 ns. Fixed by pipelining the
+  normalize into two registered stages (ln_norm_a / ln_norm_b),
+  +1 cycle latency, throughput unchanged. Re-verified 6/6 PASS.
+- Unified engine coefficient preservation (test design, not RTL):
+  dense and FC share one submodule/MAC and the three DW modes share
+  the other, so coefficients are NOT preserved across modes that
+  share a submodule. The golden's preservation cases therefore
+  re-run dense / DW-square with no reload only when the intervening
+  case used the OTHER submodule (cases 2 and 3); an earlier version
+  of the test re-ran dense after an FC case and failed because the FC
+  coefficients had (correctly) overwritten the dense ones.
+- Scheduler ST_RUN false completion: `ST_RUN` waited for `!eng_busy`,
+  but `eng_busy` is low while the TB is still reacting to `eng_start`
+  (before the first pixel is accepted), so the scheduler could
+  falsely complete a layer before its frame started. Fixed with a
+  `seen_busy_r` flag (wait for busy high first, then for busy low).
+
+### Notes
+
+- Round-half-up vs floor shift: the RTL uses round-half-up shift
+  (add 2^(shift-1), then arithmetic shift) in conv2d_dense, conv2d_dw,
+  conv2d_mc, and layernorm. The Stage 6 golden uses floor shift. The
+  <=1 LSB difference is expected and must be noted in the Stage 6
+  comparison, not "fixed" in the RTL.
+- The direct-LUT vs PWL trade-off (Stage 4 steer 1) is superseded by
+  the multi-level LUT correction (steer 2): a flat 256-entry table
+  cannot guarantee precision for steep functions. See "Multi-level LUT"
+  above.
+- `tb/run_stage4.sh` runs all Stage 4 modules + Stage 1 / pool /
+  residual regressions. The MC sim (~19 min), DW sim (~8 min) and
+  scheduler sim (~10 min) are long; each uses timeout 1800.

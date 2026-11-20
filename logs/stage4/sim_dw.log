@@ -1,0 +1,29 @@
+TB dw: 26 cases
+case 0 (mode=0 k=17 d=1 24x24 shift=6 pad=(0,0,0,0) stride=(1,1) out=8x8): 64 outputs, framing errors=0
+case 1 (mode=0 k=11 d=1 20x20 shift=8 pad=(5,5,5,5) stride=(1,1) out=20x20): 400 outputs, framing errors=0
+case 2 (mode=0 k=7 d=1 15x13 shift=8 pad=(3,3,3,3) stride=(1,1) out=15x13): 195 outputs, framing errors=0
+case 3 (mode=0 k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 4 (mode=0 k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(2,2) out=8x8): 64 outputs, framing errors=0
+case 5 (mode=0 k=13 d=1 20x16 shift=8 pad=(6,6,6,6) stride=(1,1) out=20x16): 320 outputs, framing errors=0
+case 6 (mode=0 k=15 d=1 16x16 shift=8 pad=(7,7,7,7) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 7 (mode=1 k=31 d=1 16x16 shift=6 pad=(0,0,15,15) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 8 (mode=1 k=21 d=1 20x16 shift=8 pad=(0,0,10,10) stride=(1,1) out=20x16): 320 outputs, framing errors=0
+case 9 (mode=1 k=11 d=1 16x16 shift=8 pad=(0,0,5,5) stride=(2,2) out=8x8): 64 outputs, framing errors=0
+case 10 (mode=1 k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) out=15x13): 195 outputs, framing errors=0
+case 11 (mode=2 k=31 d=1 16x16 shift=6 pad=(15,15,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 12 (mode=2 k=21 d=1 16x20 shift=8 pad=(10,10,0,0) stride=(1,1) out=16x20): 320 outputs, framing errors=0
+case 13 (mode=2 k=11 d=1 16x16 shift=8 pad=(5,5,0,0) stride=(2,2) out=8x8): 64 outputs, framing errors=0
+case 14 (mode=2 k=7 d=1 13x15 shift=3 pad=(3,3,0,0) stride=(1,1) out=13x15): 195 outputs, framing errors=0
+case 15 (mode=3 k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 16 (mode=3 k=3 d=2 16x16 shift=3 pad=(2,2,2,2) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 17 (mode=3 k=3 d=4 16x16 shift=3 pad=(4,4,4,4) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 18 (mode=3 k=5 d=2 20x20 shift=8 pad=(4,4,4,4) stride=(1,1) out=20x20): 400 outputs, framing errors=0
+case 19 (mode=3 k=9 d=4 16x16 shift=6 pad=(16,16,16,16) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 20 (mode=3 k=5 d=4 20x20 shift=8 pad=(8,8,8,8) stride=(2,2) out=10x10): 100 outputs, framing errors=0
+case 21 (mode=3 k=7 d=2 15x13 shift=8 pad=(6,6,6,6) stride=(1,1) out=15x13): 195 outputs, framing errors=0
+case 22 (mode=3 k=9 d=2 16x16 shift=6 pad=(8,8,8,8) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 23 (mode=0 k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 24 (mode=0 k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 25 (mode=1 k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) out=15x13): 195 outputs, framing errors=0
+TB dw DONE
+tb_conv2d_dw.sv:166: $finish called at 489285000 (1ps)
