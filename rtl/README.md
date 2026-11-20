@@ -1128,3 +1128,142 @@ corrupt the final sum as long as the final sum is within [-2^31, 2^31).
   python3-click), never `apt-get update` (hangs). Cached .debs live in
   `~/tools-dl/`. The run scripts already check for iverilog and point
   at `~/tools-dl/iverilog_13.0-2_amd64.deb` when it is missing.
+
+# Stage 7 — Front-end video preprocessing module (`rtl/frontend.sv`)
+
+The whole-model I/O front-end: it sits at the video input (HDMI/SDI IN)
+and output, ahead of the unified engine, and does downsampling + small-kernel
+(<=5x5) filtering on the pixel stream. Derived from the `conv2d_dense.sv`
+structure (line-buffer chain, alignment delay, window, MAC, shift+saturate,
+decimation counters, stall freeze) + the frozen reference `conv2d_stream`
+(`~/workspace/fpga-2d-conv/`, untouched).
+
+## Design
+
+- 3 parallel lanes, one per input channel, sharing one 25-coefficient bank
+  (5x5 grid, row stride 5). Kernel K = 1/3/5. Each lane computes its own
+  25-tap dot product; the 3 lanes run concurrently, so one output pixel
+  (up to 3 channels) is produced per cycle (PX=1 spatially, as in Stage 1;
+  the plan's PX=2 is a later-stage option).
+- Line buffers: 4 x 24-bit BRAM (one 24-bit group = 3 channels x 8 bits per
+  pixel), 3872 entries each (max padded width 4096 - 224). Depth is set by
+  the padded width, not the channel count, so the buffer count is constant
+  (4) for 1ch and 3ch.
+- Window: 5x5 groups of 24 bits; lane c reads byte c of each group
+  (`win[wr][wc][8*c +: 8]`). A 1ch input is packed into byte 0 of the
+  group; lanes 1-2 are idle (their products are zero).
+- Adder tree per lane: 25 products -> 13 -> 7 (27 bits) -> 4 -> 2 (29 bits)
+  -> 1 (32-bit accumulator). Max |acc| ~ 2.09e8 < 2^31 (worst case K=5,
+  25 taps x 255 x 32767).
+- Downsampling DS = 1/2/4 folds into the decimation counters: effective
+  stride = stride x DS (1..20), implemented as "next exceeds" on the
+  output coordinates (no divider). out_W = (pw - K)/eff_Sx + 1.
+- Pipeline latency 11 cycles by construction (line buffer + align 4,
+  window 1, products 1, sum2 1, sum4 1, accumulator 1, shift 1, output 1).
+  The first output additionally waits the (K-1)-row line-buffer fill.
+- Fused ReLU / Leaky ReLU in the output stage (same as Stage 4:
+  config 0x0A mode, 0x0B slope Q0.16), applied after shift+saturate.
+  Signed input/output via config 0x0F (same convention as Stage 3/4).
+- No bias register (deliberate: preprocessing kernels do not use bias).
+- Config map: 0x00 ksize (1/3/5), 0x01 shift (0..15), 0x02 W, 0x03 H,
+  0x04-0x07 pads, 0x08/0x09 stride, 0x0A fused act (0 none, 1 ReLU,
+  2 Leaky), 0x0B slope, 0x0C downsample (1/2/4), 0x0D channels (1/3),
+  0x0F sign, 0x10+i coefficients i=0..24 (5x5 grid, row stride 5).
+  Reset defaults: ksize 3, shift 8, 640x480, pads 0, stride 1, DS 1,
+  ch 3, sign 0, fused act 0, slope 0.125, 3x3 identity (centre 256).
+
+## Verification (golden, 16 cases, `tb/golden_frontend.py` + `tb/tb_frontend.sv`)
+
+All 16 cases PASS pixel-exact (max|err| = 0), framing errors 0, with
+random in_valid gaps + ~80% out_ready backpressure. Cases: 0 identity
+1ch K3; 1 blur 3ch K3 pad1; 2 Gaussian 3ch K5 asymmetric pad; 3 K1 DS=2
+1ch; 4 blur 3ch K3 DS=2; 5 sharpen 3ch K3 DS=2 stride 2 (eff 4); 6 Sobel
+1ch K3 + fused ReLU; 7 Gaussian 3ch K5 pad2 DS=4; 8 asymmetric pad +
+stride (2,1) 1ch K5; 9 Sobel 3ch K3 signed intermediates; 10 gain x2 3ch
+K1 DS=2; 11 Sobel 1ch K3 + fused Leaky (slope 0.25); 12 blur 32x24
+stride 2 DS=2; 13 Laplacian 1ch K5 pad2 + ReLU; 14 blur 3ch K3 DS=4
+32x24; 15 identity 1ch K3 stride 3 pad1. First-out latency 11-211 cycles
+(11 for K1 DS=2, 211 for 32x24 K3 DS=4 -- the (K-1)-row line-buffer fill
+dominates, as expected).
+
+## STA (Nangate45 @ 3.333 ns, OpenSTA 2.2.0, `sta/run_sta_frontend.sh`)
+
+All 6 critical-path stages MET, tns 0.000:
+
+| stage | arrival (ns) | slack (ns) |
+|---|---|---|
+| fe_mult (8x16) | 1.535 | +1.756 |
+| fe_add (25->13->7, 27b) | 1.566 | +1.733 |
+| fe_add_wide (7->4->2, 29b) | 1.681 | +1.618 |
+| fe_shift | 2.055 | +1.237 |
+| fe_sat | 0.329 | +2.959 |
+| fe_leaky (32x16) | 2.248 | +1.046 |
+
+Bottleneck = fe_leaky (2.248 ns) -> system Fmax ~437 MHz
+(1 / (2.248 + 0.041 setup)). Without Leaky the bottleneck is fe_shift
+(2.055 ns) -> 477 MHz. Both well above the 300 MHz target; the Leaky
+arrival (2.248 ns) is identical to Stage 3's act_leaky, as expected (same
+32x16 multiply).
+
+## Resources (measured, full-module Yosys synth_xilinx, `logs/stage7/`)
+
+The frontend is small enough to synth as a whole (unlike the
+multiplier-heavy Stage 1/2 modules, which timed out), so these are
+measured, not inferred:
+
+- DSP48E1: 81 (75 MAC = 3 lanes x 25, + 6 for the fused Leaky 32x16
+  multiplies, each split into 2 DSP48E1).
+- BRAM36E1: 12 (4 line buffers x 3 each; each 3872x24-bit buffer is
+  92,928 bits = 2.52 BRAM36, rounded to 3).
+- LUT: ~10,002 LCs (Yosys estimated LCs, whole design).
+- FF: ~4,560 (FDCE 4494 + FDPE 18 in the frontend module, + 48 in the
+  4 line-buffer instances).
+
+For scale: the frontend uses ~4% of the XCZU19EG DSP (81/1968) and ~1%
+of its BRAM36 (12/984). The LUT count (~10k) is higher than Stage 1
+dense (~5.3k) because the adder tree and window logic are replicated
+across 3 lanes; it is still ~2% of the 523k LUTs.
+
+## Bug found and fixed during Stage 7 (back-to-back case transition)
+
+Symptom: the first full golden run failed on cases 8, 13, 14 (case 8 all
+outputs 0; case 13 framing errors 18 + latency underflow; case 14
+timeout, 0/48 outputs) while cases 0-7, 9-12 passed, and case 13 passed
+in isolation. Root cause: the testbench rewrote the config (W/H/pads ->
+pw/ph) while the previous frame's stream was still draining. The stream
+continues past the last output to (ph-1, pw-1) -- up to ~(eff_sy-1) rows
++ (eff_sx-1) cols of padding positions (case 12 needs ~105 cycles after
+its last output) -- and a config write that shrinks pw/ph mid-stream
+corrupts the stream counters: strm_c is already past the new pw-1, so it
+never wraps, is_last_stream never fires, frame_active stays 1, and the
+next case starts with a stale frame and wrong decimation counters. A
+2-case debug run (cases 12->13) confirmed it directly: at case 13's
+pre-send, frame_active=1, strm=(25,100), can_start=0, all pipeline
+valid flags stuck at 1. Fix (testbench only, no RTL change): after
+collecting a case's outputs, wait for `!busy` (busy = !can_start =
+frame_active || !pipe_empty) before writing the next case's config, with
+a 100k-cycle timeout that fails the test if busy is ever stuck. A fixed
+20-cycle drain wait is NOT enough for high stride/DS cases. Lesson for
+later stages: the config bus must only be written between frames, and
+`busy` is the signal that says when that is -- do not rely on a fixed
+cycle count. (The Stage 1-4 testbenches use the same 20-cycle pattern
+and were only safe because their cases' post-output drain was short or
+their pw/ph transitions were benign; the frontend's high stride/DS cases
+exposed the fragility.)
+
+Proactive fix (RTL, no behaviour change in normal operation): the line
+buffer pointer wrap uses `>=` (`if (ptr >= wrap - 1)`) instead of `==`,
+matching the Stage 2 fix for pointer drift when the padded width shrinks
+across frames. Applied to `line_buffer_bram_fe` in `rtl/frontend.sv`.
+
+## Regressions re-run with Stage 7
+
+Stage 5 acceptance ALL PASS (`sw/run_stage5.sh`, `logs/stage7/regress_stage5.log`).
+Stage 1-4 RTL regressions ALL PASS (`sw/run_regressions.sh`,
+`logs/stage7/regress_stage1_4_full.log`, total wall 2425 s): Stage 1 PASS,
+Stage 2 PASS, Stage 3 ALL PASS, Stage 4 ALL PASS (wall 1140 s).
+(The first full `run_stage7.sh` attempt was interrupted mid-regression by
+a VM restart -- /tmp was wiped and iverilog/yosys vanished again; the
+tools were reinstalled from `~/tools-dl/` and the regressions re-run to
+completion. The frontend golden + STA + Stage 5 results above are from
+the uninterrupted runs and were re-confirmed.)

@@ -41,7 +41,7 @@ GOLDEN CHECK PASSED
 wrote vectors_dw.txt: 26 cases
 ../rtl/conv2d_dw.sv:206: vvp.tgt sorry: Case unique/unique0 qualities are ignored.
 [compile] rc=0
-[vvp] rc=0 wall=193s
+[vvp] rc=0 wall=194s
 TB dw: 26 cases
 case 0 (mode=0 k=17 d=1 24x24 shift=6 pad=(0,0,0,0) stride=(1,1) out=8x8): 64 outputs, framing errors=0
 case 1 (mode=0 k=11 d=1 20x20 shift=8 pad=(5,5,5,5) stride=(1,1) out=20x20): 400 outputs, framing errors=0
@@ -98,7 +98,7 @@ case 23 (DW-SQUARE k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) sign=(1,1) o
 case 24 (DW-SQUARE k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(1,1) sign=(1,1) out=16x16): PASS (256 pixels)
 case 25 (DW-STRIP-H k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) sign=(1,1) out=15x13): PASS (195 pixels)
 GOLDEN CHECK PASSED
-[stage 2] script exit=0 wall=193s
+[stage 2] script exit=0 wall=194s
 [stage 2] PASS
 === Stage 3 (tb/run_stage3.sh) ===
 === Stage 3: generating vectors ===
@@ -302,7 +302,7 @@ case 24 (DW-SQUARE k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(1,1) sign=(1,1) o
 case 25 (DW-STRIP-H k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) sign=(1,1) out=15x13): PASS (195 pixels)
 GOLDEN CHECK PASSED
 === STAGE 3 RESULT: ALL PASS ===
-[stage 3] script exit=0 wall=1080s
+[stage 3] script exit=0 wall=1076s
 [stage 3] PASS
 [stage 3] PASS (all module check logs)
 === Stage 4 (tb/run_stage4.sh) ===
@@ -571,8 +571,8 @@ case 6 (mode=0 1x1): PASS (1 pixels)
 case 7 (mode=3 16x16): PASS (256 pixels)
 GOLDEN CHECK PASSED
 === STAGE 4 RESULT: ALL PASS ===
-[stage 4] script exit=0 wall=1151s
+[stage 4] script exit=0 wall=1140s
 [stage 4] PASS
 [stage 4] PASS (all module check logs)
-=== regressions total wall=2439s ===
+=== regressions total wall=2425s ===
 === ALL REGRESSIONS PASSED ===

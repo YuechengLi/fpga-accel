@@ -1,5 +1,5 @@
 === Stage 5: unit tests (43) ===
-............................./home/hatch/workspace/fpga-accel/sw/tests/test_emit.py:80: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp5vzhbbtd/program.json' mode='r' encoding='utf-8'>
+............................./home/hatch/workspace/fpga-accel/sw/tests/test_emit.py:80: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp3yscod9w/program.json' mode='r' encoding='utf-8'>
   pub = json.load(open(jp))
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 .../home/hatch/workspace/fpga-accel/sw/passes/mlut.py:104: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
@@ -9,7 +9,7 @@ ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ..........
 ----------------------------------------------------------------------
-Ran 43 tests in 21.161s
+Ran 43 tests in 29.942s
 
 OK
 [stage5] unit tests (43): PASS

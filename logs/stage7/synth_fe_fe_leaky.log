@@ -1,0 +1,6 @@
+Warning: Replacing memory \s2 with list of registers. See critpath_frontend.sv:64
+Warning: Replacing memory \s1 with list of registers. See critpath_frontend.sv:64, critpath_frontend.sv:62
+Warning: Replacing memory \r with list of registers. See critpath_frontend.sv:55
+Warning: Replacing memory \s2 with list of registers. See critpath_frontend.sv:90
+Warning: Replacing memory \s1 with list of registers. See critpath_frontend.sv:90, critpath_frontend.sv:88
+Warning: Replacing memory \r with list of registers. See critpath_frontend.sv:84
