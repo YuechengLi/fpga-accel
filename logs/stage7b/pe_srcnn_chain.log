@@ -1,0 +1,23 @@
+L1: 384 steps, out (16, 16, 64)
+PE ARRAY TB: 384 steps, out 16x16x64, expect 128 outputs
+SENDER DONE: 384 steps sent
+COLLECTOR DONE: 128 outputs, done_count=384
+PE ARRAY TB DONE
+tb_pe_array.sv:161: $finish called at 27995000 (1ps)
+  L1: RTL vs funcsim max|err|=0 [PASS] (128 outputs)
+L2: 128 steps, out (16, 16, 32)
+PE ARRAY TB: 128 steps, out 16x16x32, expect 64 outputs
+SENDER DONE: 128 steps sent
+COLLECTOR DONE: 64 outputs, done_count=128
+PE ARRAY TB DONE
+tb_pe_array.sv:161: $finish called at 11035000 (1ps)
+  L2: RTL vs funcsim max|err|=0 [PASS] (64 outputs)
+L3: 225 steps, out (12, 12, 1)
+PE ARRAY TB: 225 steps, out 12x12x1, expect 9 outputs
+SENDER DONE: 225 steps sent
+COLLECTOR DONE: 9 outputs, done_count=225
+PE ARRAY TB DONE
+tb_pe_array.sv:161: $finish called at 4635000 (1ps)
+  L3: RTL vs funcsim max|err|=0 [PASS] (9 outputs)
+FINAL: vs funcsim max|err|=0, vs float PSNR=43.38 dB (expect ~43.5 dB)
+PE ARRAY SRCNN CHAIN: ALL PASS

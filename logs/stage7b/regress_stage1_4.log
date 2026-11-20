@@ -1,0 +1,578 @@
+=== Stage 1 (tb/run_stage1.sh) ===
+wrote vectors_dense.txt: 14 cases
+../rtl/conv2d_dense.sv:208: vvp.tgt sorry: Case unique/unique0 qualities are ignored.
+[compile] rc=0
+[vvp] rc=0 wall=16s
+TB dense PX=1: 14 cases
+case 0 (16x16 k=3 shift=0 pad=(0,0,0,0) stride=(1,1) out=14x14): 196 outputs, framing errors=0
+case 1 (16x16 k=3 shift=3 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 2 (12x20 k=5 shift=8 pad=(0,2,1,3) stride=(1,1) out=12x18): 216 outputs, framing errors=0
+case 3 (16x16 k=11 shift=6 pad=(0,0,0,0) stride=(1,1) out=6x6): 36 outputs, framing errors=0
+case 4 (16x16 k=1 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 (16x16 k=3 shift=8 pad=(1,1,1,1) stride=(2,2) out=8x8): 64 outputs, framing errors=0
+case 6 (16x16 k=3 shift=3 pad=(1,1,1,1) stride=(2,3) out=8x6): 48 outputs, framing errors=0
+case 7 (16x12 k=7 shift=8 pad=(2,1,0,2) stride=(3,3) out=4x3): 12 outputs, framing errors=0
+case 8 (15x11 k=5 shift=8 pad=(3,3,3,3) stride=(1,1) out=17x13): 221 outputs, framing errors=0
+case 9 (64x48 k=9 shift=6 pad=(4,4,4,4) stride=(1,1) out=64x48): 3072 outputs, framing errors=0
+case 10 (32x24 k=11 shift=8 pad=(1,3,2,0) stride=(2,2) out=12x9): 108 outputs, framing errors=0
+case 11 (20x18 k=3 shift=3 pad=(3,3,3,3) stride=(1,1) out=24x22): 528 outputs, framing errors=0
+case 12 (15x13 k=7 shift=8 pad=(3,3,3,3) stride=(1,1) out=15x13): 195 outputs, framing errors=0
+case 13 (24x20 k=5 shift=8 pad=(2,2,2,2) stride=(3,2) out=8x10): 80 outputs, framing errors=0
+TB dense PX=1 DONE
+tb_conv2d_dense.sv:160: $finish called at 277985000 (1ps)
+case 0 (16x16 k=3 shift=0 pad=(0,0,0,0) stride=(1,1) out=14x14): PASS (196 pixels)
+case 1 (16x16 k=3 shift=3 pad=(1,1,1,1) stride=(1,1) out=16x16): PASS (256 pixels)
+case 2 (12x20 k=5 shift=8 pad=(0,2,1,3) stride=(1,1) out=12x18): PASS (216 pixels)
+case 3 (16x16 k=11 shift=6 pad=(0,0,0,0) stride=(1,1) out=6x6): PASS (36 pixels)
+case 4 (16x16 k=1 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): PASS (256 pixels)
+case 5 (16x16 k=3 shift=8 pad=(1,1,1,1) stride=(2,2) out=8x8): PASS (64 pixels)
+case 6 (16x16 k=3 shift=3 pad=(1,1,1,1) stride=(2,3) out=8x6): PASS (48 pixels)
+case 7 (16x12 k=7 shift=8 pad=(2,1,0,2) stride=(3,3) out=4x3): PASS (12 pixels)
+case 8 (15x11 k=5 shift=8 pad=(3,3,3,3) stride=(1,1) out=17x13): PASS (221 pixels)
+case 9 (64x48 k=9 shift=6 pad=(4,4,4,4) stride=(1,1) out=64x48): PASS (3072 pixels)
+case 10 (32x24 k=11 shift=8 pad=(1,3,2,0) stride=(2,2) out=12x9): PASS (108 pixels)
+case 11 (20x18 k=3 shift=3 pad=(3,3,3,3) stride=(1,1) out=24x22): PASS (528 pixels)
+case 12 (15x13 k=7 shift=8 pad=(3,3,3,3) stride=(1,1) out=15x13): PASS (195 pixels)
+case 13 (24x20 k=5 shift=8 pad=(2,2,2,2) stride=(3,2) out=8x10): PASS (80 pixels)
+GOLDEN CHECK PASSED
+[stage 1] script exit=0 wall=16s
+[stage 1] PASS
+=== Stage 2 (tb/run_stage2.sh) ===
+wrote vectors_dw.txt: 26 cases
+../rtl/conv2d_dw.sv:206: vvp.tgt sorry: Case unique/unique0 qualities are ignored.
+[compile] rc=0
+[vvp] rc=0 wall=209s
+TB dw: 26 cases
+case 0 (mode=0 k=17 d=1 24x24 shift=6 pad=(0,0,0,0) stride=(1,1) out=8x8): 64 outputs, framing errors=0
+case 1 (mode=0 k=11 d=1 20x20 shift=8 pad=(5,5,5,5) stride=(1,1) out=20x20): 400 outputs, framing errors=0
+case 2 (mode=0 k=7 d=1 15x13 shift=8 pad=(3,3,3,3) stride=(1,1) out=15x13): 195 outputs, framing errors=0
+case 3 (mode=0 k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 4 (mode=0 k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(2,2) out=8x8): 64 outputs, framing errors=0
+case 5 (mode=0 k=13 d=1 20x16 shift=8 pad=(6,6,6,6) stride=(1,1) out=20x16): 320 outputs, framing errors=0
+case 6 (mode=0 k=15 d=1 16x16 shift=8 pad=(7,7,7,7) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 7 (mode=1 k=31 d=1 16x16 shift=6 pad=(0,0,15,15) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 8 (mode=1 k=21 d=1 20x16 shift=8 pad=(0,0,10,10) stride=(1,1) out=20x16): 320 outputs, framing errors=0
+case 9 (mode=1 k=11 d=1 16x16 shift=8 pad=(0,0,5,5) stride=(2,2) out=8x8): 64 outputs, framing errors=0
+case 10 (mode=1 k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) out=15x13): 195 outputs, framing errors=0
+case 11 (mode=2 k=31 d=1 16x16 shift=6 pad=(15,15,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 12 (mode=2 k=21 d=1 16x20 shift=8 pad=(10,10,0,0) stride=(1,1) out=16x20): 320 outputs, framing errors=0
+case 13 (mode=2 k=11 d=1 16x16 shift=8 pad=(5,5,0,0) stride=(2,2) out=8x8): 64 outputs, framing errors=0
+case 14 (mode=2 k=7 d=1 13x15 shift=3 pad=(3,3,0,0) stride=(1,1) out=13x15): 195 outputs, framing errors=0
+case 15 (mode=3 k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 16 (mode=3 k=3 d=2 16x16 shift=3 pad=(2,2,2,2) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 17 (mode=3 k=3 d=4 16x16 shift=3 pad=(4,4,4,4) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 18 (mode=3 k=5 d=2 20x20 shift=8 pad=(4,4,4,4) stride=(1,1) out=20x20): 400 outputs, framing errors=0
+case 19 (mode=3 k=9 d=4 16x16 shift=6 pad=(16,16,16,16) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 20 (mode=3 k=5 d=4 20x20 shift=8 pad=(8,8,8,8) stride=(2,2) out=10x10): 100 outputs, framing errors=0
+case 21 (mode=3 k=7 d=2 15x13 shift=8 pad=(6,6,6,6) stride=(1,1) out=15x13): 195 outputs, framing errors=0
+case 22 (mode=3 k=9 d=2 16x16 shift=6 pad=(8,8,8,8) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 23 (mode=0 k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 24 (mode=0 k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 25 (mode=1 k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) out=15x13): 195 outputs, framing errors=0
+TB dw DONE
+tb_conv2d_dw.sv:166: $finish called at 489285000 (1ps)
+case 0 (DW-SQUARE k=17 d=1 24x24 shift=6 pad=(0,0,0,0) stride=(1,1) sign=(0,0) out=8x8): PASS (64 pixels)
+case 1 (DW-SQUARE k=11 d=1 20x20 shift=8 pad=(5,5,5,5) stride=(1,1) sign=(0,0) out=20x20): PASS (400 pixels)
+case 2 (DW-SQUARE k=7 d=1 15x13 shift=8 pad=(3,3,3,3) stride=(1,1) sign=(0,0) out=15x13): PASS (195 pixels)
+case 3 (DW-SQUARE k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 4 (DW-SQUARE k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(2,2) sign=(0,0) out=8x8): PASS (64 pixels)
+case 5 (DW-SQUARE k=13 d=1 20x16 shift=8 pad=(6,6,6,6) stride=(1,1) sign=(0,0) out=20x16): PASS (320 pixels)
+case 6 (DW-SQUARE k=15 d=1 16x16 shift=8 pad=(7,7,7,7) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 7 (DW-STRIP-H k=31 d=1 16x16 shift=6 pad=(0,0,15,15) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 8 (DW-STRIP-H k=21 d=1 20x16 shift=8 pad=(0,0,10,10) stride=(1,1) sign=(0,0) out=20x16): PASS (320 pixels)
+case 9 (DW-STRIP-H k=11 d=1 16x16 shift=8 pad=(0,0,5,5) stride=(2,2) sign=(0,0) out=8x8): PASS (64 pixels)
+case 10 (DW-STRIP-H k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) sign=(0,0) out=15x13): PASS (195 pixels)
+case 11 (DW-STRIP-V k=31 d=1 16x16 shift=6 pad=(15,15,0,0) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 12 (DW-STRIP-V k=21 d=1 16x20 shift=8 pad=(10,10,0,0) stride=(1,1) sign=(0,0) out=16x20): PASS (320 pixels)
+case 13 (DW-STRIP-V k=11 d=1 16x16 shift=8 pad=(5,5,0,0) stride=(2,2) sign=(0,0) out=8x8): PASS (64 pixels)
+case 14 (DW-STRIP-V k=7 d=1 13x15 shift=3 pad=(3,3,0,0) stride=(1,1) sign=(0,0) out=13x15): PASS (195 pixels)
+case 15 (DW-DILATED k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 16 (DW-DILATED k=3 d=2 16x16 shift=3 pad=(2,2,2,2) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 17 (DW-DILATED k=3 d=4 16x16 shift=3 pad=(4,4,4,4) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 18 (DW-DILATED k=5 d=2 20x20 shift=8 pad=(4,4,4,4) stride=(1,1) sign=(0,0) out=20x20): PASS (400 pixels)
+case 19 (DW-DILATED k=9 d=4 16x16 shift=6 pad=(16,16,16,16) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 20 (DW-DILATED k=5 d=4 20x20 shift=8 pad=(8,8,8,8) stride=(2,2) sign=(0,0) out=10x10): PASS (100 pixels)
+case 21 (DW-DILATED k=7 d=2 15x13 shift=8 pad=(6,6,6,6) stride=(1,1) sign=(0,0) out=15x13): PASS (195 pixels)
+case 22 (DW-DILATED k=9 d=2 16x16 shift=6 pad=(8,8,8,8) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 23 (DW-SQUARE k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) sign=(1,1) out=16x16): PASS (256 pixels)
+case 24 (DW-SQUARE k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(1,1) sign=(1,1) out=16x16): PASS (256 pixels)
+case 25 (DW-STRIP-H k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) sign=(1,1) out=15x13): PASS (195 pixels)
+GOLDEN CHECK PASSED
+[stage 2] script exit=0 wall=210s
+[stage 2] PASS
+=== Stage 3 (tb/run_stage3.sh) ===
+=== Stage 3: generating vectors ===
+wrote vectors_mc.txt: 15 cases
+wrote vectors_pool.txt: 8 cases
+wrote vectors_residual.txt: 8 cases
+wrote vectors_act.txt: 12 cases
+MLUT sigmoid: approx error vs float: max 5.5 Q5.11 LSBs (0.0027), RMS 1.0 LSBs
+MLUT tanh: approx error vs float: max 38.1 Q5.11 LSBs (0.0186), RMS 5.3 LSBs
+MLUT GELU: approx error vs float: max 55.0 Q5.11 LSBs (0.0269), RMS 5.9 LSBs
+MLUT SiLU: approx error vs float: max 48.0 Q5.11 LSBs (0.0234), RMS 6.6 LSBs
+=== Stage 3: mc ===
+TB mc: 15 cases
+case 0 ch 0 (K=3 16x16 C_in=3 C_out=2 shift=8 pad=(0,0,0,0) stride=(1,1) out=14x14): 196 outputs, framing errors=0
+case 0 ch 1 (K=3 16x16 C_in=3 C_out=2 shift=8 pad=(0,0,0,0) stride=(1,1) out=14x14): 196 outputs, framing errors=0
+case 1 ch 0 (K=3 16x16 C_in=8 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 1 ch 1 (K=3 16x16 C_in=8 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 2 ch 0 (K=3 16x16 C_in=16 C_out=8 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 2 ch 1 (K=3 16x16 C_in=16 C_out=8 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 2 ch 2 (K=3 16x16 C_in=16 C_out=8 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 2 ch 3 (K=3 16x16 C_in=16 C_out=8 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 2 ch 4 (K=3 16x16 C_in=16 C_out=8 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 2 ch 5 (K=3 16x16 C_in=16 C_out=8 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 2 ch 6 (K=3 16x16 C_in=16 C_out=8 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 2 ch 7 (K=3 16x16 C_in=16 C_out=8 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 3 ch 0 (K=3 16x16 C_in=64 C_out=2 shift=8 pad=(0,0,0,0) stride=(1,1) out=14x14): 196 outputs, framing errors=0
+case 3 ch 1 (K=3 16x16 C_in=64 C_out=2 shift=8 pad=(0,0,0,0) stride=(1,1) out=14x14): 196 outputs, framing errors=0
+case 4 ch 0 (K=5 16x16 C_in=8 C_out=4 shift=8 pad=(2,2,2,2) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 4 ch 1 (K=5 16x16 C_in=8 C_out=4 shift=8 pad=(2,2,2,2) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 4 ch 2 (K=5 16x16 C_in=8 C_out=4 shift=8 pad=(2,2,2,2) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 4 ch 3 (K=5 16x16 C_in=8 C_out=4 shift=8 pad=(2,2,2,2) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 0 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 1 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 2 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 3 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 4 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 5 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 6 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 7 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 8 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 9 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 10 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 11 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 12 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 13 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 14 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 5 ch 15 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 0 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 1 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 2 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 3 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 4 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 5 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 6 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 7 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 8 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 9 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 10 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 11 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 12 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 13 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 14 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 15 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 16 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 17 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 18 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 19 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 20 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 21 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 22 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 23 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 24 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 25 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 26 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 27 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 28 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 29 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 30 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 6 ch 31 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 7 ch 0 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+case 7 ch 1 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+case 7 ch 2 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+case 7 ch 3 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+case 8 ch 0 (K=3 15x13 C_in=3 C_out=2 shift=8 pad=(1,1,1,1) stride=(2,2) out=8x7): 56 outputs, framing errors=0
+case 8 ch 1 (K=3 15x13 C_in=3 C_out=2 shift=8 pad=(1,1,1,1) stride=(2,2) out=8x7): 56 outputs, framing errors=0
+case 9 ch 0 (K=3 16x16 C_in=8 C_out=4 shift=0 pad=(0,0,0,0) stride=(1,1) out=14x14): 196 outputs, framing errors=0
+case 9 ch 1 (K=3 16x16 C_in=8 C_out=4 shift=0 pad=(0,0,0,0) stride=(1,1) out=14x14): 196 outputs, framing errors=0
+case 9 ch 2 (K=3 16x16 C_in=8 C_out=4 shift=0 pad=(0,0,0,0) stride=(1,1) out=14x14): 196 outputs, framing errors=0
+case 9 ch 3 (K=3 16x16 C_in=8 C_out=4 shift=0 pad=(0,0,0,0) stride=(1,1) out=14x14): 196 outputs, framing errors=0
+case 10 ch 0 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 10 ch 1 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 11 ch 0 (K=3 16x16 C_in=8 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 11 ch 1 (K=3 16x16 C_in=8 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 12 ch 0 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 12 ch 1 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 13 ch 0 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 13 ch 1 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 14 ch 0 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+case 14 ch 1 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+case 14 ch 2 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+case 14 ch 3 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+TB mc DONE
+tb_conv2d_mc.sv:226: $finish called at 3771805000 (1ps)
+case 0 (K=3 16x16 C_in=3 C_out=2 shift=8 pad=(0,0,0,0) stride=(1,1) out=14x14 ): PASS (392 pixels)
+case 1 (K=3 16x16 C_in=8 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 ): PASS (512 pixels)
+case 2 (K=3 16x16 C_in=16 C_out=8 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 ): PASS (2048 pixels)
+case 3 (K=3 16x16 C_in=64 C_out=2 shift=8 pad=(0,0,0,0) stride=(1,1) out=14x14 ): PASS (392 pixels)
+case 4 (K=5 16x16 C_in=8 C_out=4 shift=8 pad=(2,2,2,2) stride=(1,1) out=16x16 ): PASS (1024 pixels)
+case 5 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16 ): PASS (4096 pixels)
+case 6 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16 ): PASS (8192 pixels)
+case 7 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1 ): PASS (4 pixels)
+case 8 (K=3 15x13 C_in=3 C_out=2 shift=8 pad=(1,1,1,1) stride=(2,2) out=8x7 ): PASS (112 pixels)
+case 9 (K=3 16x16 C_in=8 C_out=4 shift=0 pad=(0,0,0,0) stride=(1,1) out=14x14 ): PASS (784 pixels)
+case 10 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 sgn_in=1 sgn_out=1 ): PASS (512 pixels)
+case 11 (K=3 16x16 C_in=8 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 sgn_in=1 sgn_out=0 ): PASS (512 pixels)
+case 12 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 sgn_in=1 sgn_out=1 fuse_act=1 slope=8192 ): PASS (512 pixels)
+case 13 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 sgn_in=1 sgn_out=1 fuse_act=2 slope=8192 ): PASS (512 pixels)
+case 14 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1 sgn_in=1 sgn_out=1 fuse_act=1 slope=8192 ): PASS (4 pixels)
+GOLDEN CHECK PASSED
+=== Stage 3: pool ===
+TB pool: 8 cases
+case 0 (mode=0 16x16 -> 8x8): 64 outputs, framing errors=0
+case 1 (mode=0 15x13 -> 8x7): 56 outputs, framing errors=0
+case 2 (mode=0 1x1 -> 1x1): 1 outputs, framing errors=0
+case 3 (mode=1 16x16 -> 8x8): 64 outputs, framing errors=0
+case 4 (mode=1 15x13 -> 8x7): 56 outputs, framing errors=0
+case 5 (mode=2 16x16 -> 1x1): 1 outputs, framing errors=0
+case 6 (mode=2 15x13 -> 1x1): 1 outputs, framing errors=0
+case 7 (mode=2 1x1 -> 1x1): 1 outputs, framing errors=0
+TB pool DONE
+tb_pool.sv:136: $finish called at 43685000 (1ps)
+case 0 (mode=0 16x16 out=8x8): PASS (64 pixels)
+case 1 (mode=0 15x13 out=8x7): PASS (56 pixels)
+case 2 (mode=0 1x1 out=1x1): PASS (1 pixels)
+case 3 (mode=1 16x16 out=8x8): PASS (64 pixels)
+case 4 (mode=1 15x13 out=8x7): PASS (56 pixels)
+case 5 (mode=2 16x16 out=1x1): PASS (1 pixels)
+case 6 (mode=2 15x13 out=1x1): PASS (1 pixels)
+case 7 (mode=2 1x1 out=1x1): PASS (1 pixels)
+GOLDEN CHECK PASSED
+=== Stage 3: residual ===
+TB residual: 8 cases
+case 0 (mode=0 16x16): 256 outputs, framing errors=0
+case 1 (mode=0 15x13): 195 outputs, framing errors=0
+case 2 (mode=0 16x16): 256 outputs, framing errors=0
+case 3 (mode=1 16x16): 256 outputs, framing errors=0
+case 4 (mode=1 15x13): 195 outputs, framing errors=0
+case 5 (mode=2 16x16): 256 outputs, framing errors=0
+case 6 (mode=0 1x1): 1 outputs, framing errors=0
+case 7 (mode=3 16x16): 256 outputs, framing errors=0
+TB residual DONE
+tb_residual.sv:165: $finish called at 52635000 (1ps)
+case 0 (mode=0 16x16): PASS (256 pixels)
+case 1 (mode=0 15x13): PASS (195 pixels)
+case 2 (mode=0 16x16): PASS (256 pixels)
+case 3 (mode=1 16x16): PASS (256 pixels)
+case 4 (mode=1 15x13): PASS (195 pixels)
+case 5 (mode=2 16x16): PASS (256 pixels)
+case 6 (mode=0 1x1): PASS (1 pixels)
+case 7 (mode=3 16x16): PASS (256 pixels)
+GOLDEN CHECK PASSED
+=== Stage 3: act ===
+TB act: 12 cases
+case 0 (mode=0): 12 outputs, framing errors=0
+case 1 (mode=1): 12 outputs, framing errors=0
+case 2 (mode=1): 8 outputs, framing errors=0
+case 3 (mode=2): 87 outputs, framing errors=0
+case 4 (mode=3): 87 outputs, framing errors=0
+case 5 (mode=4): 87 outputs, framing errors=0
+case 6 (mode=5): 87 outputs, framing errors=0
+case 7 (mode=6): 4096 outputs, framing errors=0
+case 8 (mode=6): 4096 outputs, framing errors=0
+case 9 (mode=6): 4096 outputs, framing errors=0
+case 10 (mode=6): 4096 outputs, framing errors=0
+case 11 (mode=7): 12 outputs, framing errors=0
+TB act DONE
+tb_act.sv:171: $finish called at 579495000 (1ps)
+case 0 (ReLU): PASS (12 values)
+case 1 (Leaky): PASS (12 values)
+case 2 (Leaky): PASS (8 values)
+case 3 (sigmoid): PASS (87 values)
+case 4 (tanh): PASS (87 values)
+case 5 (GELU): PASS (87 values)
+case 6 (SiLU): PASS (87 values)
+case 7 (MLUT-sigmoid): PASS (4096 values)
+case 8 (MLUT-tanh): PASS (4096 values)
+case 9 (MLUT-GELU): PASS (4096 values)
+case 10 (MLUT-SiLU): PASS (4096 values)
+case 11 (BYPASS): PASS (12 values)
+GOLDEN CHECK PASSED
+=== Stage 1 regression (14 cases) ===
+case 10 (32x24 k=11 shift=8 pad=(1,3,2,0) stride=(2,2) out=12x9): PASS (108 pixels)
+case 11 (20x18 k=3 shift=3 pad=(3,3,3,3) stride=(1,1) out=24x22): PASS (528 pixels)
+case 12 (15x13 k=7 shift=8 pad=(3,3,3,3) stride=(1,1) out=15x13): PASS (195 pixels)
+case 13 (24x20 k=5 shift=8 pad=(2,2,2,2) stride=(3,2) out=8x10): PASS (80 pixels)
+GOLDEN CHECK PASSED
+=== Stage 2 regression (23 cases) ===
+case 22 (DW-DILATED k=9 d=2 16x16 shift=6 pad=(8,8,8,8) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 23 (DW-SQUARE k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) sign=(1,1) out=16x16): PASS (256 pixels)
+case 24 (DW-SQUARE k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(1,1) sign=(1,1) out=16x16): PASS (256 pixels)
+case 25 (DW-STRIP-H k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) sign=(1,1) out=15x13): PASS (195 pixels)
+GOLDEN CHECK PASSED
+=== STAGE 3 RESULT: ALL PASS ===
+[stage 3] script exit=0 wall=1338s
+[stage 3] PASS
+[stage 3] PASS (all module check logs)
+=== Stage 4 (tb/run_stage4.sh) ===
+=== Stage 4: generating vectors ===
+wrote 6 cases to vectors_layernorm.txt
+wrote vectors_upsample.txt: 10 cases
+wrote vectors_concat.txt: 6 cases
+wrote vectors_simplegate.txt: 6 cases
+wrote vectors_dw.txt: 26 cases
+wrote vectors_mc.txt: 15 cases
+wrote vectors_act.txt: 12 cases
+MLUT sigmoid: approx error vs float: max 5.5 Q5.11 LSBs (0.0027), RMS 1.0 LSBs
+MLUT tanh: approx error vs float: max 38.1 Q5.11 LSBs (0.0186), RMS 5.3 LSBs
+MLUT GELU: approx error vs float: max 55.0 Q5.11 LSBs (0.0269), RMS 5.9 LSBs
+MLUT SiLU: approx error vs float: max 48.0 Q5.11 LSBs (0.0234), RMS 6.6 LSBs
+wrote 7 cases to vectors_unified.txt
+wrote vectors_sched.txt (2 runs x 3 layers)
+=== Stage 4: layernorm ===
+case 0 (8x8): 64 outputs, framing errors=0
+case 1 (16x16): 256 outputs, framing errors=0
+case 2 (8x8): 64 outputs, framing errors=0
+case 3 (4x4): 16 outputs, framing errors=0
+case 4 (16x16): 256 outputs, framing errors=0
+case 5 (8x16): 128 outputs, framing errors=0
+TB layernorm DONE
+tb_layernorm.sv:161: $finish called at 70265000 (1ps)
+case 0 (8x8 sign=0/0 gamma=1.000 beta=0): PASS (64 pixels) mean=114 var=4451 inv_std_q=491 max|fixed-float|=0.93
+case 1 (16x16 sign=0/0 gamma=0.500 beta=10): PASS (256 pixels) mean=119 var=5452 inv_std_q=443 max|fixed-float|=0.98
+case 2 (8x8 sign=1/1 gamma=1.000 beta=0): PASS (64 pixels) mean=-16 var=12709 inv_std_q=291 max|fixed-float|=0.99
+case 3 (4x4 sign=0/0 gamma=1.000 beta=5): PASS (16 pixels) mean=100 var=0 inv_std_q=5793 max|fixed-float|=0.00
+case 4 (16x16 sign=0/0 gamma=0.250 beta=-5): PASS (256 pixels) mean=138 var=5473 inv_std_q=443 max|fixed-float|=0.00
+case 5 (8x16 sign=0/0 gamma=1.000 beta=0): PASS (128 pixels) mean=127 var=245 inv_std_q=2189 max|fixed-float|=1.36
+GOLDEN CHECK PASSED
+=== Stage 4: upsample ===
+case 0 (mode=0 16x16 -> 32x32): 1024 outputs, framing errors=0
+case 1 (mode=0 15x13 -> 30x26): 780 outputs, framing errors=0
+case 2 (mode=0 4x4 -> 8x8): 64 outputs, framing errors=0
+case 3 (mode=1 16x16 -> 32x32): 1024 outputs, framing errors=0
+case 4 (mode=1 15x13 -> 30x26): 780 outputs, framing errors=0
+case 5 (mode=1 4x4 -> 8x8): 64 outputs, framing errors=0
+case 6 (mode=1 1x1 -> 2x2): 4 outputs, framing errors=0
+case 7 (mode=2 16x16 -> 32x32): 1024 outputs, framing errors=0
+case 8 (mode=2 15x13 -> 30x26): 780 outputs, framing errors=0
+case 9 (mode=2 4x4 -> 8x8): 64 outputs, framing errors=0
+TB upsample DONE
+tb_upsample.sv:141: $finish called at 154735000 (1ps)
+case 0 (mode=0 16x16): PASS (1024 pixels)
+case 1 (mode=0 15x13): PASS (780 pixels)
+case 2 (mode=0 4x4): PASS (64 pixels)
+case 3 (mode=1 16x16): PASS (1024 pixels)
+case 4 (mode=1 15x13): PASS (780 pixels)
+case 5 (mode=1 4x4): PASS (64 pixels)
+case 6 (mode=1 1x1): PASS (4 pixels)
+case 7 (mode=2 16x16): PASS (1024 pixels)
+case 8 (mode=2 15x13): PASS (780 pixels)
+case 9 (mode=2 4x4): PASS (64 pixels)
+GOLDEN CHECK PASSED
+=== Stage 4: concat ===
+TB concat: 6 cases
+case 0 (mode=0 16x16 out=512): 512 outputs, framing errors=0
+case 1 (mode=0 15x13 out=390): 390 outputs, framing errors=0
+case 2 (mode=0 4x4 out=32): 32 outputs, framing errors=0
+case 3 (mode=1 16x16 out=512): 512 outputs, framing errors=0
+case 4 (mode=1 15x13 out=390): 390 outputs, framing errors=0
+case 5 (mode=1 4x4 out=32): 32 outputs, framing errors=0
+TB concat DONE
+tb_concat.sv:167: $finish called at 43455000 (1ps)
+case 0 (mode=0 16x16): PASS (512 pixels)
+case 1 (mode=0 15x13): PASS (390 pixels)
+case 2 (mode=0 4x4): PASS (32 pixels)
+case 3 (mode=1 16x16): PASS (512 pixels)
+case 4 (mode=1 15x13): PASS (390 pixels)
+case 5 (mode=1 4x4): PASS (32 pixels)
+GOLDEN CHECK PASSED
+=== Stage 4: simplegate ===
+TB simplegate: 6 cases
+case 0 (shift=8 16x16 sign=(0,0)): 256 outputs, framing errors=0
+case 1 (shift=0 16x16 sign=(0,0)): 256 outputs, framing errors=0
+case 2 (shift=4 15x13 sign=(0,0)): 195 outputs, framing errors=0
+case 3 (shift=8 4x4 sign=(0,0)): 16 outputs, framing errors=0
+case 4 (shift=8 16x16 sign=(1,1)): 256 outputs, framing errors=0
+case 5 (shift=4 15x13 sign=(1,1)): 195 outputs, framing errors=0
+TB simplegate DONE
+tb_simplegate.sv:140: $finish called at 71935000 (1ps)
+case 0 (shift=8 16x16 sign=(0,0)): PASS (256 pixels)
+case 1 (shift=0 16x16 sign=(0,0)): PASS (256 pixels)
+case 2 (shift=4 15x13 sign=(0,0)): PASS (195 pixels)
+case 3 (shift=8 4x4 sign=(0,0)): PASS (16 pixels)
+case 4 (shift=8 16x16 sign=(1,1)): PASS (256 pixels)
+case 5 (shift=4 15x13 sign=(1,1)): PASS (195 pixels)
+GOLDEN CHECK PASSED
+=== Stage 4: dw ===
+case 16 (mode=3 k=3 d=2 16x16 shift=3 pad=(2,2,2,2) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 17 (mode=3 k=3 d=4 16x16 shift=3 pad=(4,4,4,4) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 18 (mode=3 k=5 d=2 20x20 shift=8 pad=(4,4,4,4) stride=(1,1) out=20x20): 400 outputs, framing errors=0
+case 19 (mode=3 k=9 d=4 16x16 shift=6 pad=(16,16,16,16) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 20 (mode=3 k=5 d=4 20x20 shift=8 pad=(8,8,8,8) stride=(2,2) out=10x10): 100 outputs, framing errors=0
+case 21 (mode=3 k=7 d=2 15x13 shift=8 pad=(6,6,6,6) stride=(1,1) out=15x13): 195 outputs, framing errors=0
+case 22 (mode=3 k=9 d=2 16x16 shift=6 pad=(8,8,8,8) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 23 (mode=0 k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 24 (mode=0 k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 25 (mode=1 k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) out=15x13): 195 outputs, framing errors=0
+TB dw DONE
+tb_conv2d_dw.sv:166: $finish called at 489285000 (1ps)
+case 0 (DW-SQUARE k=17 d=1 24x24 shift=6 pad=(0,0,0,0) stride=(1,1) sign=(0,0) out=8x8): PASS (64 pixels)
+case 1 (DW-SQUARE k=11 d=1 20x20 shift=8 pad=(5,5,5,5) stride=(1,1) sign=(0,0) out=20x20): PASS (400 pixels)
+case 2 (DW-SQUARE k=7 d=1 15x13 shift=8 pad=(3,3,3,3) stride=(1,1) sign=(0,0) out=15x13): PASS (195 pixels)
+case 3 (DW-SQUARE k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 4 (DW-SQUARE k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(2,2) sign=(0,0) out=8x8): PASS (64 pixels)
+case 5 (DW-SQUARE k=13 d=1 20x16 shift=8 pad=(6,6,6,6) stride=(1,1) sign=(0,0) out=20x16): PASS (320 pixels)
+case 6 (DW-SQUARE k=15 d=1 16x16 shift=8 pad=(7,7,7,7) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 7 (DW-STRIP-H k=31 d=1 16x16 shift=6 pad=(0,0,15,15) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 8 (DW-STRIP-H k=21 d=1 20x16 shift=8 pad=(0,0,10,10) stride=(1,1) sign=(0,0) out=20x16): PASS (320 pixels)
+case 9 (DW-STRIP-H k=11 d=1 16x16 shift=8 pad=(0,0,5,5) stride=(2,2) sign=(0,0) out=8x8): PASS (64 pixels)
+case 10 (DW-STRIP-H k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) sign=(0,0) out=15x13): PASS (195 pixels)
+case 11 (DW-STRIP-V k=31 d=1 16x16 shift=6 pad=(15,15,0,0) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 12 (DW-STRIP-V k=21 d=1 16x20 shift=8 pad=(10,10,0,0) stride=(1,1) sign=(0,0) out=16x20): PASS (320 pixels)
+case 13 (DW-STRIP-V k=11 d=1 16x16 shift=8 pad=(5,5,0,0) stride=(2,2) sign=(0,0) out=8x8): PASS (64 pixels)
+case 14 (DW-STRIP-V k=7 d=1 13x15 shift=3 pad=(3,3,0,0) stride=(1,1) sign=(0,0) out=13x15): PASS (195 pixels)
+case 15 (DW-DILATED k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 16 (DW-DILATED k=3 d=2 16x16 shift=3 pad=(2,2,2,2) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 17 (DW-DILATED k=3 d=4 16x16 shift=3 pad=(4,4,4,4) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 18 (DW-DILATED k=5 d=2 20x20 shift=8 pad=(4,4,4,4) stride=(1,1) sign=(0,0) out=20x20): PASS (400 pixels)
+case 19 (DW-DILATED k=9 d=4 16x16 shift=6 pad=(16,16,16,16) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 20 (DW-DILATED k=5 d=4 20x20 shift=8 pad=(8,8,8,8) stride=(2,2) sign=(0,0) out=10x10): PASS (100 pixels)
+case 21 (DW-DILATED k=7 d=2 15x13 shift=8 pad=(6,6,6,6) stride=(1,1) sign=(0,0) out=15x13): PASS (195 pixels)
+case 22 (DW-DILATED k=9 d=2 16x16 shift=6 pad=(8,8,8,8) stride=(1,1) sign=(0,0) out=16x16): PASS (256 pixels)
+case 23 (DW-SQUARE k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) sign=(1,1) out=16x16): PASS (256 pixels)
+case 24 (DW-SQUARE k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(1,1) sign=(1,1) out=16x16): PASS (256 pixels)
+case 25 (DW-STRIP-H k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) sign=(1,1) out=15x13): PASS (195 pixels)
+GOLDEN CHECK PASSED
+=== Stage 4: mc ===
+case 11 ch 0 (K=3 16x16 C_in=8 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 11 ch 1 (K=3 16x16 C_in=8 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 12 ch 0 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 12 ch 1 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 13 ch 0 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 13 ch 1 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 14 ch 0 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+case 14 ch 1 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+case 14 ch 2 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+case 14 ch 3 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+TB mc DONE
+tb_conv2d_mc.sv:226: $finish called at 3771805000 (1ps)
+case 0 (K=3 16x16 C_in=3 C_out=2 shift=8 pad=(0,0,0,0) stride=(1,1) out=14x14 ): PASS (392 pixels)
+case 1 (K=3 16x16 C_in=8 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 ): PASS (512 pixels)
+case 2 (K=3 16x16 C_in=16 C_out=8 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 ): PASS (2048 pixels)
+case 3 (K=3 16x16 C_in=64 C_out=2 shift=8 pad=(0,0,0,0) stride=(1,1) out=14x14 ): PASS (392 pixels)
+case 4 (K=5 16x16 C_in=8 C_out=4 shift=8 pad=(2,2,2,2) stride=(1,1) out=16x16 ): PASS (1024 pixels)
+case 5 (K=1 16x16 C_in=16 C_out=16 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16 ): PASS (4096 pixels)
+case 6 (K=1 16x16 C_in=64 C_out=32 shift=8 pad=(0,0,0,0) stride=(1,1) out=16x16 ): PASS (8192 pixels)
+case 7 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1 ): PASS (4 pixels)
+case 8 (K=3 15x13 C_in=3 C_out=2 shift=8 pad=(1,1,1,1) stride=(2,2) out=8x7 ): PASS (112 pixels)
+case 9 (K=3 16x16 C_in=8 C_out=4 shift=0 pad=(0,0,0,0) stride=(1,1) out=14x14 ): PASS (784 pixels)
+case 10 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 sgn_in=1 sgn_out=1 ): PASS (512 pixels)
+case 11 (K=3 16x16 C_in=8 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 sgn_in=1 sgn_out=0 ): PASS (512 pixels)
+case 12 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 sgn_in=1 sgn_out=1 fuse_act=1 slope=8192 ): PASS (512 pixels)
+case 13 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 sgn_in=1 sgn_out=1 fuse_act=2 slope=8192 ): PASS (512 pixels)
+case 14 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1 sgn_in=1 sgn_out=1 fuse_act=1 slope=8192 ): PASS (4 pixels)
+GOLDEN CHECK PASSED
+=== Stage 4: act ===
+case 2 (mode=1): 8 outputs, framing errors=0
+case 3 (mode=2): 87 outputs, framing errors=0
+case 4 (mode=3): 87 outputs, framing errors=0
+case 5 (mode=4): 87 outputs, framing errors=0
+case 6 (mode=5): 87 outputs, framing errors=0
+case 7 (mode=6): 4096 outputs, framing errors=0
+case 8 (mode=6): 4096 outputs, framing errors=0
+case 9 (mode=6): 4096 outputs, framing errors=0
+case 10 (mode=6): 4096 outputs, framing errors=0
+case 11 (mode=7): 12 outputs, framing errors=0
+TB act DONE
+tb_act.sv:171: $finish called at 579495000 (1ps)
+case 0 (ReLU): PASS (12 values)
+case 1 (Leaky): PASS (12 values)
+case 2 (Leaky): PASS (8 values)
+case 3 (sigmoid): PASS (87 values)
+case 4 (tanh): PASS (87 values)
+case 5 (GELU): PASS (87 values)
+case 6 (SiLU): PASS (87 values)
+case 7 (MLUT-sigmoid): PASS (4096 values)
+case 8 (MLUT-tanh): PASS (4096 values)
+case 9 (MLUT-GELU): PASS (4096 values)
+case 10 (MLUT-SiLU): PASS (4096 values)
+case 11 (BYPASS): PASS (12 values)
+GOLDEN CHECK PASSED
+=== Stage 4: unified ===
+case 0 (mode=0 16x16 -> 16x16): 256 outputs, framing errors=0
+case 1 (mode=1 16x16 -> 16x16): 256 outputs, framing errors=0
+case 2 (mode=0 16x16 -> 16x16): 256 outputs, framing errors=0
+case 3 (mode=1 16x16 -> 16x16): 256 outputs, framing errors=0
+case 4 (mode=5 1x1 -> 1x1): 1 outputs, framing errors=0
+case 5 (mode=2 15x13 -> 15x13): 195 outputs, framing errors=0
+case 6 (mode=4 16x16 -> 16x16): 256 outputs, framing errors=0
+TB unified_engine DONE
+tb_unified_engine.sv:189: $finish called at 88115000 (1ps)
+case 0 (dense 16x16): PASS (256 pixels)
+case 1 (DW-square 16x16): PASS (256 pixels)
+case 2 (dense 16x16): PASS (256 pixels)
+case 3 (DW-square 16x16): PASS (256 pixels)
+case 4 (FC 1x1): PASS (1 pixels)
+case 5 (DW-strip-H 15x13): PASS (195 pixels)
+case 6 (DW-dilated 16x16): PASS (256 pixels)
+GOLDEN CHECK PASSED
+=== Stage 4: sched ===
+run 0 (late=0): 768 outputs, sched done, layer2 eng_start at cycle 3626 (start 928)
+run 1 (late=1): 768 outputs, sched done, layer2 eng_start at cycle 8705 (start 5612)
+TB layer_scheduler DONE
+tb_layer_scheduler.sv:283: $finish called at 97905000 (1ps)
+run 0 layer 0 (dense): PASS (256 pixels)
+run 0 layer 1 (DW-sq): PASS (256 pixels)
+run 0 layer 2 (dense): PASS (256 pixels)
+run 1 layer 0 (dense): PASS (256 pixels)
+run 1 layer 1 (DW-sq): PASS (256 pixels)
+run 1 layer 2 (dense): PASS (256 pixels)
+GOLDEN CHECK PASSED
+=== Stage 1 regression (14 cases, dense now with sign + fused act) ===
+case 10 (32x24 k=11 shift=8 pad=(1,3,2,0) stride=(2,2) out=12x9): PASS (108 pixels)
+case 11 (20x18 k=3 shift=3 pad=(3,3,3,3) stride=(1,1) out=24x22): PASS (528 pixels)
+case 12 (15x13 k=7 shift=8 pad=(3,3,3,3) stride=(1,1) out=15x13): PASS (195 pixels)
+case 13 (24x20 k=5 shift=8 pad=(2,2,2,2) stride=(3,2) out=8x10): PASS (80 pixels)
+GOLDEN CHECK PASSED
+=== Stage 3 regressions (pool 8, residual 7; mc + act already run above) ===
+wrote vectors_pool.txt: 8 cases
+wrote vectors_residual.txt: 8 cases
+=== Stage 4: pool ===
+TB pool: 8 cases
+case 0 (mode=0 16x16 -> 8x8): 64 outputs, framing errors=0
+case 1 (mode=0 15x13 -> 8x7): 56 outputs, framing errors=0
+case 2 (mode=0 1x1 -> 1x1): 1 outputs, framing errors=0
+case 3 (mode=1 16x16 -> 8x8): 64 outputs, framing errors=0
+case 4 (mode=1 15x13 -> 8x7): 56 outputs, framing errors=0
+case 5 (mode=2 16x16 -> 1x1): 1 outputs, framing errors=0
+case 6 (mode=2 15x13 -> 1x1): 1 outputs, framing errors=0
+case 7 (mode=2 1x1 -> 1x1): 1 outputs, framing errors=0
+TB pool DONE
+tb_pool.sv:136: $finish called at 43685000 (1ps)
+case 0 (mode=0 16x16 out=8x8): PASS (64 pixels)
+case 1 (mode=0 15x13 out=8x7): PASS (56 pixels)
+case 2 (mode=0 1x1 out=1x1): PASS (1 pixels)
+case 3 (mode=1 16x16 out=8x8): PASS (64 pixels)
+case 4 (mode=1 15x13 out=8x7): PASS (56 pixels)
+case 5 (mode=2 16x16 out=1x1): PASS (1 pixels)
+case 6 (mode=2 15x13 out=1x1): PASS (1 pixels)
+case 7 (mode=2 1x1 out=1x1): PASS (1 pixels)
+GOLDEN CHECK PASSED
+=== Stage 4: residual ===
+TB residual: 8 cases
+case 0 (mode=0 16x16): 256 outputs, framing errors=0
+case 1 (mode=0 15x13): 195 outputs, framing errors=0
+case 2 (mode=0 16x16): 256 outputs, framing errors=0
+case 3 (mode=1 16x16): 256 outputs, framing errors=0
+case 4 (mode=1 15x13): 195 outputs, framing errors=0
+case 5 (mode=2 16x16): 256 outputs, framing errors=0
+case 6 (mode=0 1x1): 1 outputs, framing errors=0
+case 7 (mode=3 16x16): 256 outputs, framing errors=0
+TB residual DONE
+tb_residual.sv:165: $finish called at 52635000 (1ps)
+case 0 (mode=0 16x16): PASS (256 pixels)
+case 1 (mode=0 15x13): PASS (195 pixels)
+case 2 (mode=0 16x16): PASS (256 pixels)
+case 3 (mode=1 16x16): PASS (256 pixels)
+case 4 (mode=1 15x13): PASS (195 pixels)
+case 5 (mode=2 16x16): PASS (256 pixels)
+case 6 (mode=0 1x1): PASS (1 pixels)
+case 7 (mode=3 16x16): PASS (256 pixels)
+GOLDEN CHECK PASSED
+=== STAGE 4 RESULT: ALL PASS ===
+[stage 4] script exit=0 wall=1216s
+[stage 4] PASS
+[stage 4] PASS (all module check logs)
+=== regressions total wall=2780s ===
+=== ALL REGRESSIONS PASSED ===

@@ -1267,3 +1267,223 @@ a VM restart -- /tmp was wiped and iverilog/yosys vanished again; the
 tools were reinstalled from `~/tools-dl/` and the regressions re-run to
 completion. The frontend golden + STA + Stage 5 results above are from
 the uninterrupted runs and were re-confirmed.)
+
+## Stage 7b: generic PE array (tensor-core-like) -- SRCNN 1080p30
+
+The K^2-parallel engine (conv2d_mc and the Stage 7b outpar/cp/tappar
+engines) binds 121 multipliers to the 11x11 window; only K^2 of them
+do useful work. Measured MFU, single engine, 300 MHz, 1080p: SRCNN
+0.66% of device peak, DnCNN 1.80%. Per-K structural cap: K=1 0.2%,
+K=3 1.8%, K=5 5.1%, K=9 16.5%, K=11 24.6% of device peak. The K^2
+shape IS the MFU ceiling; per-layer sizing of the same shape cannot
+fix it. The K^2 engines (rtl/conv2d_outpar.sv, rtl/conv1x1_cp.sv,
+rtl/conv2d_tappar.sv, rtl/srcnn_pipe.sv) are kept as reference /
+golden-comparison baselines; they are not the Stage 7b deliverable.
+The raster cycle model (sw/stage7b_model.py) is likewise superseded
+by sw/stage7b_model_pe.py. The design, sizing derivation, and device
+configs are in logs/stage7b/design.md.
+
+### Design
+
+One PE = a GENERIC MAC array (128 multipliers, 16x8 grid), NOT bound
+to the KxK window. Two configurations of the same multiplier grid:
+outer-product (TM=16 positions x TN=8 channels, one k per cycle) and
+dot-product (TM=16 positions x 8 taps, one n per cycle, each row's 8
+products reduce through a tree). Convolution is lowered to GEMM
+(implicit im2col): M = output positions x output channels, K-dim =
+C_in x K x K. The scheduler tiles M and splits K; small-K layers
+parallelize by tiling M, large-K layers split the reduction across
+PEs and merge partials. The PE is a pure GEMM engine (raw 32-bit
+partial sums); the array's merge unit sums the K-chunk partials per
+(M-tile, N-chunk) and applies the output stage (pe_emit) to the
+final merged sum only.
+
+PE size is DERIVED, not assumed (256 was an assumption, not a spec):
+SRCNN 1080p30 needs 1645 useful MACs/cycle at 300 MHz (83.6% MFU),
+1371 at 360 MHz, 1234 at 400 MHz. Evaluated 64 / 128 / 256 mults
+per PE with the cycle model: 64 and 128 both give 33.7 fps at
+300 MHz (1920 DSPs, 96.3% MFU, 0% tile-quantization loss on SRCNN);
+256 gives 31.5 fps (1792 DSPs, marginal at 300 MHz). CHOICE: 128
+mults/PE, 15 PEs, 1920 DSPs (97.6%) -- same throughput as 64 with
+half the control overhead, and more robust than 256 to small-N
+layers (0% waste on C_out=8 vs 50%).
+
+Configurable for different FPGAs (parameters, not constants): the
+RTL takes N_PE / TM / TN / TK_MAX; the scheduler takes a device
+config (sw/devices.py). XCZU19EG-2 (iW-RainboW-G35D): 15x128, 300 MHz,
+1080p30 target. LFE5U-85F (Lattice ECP5, low-power): 2x64, 100 MHz,
+small resolutions (640x480 -> 5.1 fps, 320x240 -> 21.1 fps), the
+FULL SRCNN pipeline at small scale (same compiler flow, same
+precision -- the parameterization scales the parallelism, never the
+feature set). The RTL is vendor-neutral (no Xilinx primitives;
+BRAM/multipliers inferred); see the synth_ecp5 checks below.
+
+### Files
+
+- rtl/pe_mac.sv -- one PE (TM/TN/TK_MAX parameters, outer + dot modes).
+- rtl/pe_emit.sv -- output stage (round-half-up shift, ReLU/Leaky, saturate).
+- rtl/pe_array.sv -- N_PE PEs + dispatcher (round-robin) + merge unit
+  (associative table, count-based completion) + output emit.
+- rtl/srcnn_pipe_pe.sv -- top wrapper (config bus + tile-step program port).
+- sw/sched_pe.py -- scheduling pass (tile-step generation per layer/device).
+- sw/devices.py -- device configs (zu19eg, ecp5u85).
+- sw/emit.py emit_pe_program -- compiler streaming emission (PE assignments).
+- tb/golden_pe.py + tb/tb_pe_mac.sv -- PE golden + TB.
+- tb/tb_pe_array.sv + sw/run_pe_srcnn.py -- SRCNN chain driver (one wave
+  per layer, RTL output feeding the next layer).
+- tb/run_stage7b.sh -- Stage 7b verification runner (fail-fast).
+
+### Measured results (freshly run, traceable to `logs/stage7b/`)
+
+#### PE golden (pixel-exact) -- 11/11 PASS, 1408 values
+
+`tb/golden_pe.py check` (run by `tb/run_stage7b.sh`): outer mode
+(TK=27/32/16/11/1/8, first_k 0/1, sign_in 0/1) and dot mode
+(TK=32/16/8, tn=8 and tn=1 for the SRCNN L3 shape), including a case
+with the same A/B in dot mode as in outer mode (the two modes agree
+exactly). Cycle counts match the model (outer = tk cycles,
+dot = tn*(tk/8) cycles; the L3-like dot case with tn=1, tk=32 takes
+4 cycles).
+
+#### PE-array SRCNN chain (24x24, one wave per layer) -- ALL PASS
+
+`sw/run_pe_srcnn.py` (log `logs/stage7b/pe_srcnn_chain.log`): L1
+(384 steps, 128 outputs), L2 (128 steps, 64 outputs), L3 (225 steps,
+9 outputs) vs funcsim max|err| = 0 for every layer; final vs funcsim
+max|err| = 0, vs float PSNR = 43.38 dB (expect ~43.5 dB; Stage 6
+reported 43.51 dB for the same chain through conv2d_mc).
+
+#### Cycle model (device-driven) -- MODEL CHECK ALL OK
+
+`sw/stage7b_model_pe.py` (log `logs/stage7b/model_pe.log`): ZU19EG
+1080p: 15x128 -> 33.7 fps @300 MHz, 40.5 @360, 45.0 @400 (MFU 96.3%);
+7x256 -> 31.5 @300; 30x64 -> 33.7 @300. ECP5 640x480 -> 5.1 fps,
+320x240 -> 21.1 fps @100 MHz (MFU ~95.5%). Per-layer (128 config,
+300 MHz): L1 18.45 ms, L2 7.29 ms, L3 2.83 ms; ideal frame 8.57M
+cycles, frame 8.90M cycles (frame tile 64, edge x1.019).
+
+#### Clock decision (STA, Nangate45, OpenSTA 2.2.0)
+
+The PE's critical paths were STA'd with the accepted per-stage
+method (a full-module Yosys synth of the 128-multiplier PE times out
+on this VM; the paths are timed as standalone probes, /tmp/pe_crit.sv).
+Outer (mult + accumulate): 300 MHz +1.393, 360 MHz +0.838,
+400 MHz +0.560 -- all MET. Dot (mult + 3-level tree + accumulate,
+the critical path): 300 MHz +0.788, 360 MHz +0.233,
+400 MHz -0.045 VIOLATED (Fmax ~393 MHz). DECISION: 360 MHz is the
+operating clock (40.5 fps predicted); 300 MHz (33.7 fps) is the
+fallback; 400 MHz does not close for the dot path. Both 300 and
+360 MHz meet the 30 fps goal. Logs:
+logs/stage7b/sta_pe_crit_{outer,dot}_{3.333,2.778,2.500}.txt
+(tns 0.000 except dot@400 MHz, tns -0.045).
+
+#### synth_ecp5 (vendor neutrality) -- PASS
+
+- adder_tree (N=81, W=25): PASS, 4509 cells (CCU2C 402, LUT4 2909,
+  TRELLIS_FF 828), 0 problems. Log
+  logs/stage7b/synth_ecp5_adder_tree.log.
+- line_buffer_bram_mc (256-bit x 2048-deep, the L1/L3 size): PASS,
+  memory maps to 29 DP16KD (ECP5 EBR), 70 cells total. Log
+  logs/stage7b/synth_ecp5_linebuf.log. (The original form, with an
+  async reset on the BRAM output register, made Yosys replace the
+  memory with registers -- 2344 cells, 0 BRAM; fixed by
+  `initial dout = '0;` with a plain clocked memory process.)
+- Multiplier/RAM probe (/tmp/probe_ecp5.v): the 256-byte RAM maps to
+  1 DP16KD. The 64x 8x16 multipliers in COMBINATIONAL form map to
+  LUTs (4175 LUT4), not to ECP5 DSP blocks -- Yosys does not infer
+  DSP for combinational multipliers in this flow; the PE's
+  multipliers are registered (prod registers), which is the form DSP
+  inference expects. Log logs/stage7b/synth_ecp5_probe.log.
+
+#### K^2 reference engines (re-verified after the adder_tree port)
+
+- L2 (conv1x1_cp): 4/4 PASS, 1024 values, pixel-exact.
+- L3 (conv2d_tappar): K=5 cases (0, 1, 3) PASS, pixel-exact
+  (including SRCNN L3 real weights); K=3 (case 2) has 18/100
+  mismatches (known column-alignment limitation, documented below).
+- L1 (conv2d_outpar): K=9 cases (0, 1) PASS, 5120 values,
+  pixel-exact (with the V1 line-buffer change); case 2 (K=5) times
+  out (known limitation, documented below).
+
+### Bugs found and fixed during Stage 7b
+
+1. adder_tree flat-port + Icarus sensitivity: Yosys 0.52 rejects
+   unpacked array ports, so the port became a flat packed vector
+   `in_flat`. A variable-base part-select inside the `always @*`
+   level-1 block has incomplete @* sensitivity in Icarus and leaves
+   stale sums (smoke test failed with 781 errors); fixed by
+   unpacking `in_flat` with generate assigns (constant indices) and
+   keeping the original `in[2*i]` references. The smoke test and
+   synth_ecp5 both pass after the fix.
+2. L1 position lag (pos shift-register depth MAX_K -> MAX_K-2): the
+   window's bottom-right lags the stream by MAX_K-1 advances, and
+   `mac` is sampled pre-edge, so the shift-register depth must be
+   MAX_K-2 (the L3 already used this lag). The old depth made every
+   output use the window two columns to the right.
+3. L1 pipeline duplication during in_valid gaps: the prod registers
+   and flag pipeline shifted every cycle, but a new window arrives
+   only on `win_adv`; during a gap the group counter re-cycled the
+   held window's groups and re-emitted them. Fixed with `pipe_adv`
+   (a new (window, group) pair enters the pipeline only on a window
+   advance or a within-window group step).
+4. Leaky slope sign (L1/L2): the slope is a Q0.16 UNSIGNED fraction,
+   so 0x8000 (= 0.5) must be zero-extended to 17 bits; a signed
+   16-bit 0x8000 overflows to -32768 and flips the Leaky sign.
+   (The MC has the same latent bug for slope >= 0.5; SRCNN uses
+   ReLU, so it is out of scope here.)
+5. Line-buffer BRAM inference (shared module): the async reset on
+   the BRAM output register blocks Yosys BRAM inference; fixed with
+   `initial dout = '0;` (see the synth_ecp5 section). Covered by
+   the Stage 1-4 regressions.
+6. Icarus part-select signedness (PE): an indexed part-select of a
+   SIGNED vector loses its signedness when used directly in
+   arithmetic -- a negative value becomes a large positive. This
+   broke the dot-mode tree (tree8 function), the pe_emit shift, and
+   the pe_array merge add (negative partials became huge positives
+   and the merged sums saturated to 255). Fixed in all three places
+   by unpacking into a signed array with generate assigns (the
+   adder_tree pattern).
+7. K-chunk merge placement: chaining K-chunks inside one PE (a
+   `cont` flag) requires all chunks of one (M-tile, N-chunk) to land
+   on the same PE, but the dispatcher assigns round-robin, so the
+   chain breaks. Fixed by moving the merge into the array (an
+   associative table, count-based completion) and making the PE a
+   pure GEMM engine.
+8. TB handshake race (tb_pe_array): sampling `ts_ready` just after a
+   posedge races with the assignment (the step would be presented
+   for an extra cycle and dispatched twice). Fixed by sampling
+   `ts_ready` at negedge (mid-cycle, stable).
+
+### Known limitations (documented, not hidden)
+
+- L1 (conv2d_outpar) case 2 (K=5, pad 1, 20x12): times out (the
+  K<MAX_K window/position alignment for K < MAX_K). The L1's SRCNN
+  use is K=9, which passes (cases 0, 1). The K=5 case is a
+  generality case, not required by SRCNN.
+- L3 (conv2d_tappar) case 2 (K=3, pad 1, 10x10): 18/100 mismatches
+  (column-alignment limitation for K < MAX_K). The L3's SRCNN use
+  is K=5, which passes (cases 0, 1, 3, including real weights).
+- The pe_array's merge table holds one entry per in-flight
+  (M-tile, N-chunk); if two PEs completed the same cycle for the
+  same tag, the second update would be based on the stale sum.
+  Within one layer all tile-steps have the same latency and are
+  dispatched >= 1 cycle apart, so same-cycle same-tag completions
+  cannot occur; the TB's done_count/out_count would reveal it if
+  they did.
+- The PE's full-module Yosys synth times out on this VM (128
+  multipliers); the STA is on the PE's critical paths (per-stage
+  method), not a full-module STA. The ECP5 fit check for the
+  parameterized PE array (2 PEs x 64 mults) is pending the RTL
+  (the adder_tree and line-buffer checks pass; the array-level
+  synth_ecp5 fit is the remaining vendor-neutrality check).
+
+### Regressions re-run with Stage 7b
+
+Stage 5 acceptance ALL PASS (`sw/run_stage5.sh`,
+`logs/stage7b/regress_stage5.log`). Stage 1-4 RTL regressions ALL
+PASS (`sw/run_regressions.sh`, `logs/stage7b/regress_stage1_4.log`,
+total wall 2780 s): Stage 1 PASS, Stage 2 PASS, Stage 3 ALL PASS,
+Stage 4 ALL PASS (wall 1216 s). This covers the shared-module
+changes (adder_tree flat port, line_buffer_bram_mc dout reset ->
+initial) -- the conv2d_mc / line-buffer modules used by Stages 1-3
+are re-verified by these regressions.

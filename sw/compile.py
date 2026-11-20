@@ -91,10 +91,15 @@ def infer_shapes(graph, input_shape):
 
 
 def compile_model(graph, calib_input, input_shape, model_name="model",
-                  err_budget=0.03):
+                  err_budget=0.03, streaming=False):
     """Run the full compiler pipeline. ``calib_input`` is the
     calibration image as float (H, W, C) in [0, 1].
-    Returns (program, instrs, blob, report_dict)."""
+    Returns (program, instrs, blob, report_dict).
+
+    ``streaming`` (Stage 7b): emit the fused streaming program for
+    the 3-stage pipeline (rtl/srcnn_pipe.sv) instead of the iterative
+    per-layer program. See emit.emit_program.
+    """
     report = {"model": model_name, "passes": {}}
     # 1. fusion
     fused, groups, freport = fuse(graph)
@@ -157,9 +162,10 @@ def compile_model(graph, calib_input, input_shape, model_name="model",
     # 6. emission
     program, instrs, blob = emit_program(
         fused, tile_results, act_tables, model_name=model_name,
-        input_shape=input_shape)
+        input_shape=input_shape, streaming=streaming)
     report["instr_count"] = len(instrs)
     report["weight_blob_bytes"] = len(blob)
+    report["streaming"] = bool(streaming)
     # Attach the runtime structures the functional simulator needs.
     program["_weights_arrays"] = {
         k: {"W_q": v["W_q"], "b_q": v["b_q"]}

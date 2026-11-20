@@ -1,0 +1,77 @@
+Required useful throughput: SRCNN 1080p30
+  16.4534 GMACs/frame x 30 fps = 493.6 GMAC/s effective
+  @ 300 MHz: 1645 useful MACs/cycle (83.6% device MFU); DSPs needed at 96% util: 1714 (87% of device)
+  @ 360 MHz: 1371 useful MACs/cycle (69.7% device MFU); DSPs needed at 96% util: 1428 (73% of device)
+  @ 400 MHz: 1234 useful MACs/cycle (62.7% device MFU); DSPs needed at 96% util: 1285 (65% of device)
+
+PE-size evaluation (XCZU19EG-2, 1080p, 300 MHz baseline):
+  Tile-quantization loss on SRCNN is 0% for all three sizes:
+  N divides exactly (64/32 by TN 4/8/16), TK divides every
+  K-dim (27|81, 32|64, 32|800), M tiles 4x4 exactly.
+  Robustness to small-N layers (not SRCNN, sensitivity):
+    64-mult (TN=4): C_out=8 wastes 0%, C_out=4 wastes 0%
+    128-mult (TN=8): C_out=8 wastes 0%, C_out=4 wastes 50%
+    256-mult (TN=16): C_out=8 wastes 50%, C_out=4 wastes 75%
+
+zu19eg 1920x1080 (30 PEs x 64 = 1920 DSPs, 97.6% of 1968)
+  L1 9x9 1->64: M-tiles=128104 N-chunks=16 TK=27 K-chunks=3 27cy/step -> 5,534,093cy (18.45 ms)
+  L2 1x1 64->32: M-tiles=128104 N-chunks=8 TK=32 K-chunks=2 32cy/step -> 2,186,308cy (7.29 ms)
+  L3 5x5 32->1: M-tiles=127359 N-chunks=1 TK=32 K-chunks=25 8cy/step -> 849,060cy (2.83 ms)
+  frame tile 64 (510 tiles, edge x1.019); ideal 8,569,461cy, frame 8,898,357cy
+  dispatch: 3,201,855 (M-tile,N-chunk) tasks = 0.37/cycle (fine tile-step dispatch would be 1.33/cycle)
+  @ 300 MHz: 33.7 fps MEETS 30fps(MFU 96.3%)
+  @ 360 MHz: 40.5 fps MEETS 30fps(MFU 96.3%)
+  @ 400 MHz: 45.0 fps MEETS 30fps(MFU 96.3%)
+
+zu19eg 1920x1080 (15 PEs x 128 = 1920 DSPs, 97.6% of 1968)
+  L1 9x9 1->64: M-tiles=128104 N-chunks=8 TK=27 K-chunks=3 27cy/step -> 5,534,093cy (18.45 ms)
+  L2 1x1 64->32: M-tiles=128104 N-chunks=4 TK=32 K-chunks=2 32cy/step -> 2,186,308cy (7.29 ms)
+  L3 5x5 32->1: M-tiles=127359 N-chunks=1 TK=32 K-chunks=25 4cy/step -> 849,060cy (2.83 ms)
+  frame tile 64 (510 tiles, edge x1.019); ideal 8,569,461cy, frame 8,898,357cy
+  dispatch: 1,664,607 (M-tile,N-chunk) tasks = 0.19/cycle (fine tile-step dispatch would be 0.85/cycle)
+  @ 300 MHz: 33.7 fps MEETS 30fps(MFU 96.3%)
+  @ 360 MHz: 40.5 fps MEETS 30fps(MFU 96.3%)
+  @ 400 MHz: 45.0 fps MEETS 30fps(MFU 96.3%)
+
+zu19eg 1920x1080 (7 PEs x 256 = 1792 DSPs, 91.1% of 1968)
+  L1 9x9 1->64: M-tiles=128104 N-chunks=4 TK=27 K-chunks=3 27cy/step -> 5,929,385cy (19.76 ms)
+  L2 1x1 64->32: M-tiles=128104 N-chunks=2 TK=32 K-chunks=2 32cy/step -> 2,342,473cy (7.81 ms)
+  L3 5x5 32->1: M-tiles=127359 N-chunks=1 TK=32 K-chunks=25 2cy/step -> 909,707cy (3.03 ms)
+  frame tile 64 (510 tiles, edge x1.019); ideal 9,181,565cy, frame 9,528,435cy
+  dispatch: 895,983 (M-tile,N-chunk) tasks = 0.10/cycle (fine tile-step dispatch would be 0.57/cycle)
+  @ 300 MHz: 31.5 fps MEETS 30fps(MFU 96.4%)
+  @ 360 MHz: 37.8 fps MEETS 30fps(MFU 96.4%)
+  @ 400 MHz: 42.0 fps MEETS 30fps(MFU 96.4%)
+
+CHOICE: 128 mults/PE (15 PEs, 1920 DSPs) -- same 1080p fps as 64 (33.7) with half the PEs to dispatch; it wastes nothing on C_out=8 (50% only on C_out=4, vs 75% for 256 and 0% for 64). 256 reaches only 1792 DSPs (31.5 fps) and wastes half its lanes on C_out=8. 64 ties 128 on fps but doubles the control (30 PEs, 30 buffer slices, 30 scoreboard entries) for robustness SRCNN does not need (its N are 64/32/1).
+
+zu19eg 1920x1080 (15 PEs x 128 = 1920 DSPs, 97.6% of 1968)
+  L1 9x9 1->64: M-tiles=128104 N-chunks=8 TK=27 K-chunks=3 27cy/step -> 5,534,093cy (18.45 ms)
+  L2 1x1 64->32: M-tiles=128104 N-chunks=4 TK=32 K-chunks=2 32cy/step -> 2,186,308cy (7.29 ms)
+  L3 5x5 32->1: M-tiles=127359 N-chunks=1 TK=32 K-chunks=25 4cy/step -> 849,060cy (2.83 ms)
+  frame tile 64 (510 tiles, edge x1.019); ideal 8,569,461cy, frame 8,898,357cy
+  dispatch: 1,664,607 (M-tile,N-chunk) tasks = 0.19/cycle (fine tile-step dispatch would be 0.85/cycle)
+  @ 300 MHz: 33.7 fps MEETS 30fps(MFU 96.3%)
+  @ 360 MHz: 40.5 fps MEETS 30fps(MFU 96.3%)
+  @ 400 MHz: 45.0 fps MEETS 30fps(MFU 96.3%)
+  verification: rtl (RTL golden + sim)
+
+ecp5u85 640x480 (2 PEs x 64 = 128 DSPs, 82.1% of 156)
+  L1 9x9 1->64: M-tiles=18644 N-chunks=16 TK=27 K-chunks=3 27cy/step -> 12,081,312cy (120.81 ms)
+  L2 1x1 64->32: M-tiles=18644 N-chunks=8 TK=32 K-chunks=2 32cy/step -> 4,772,864cy (47.73 ms)
+  L3 5x5 32->1: M-tiles=18369 N-chunks=1 TK=32 K-chunks=25 8cy/step -> 1,836,900cy (18.37 ms)
+  frame tile 32 (300 tiles, edge x1.030); ideal 18,691,076cy, frame 19,486,415cy
+  dispatch: 465,825 (M-tile,N-chunk) tasks = 0.02/cycle (fine tile-step dispatch would be 0.09/cycle)
+  @ 100 MHz: 5.1 fps (MFU 95.9%)
+  verification: model+synth (cycle model + synth_ecp5 fit check)
+
+ecp5u85 320x240 (2 PEs x 64 = 128 DSPs, 82.1% of 156)
+  L1 9x9 1->64: M-tiles=4524 N-chunks=16 TK=27 K-chunks=3 27cy/step -> 2,931,552cy (29.32 ms)
+  L2 1x1 64->32: M-tiles=4524 N-chunks=8 TK=32 K-chunks=2 32cy/step -> 1,158,144cy (11.58 ms)
+  L3 5x5 32->1: M-tiles=4389 N-chunks=1 TK=32 K-chunks=25 8cy/step -> 438,900cy (4.39 ms)
+  frame tile 8 (1131 tiles, edge x1.000); ideal 4,528,596cy, frame 4,745,228cy
+  dispatch: 112,965 (M-tile,N-chunk) tasks = 0.02/cycle (fine tile-step dispatch would be 0.09/cycle)
+  @ 100 MHz: 21.1 fps (MFU 95.4%)
+  verification: model+synth (cycle model + synth_ecp5 fit check)
+
+MODEL CHECK: ALL OK

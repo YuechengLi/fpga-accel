@@ -149,3 +149,66 @@ bash tb/run_stage6.sh        # Stage 6 model verification + Stage 5 + regression
 python3 sw/stage6.py --model srcnn|dncnn|retinexnet|all   # Stage 6 models only
 python3 sw/stage6_float_layers.py   # per-layer vs float (pure Python, no RTL)
 ```
+
+## Stage 7b — PE-array scheduler + streaming emission
+
+The Stage 7b hardware is a generic PE array (rtl/pe_array.sv), not
+the K^2-parallel engines. The compiler side is the scheduling pass
+plus the streaming emission, both device-driven.
+
+### Scheduler (sw/sched_pe.py)
+
+Given a layer, its input feature map, its weights, and a device
+config (sw/devices.py), the scheduler decides the mode (outer/dot),
+TM/TN/TK, frame-tile size, and K-split, and emits the tile-step
+program: one tile-step per (M-tile, N-chunk, K-chunk). The tile-step
+carries the mode, TK/TN, first_k, sign_in, shift/act/slope/sign_out,
+bias, the A tile (im2col gather from the input) and the B tile
+(from the weights), the tag (mtile, nchunk), and n_kchunk. The
+K-dim order is k = (ci*K + kr)*K + kc (ci-major, then kr, then kc),
+matching the weight array layout and the K^2 engines' tap order.
+TK is the largest divisor of the K-dim that is <= 32 (the
+register-file bound: A = TM x TK <= 512, B = TK x TN <= 512).
+The M-tile is 4x4 output positions (TM=16). The scheduler is the
+compiler scheduling pass; the pe_array dispatcher just executes
+the emitted program (it does not compute im2col addresses).
+
+### Device configs (sw/devices.py)
+
+- zu19eg (XCZU19EG-2, iW-RainboW-G35D): 1968 DSP, 300 MHz,
+  15 PEs x 128 mults = 1920 DSPs (97.6%), TM=16, TN=8, 1080p30.
+  Verification: RTL (golden + sim).
+- ecp5u85 (LFE5U-85F, Lattice ECP5, low-power): 84K LUTs, 208
+  sysMEM blocks (3,744 Kbits EBR), 156 18x18 multipliers (Lattice
+  ECP5 Family Data Sheet FPGA-DS-02012-3.2), 100 MHz, 2 PEs x 64
+  mults = 128 (82%), TM=16, TN=4, small resolutions (640x480,
+  320x240). Verification: cycle model + synth_ecp5 fit check
+  (model+synth). The Lattice config runs the FULL SRCNN pipeline
+  (all 3 layers, same compiler flow, same precision) at small
+  resolutions -- the parameterization scales the parallelism, never
+  the feature set.
+
+### Streaming emission (sw/emit.py emit_pe_program)
+
+emit_pe_program wraps the scheduler: given the model's layers and
+the input, it emits the PE-array tile-step program (mode
+"streaming_pe", device, per-layer step counts and output shapes).
+There is no per-layer GO/WAIT instruction stream -- the array is
+programmed by tile-steps (one weight-load phase, then the frame
+streams as tile-steps). This REPLACES the K^2 streaming emission
+(emit_program(streaming=True), which targets the superseded
+rtl/srcnn_pipe.sv) for the PE array; the K^2 streaming code is kept
+as reference. Tests: sw/tests/test_streaming_pe.py (program
+structure, steps match the scheduler, no GO/WAIT).
+
+### Verification
+
+- PE golden (tb/golden_pe.py): 11 cases, outer + dot, pixel-exact.
+- PE-array SRCNN chain (sw/run_pe_srcnn.py): 24x24 input, one wave
+  per layer (RTL output feeding the next layer), L1/L2/L3 vs
+  funcsim max|err| = 0, final PSNR vs float 43.38 dB.
+- Cycle model (sw/stage7b_model_pe.py): ZU19EG 1080p 33.7 fps @300,
+  40.5 @360, 45.0 @400 MHz; ECP5 640x480 5.1 fps, 320x240 21.1 fps
+  @100 MHz. MODEL CHECK ALL OK.
+- Run: bash tb/run_stage7b.sh (fail-fast; PE + chain + K^2
+  reference re-verification + model + synth_ecp5).

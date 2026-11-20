@@ -114,13 +114,24 @@ FUSED_ACT_CODE = {"none": 0, "relu": 1, "leaky": 2}
 
 
 def emit_program(graph, tile_results, act_tables, model_name="model",
-                 input_shape=None):
+                 input_shape=None, streaming=False):
     """Emit the program for a fused + quantized graph.
 
     ``tile_results``: dict node name -> tile_search result (from
     costmodel.tile_search). ``act_tables``: dict node name -> table
     (from passes/mlut.py or passes/actapprox.py). Returns
     (program_dict, instr_lines, weight_blob_bytes).
+
+    ``streaming`` (Stage 7b): emit ONE fused program for the whole
+    chain for the 3-stage streaming pipeline (rtl/srcnn_pipe.sv)
+    instead of the iterative per-layer DMA -> GO -> WAIT program.
+    Weights for all layers are preloaded once at startup, the frame
+    streams through L1->L2->L3 concurrently, and there is no
+    per-layer GO/WAIT serialization. The op list (what the functional
+    simulator executes) is identical in both modes; only the weight
+    blob layout and the instruction stream differ. Raises ValueError
+    if the chain does not fit the pipeline (see
+    _assign_streaming_engines).
     """
     ops = []
     weights = {}
@@ -129,6 +140,7 @@ def emit_program(graph, tile_results, act_tables, model_name="model",
     layout = {}
     signed_of = {}
     layer_index = 0  # scheduler layer index (single-channel path)
+    stream_layers = []  # (op dict, geometry) per conv layer, streaming only
     for n in graph.nodes:
         if n.op == "input":
             ops.append({"name": n.name, "op": "input",
@@ -156,32 +168,33 @@ def emit_program(graph, tile_results, act_tables, model_name="model",
             # Weight blob, hardware order: (o, t, l, k).
             off = len(blob) // 2
             ncoeff_total = 0
-            for o in range(cout):
-                for t0 in range(0, cin, cin_tile):
-                    t1 = min(t0 + cin_tile, cin)
-                    for l in range(t1 - t0):
-                        c = t0 + l
-                        taps = W_q[:, :, c, o].reshape(-1)
-                        # taps are K*K row-major; the engine's 11x11
-                        # grid uses the top-left KxK, index = r*11+c.
-                        grid = np.zeros(121, dtype=np.int16)
-                        for r in range(K):
-                            grid[r * 11:(r * 11) + K] = \
-                                taps[r * K:(r * K) + K]
-                        # Store the FULL 121-entry grid per lane
-                        # (Stage 6 fix). The MC's coefficient memory
-                        # is indexed by the 11x11 grid (r*11+c), NOT
-                        # by the contiguous KxK row-major index: the
-                        # DMA writes tap k at dst + l*128 + k, so
-                        # the blob must carry the grid (zeros outside
-                        # the KxK kernel) or the MAC reads the wrong
-                        # coefficients. Storing only the K*K taps
-                        # (the previous code) put them at 0..K*K-1
-                        # instead of the grid positions and failed
-                        # the Stage 6 DMA integration check
-                        # (245/256 outputs wrong, SRCNN L1 ch5).
-                        blob += grid.astype("<i2").tobytes()
-                        ncoeff_total += 121
+            if not streaming:
+                for o in range(cout):
+                    for t0 in range(0, cin, cin_tile):
+                        t1 = min(t0 + cin_tile, cin)
+                        for l in range(t1 - t0):
+                            c = t0 + l
+                            taps = W_q[:, :, c, o].reshape(-1)
+                            # taps are K*K row-major; the engine's 11x11
+                            # grid uses the top-left KxK, index = r*11+c.
+                            grid = np.zeros(121, dtype=np.int16)
+                            for r in range(K):
+                                grid[r * 11:(r * 11) + K] = \
+                                    taps[r * K:(r * K) + K]
+                            # Store the FULL 121-entry grid per lane
+                            # (Stage 6 fix). The MC's coefficient memory
+                            # is indexed by the 11x11 grid (r*11+c), NOT
+                            # by the contiguous KxK row-major index: the
+                            # DMA writes tap k at dst + l*128 + k, so
+                            # the blob must carry the grid (zeros outside
+                            # the KxK kernel) or the MAC reads the wrong
+                            # coefficients. Storing only the K*K taps
+                            # (the previous code) put them at 0..K*K-1
+                            # instead of the grid positions and failed
+                            # the Stage 6 DMA integration check
+                            # (245/256 outputs wrong, SRCNN L1 ch5).
+                            blob += grid.astype("<i2").tobytes()
+                            ncoeff_total += 121
             weights[n.name] = {"W_q": W_q, "b_q": b_q}
             layout[n.name] = {"offset": off, "ncoeff": ncoeff_total,
                               "order": "(o, t, l, k) -- k is the 11x11 "
@@ -202,6 +215,12 @@ def emit_program(graph, tile_results, act_tables, model_name="model",
             ops.append(op)
             signed_of[n.name] = signed_out
             # ---- instruction stream ----
+            if streaming:
+                # The streaming branch (after the loop) emits the
+                # fused program; the geometry comes from infer_shapes
+                # (H/W/H_out/W_out on the node kwargs).
+                stream_layers.append((op, n.kwargs))
+                continue
             if cin == 1 and cout == 1 and n.op != "linear":
                 _emit_sched_layer(instrs, op, layer_index, off)
                 layer_index += 1
@@ -209,6 +228,28 @@ def emit_program(graph, tile_results, act_tables, model_name="model",
                 _emit_mc_layer(instrs, op, off)
             continue
         if n.op == "act":
+            if streaming:
+                raise ValueError(
+                    "streaming emission: standalone act node "
+                    f"{n.name} is not supported by the pipeline "
+                    "(only fused activations inside the conv layers)")
+            src = n.args[0]
+            tab = act_tables.get(n.name, {})
+            op = {"name": n.name, "op": "act", "args": [src],
+                  "func": n.kwargs.get("func"),
+                  "impl": tab.get("impl", "mlut"),
+                  "r_in": n.kwargs.get("r_in", 0),
+                  "r_out": n.kwargs.get("r_out", 0),
+                  "signed_out": bool(n.kwargs.get("signed_out", False))}
+            ops.append(op)
+            signed_of[n.name] = op["signed_out"]
+            # Act config writes (MLUT tables or PWL table) go through
+            # the act module's config bus (the driver writes them
+            # before the layer that uses the act).
+            for (a, d) in tab.get("config_writes", []):
+                instrs.append(f"W {a:#06x} {d & 0xFFFF:#06x}")
+            instrs.append(f"W 0x0000 {6 if op['impl'] == 'mlut' else 2:#06x}  # act mode")
+            continue
             src = n.args[0]
             tab = act_tables.get(n.name, {})
             op = {"name": n.name, "op": "act", "args": [src],
@@ -235,6 +276,35 @@ def emit_program(graph, tile_results, act_tables, model_name="model",
         ops.append(op)
         src = n.args[0] if n.args else None
         signed_of[n.name] = signed_of.get(src, False) if src else False
+    streaming_info = None
+    if streaming:
+        # Fused streaming program: validate the chain, assign the
+        # layers to the three pipeline engines, build the per-engine
+        # weight blob and the single weight-load + STREAM instruction
+        # stream. The op list above is unchanged (the functional
+        # simulator executes the same ops in both modes).
+        descs = _assign_streaming_engines(stream_layers)
+        blob_bytes, layout = _streaming_blob(descs, weights)
+        blob = bytearray(blob_bytes)
+        instrs = _emit_streaming_instrs(descs)
+        # The op dicts record the streaming weight offsets (the
+        # iterative layout's offsets are meaningless here).
+        for d in descs:
+            for op in ops:
+                if op.get("name") == d["layer"]:
+                    op["weight_offset"] = d["weight_offset"]
+                    op["ncoeff"] = d["ncoeff"]
+        streaming_info = {
+            "enabled": True,
+            "engines": [{k: d[k] for k in
+                         ("layer", "engine", "pipe_base", "K", "C_in",
+                          "C_out", "W", "H", "W_out", "H_out", "shift",
+                          "sign", "fused_act", "weight_offset", "ncoeff",
+                          "dma_dst", "dma_taps", "dma_stride")}
+                        for d in descs],
+            "weight_blob_bytes": len(blob),
+            "frames": "one STREAM per frame; engines run concurrently",
+        }
     program = {
         "model": model_name,
         "version": 1,
@@ -248,6 +318,8 @@ def emit_program(graph, tile_results, act_tables, model_name="model",
         "outputs": list(graph.outputs),
         "instr_count": len(instrs),
     }
+    if streaming_info is not None:
+        program["streaming"] = streaming_info
     # The functional simulator needs the actual arrays, not just the
     # summary -- attach them under a separate key that the JSON writer
     # strips.
@@ -367,6 +439,282 @@ def _emit_sched_layer(instrs, op, layer_index, blob_off):
                   f"all {layer_index + 1} layers are programmed)")
 
 
+# ---------------------------------------------------------------------------
+# Stage 7b streaming pipeline (rtl/srcnn_pipe.sv).
+#
+# The pipeline runs three sized engines concurrently (L1 conv2d_outpar,
+# L2 conv1x1_cp, L3 conv2d_tappar) on one frame stream. The streaming
+# program is ONE fused program for the whole chain: weights for all
+# three layers are preloaded once at startup (DMA into each engine's
+# coefficient memory), the geometry + bias are configured per engine,
+# GO is written to L1 and L3 (L2 has no GO -- it runs when vectors
+# arrive), and a single STREAM marker flows the input frame through.
+# There is NO per-layer GO/WAIT serialization: the iterative program's
+# per-(o,t) DMA -> GO -> WAIT sequence would cap throughput at
+# ~13.5 fps and waste the hardware.
+#
+# Config routing (rtl/srcnn_pipe.sv): the top two address bits select
+# the engine (L1 0x0000-0x3FFF, L2 0x4000-0x7FFF, L3 0x8000-0xBFFF);
+# the engine sees cfg_addr[13:0]. The driver writes the routed
+# addresses verbatim (W) and the weight DMA writes to the routed
+# coefficient bases the same way -- no driver change is needed.
+# ---------------------------------------------------------------------------
+PIPE_L1_BASE = 0x0000
+PIPE_L2_BASE = 0x4000
+PIPE_L3_BASE = 0x8000
+
+# Engine-local (low-14-bit) addresses. Geometry registers share the
+# conv2d_mc map (0x00 K, 0x01 shift, 0x02 W, 0x03 H, 0x04-0x07 pads,
+# 0x08/0x09 strides, 0x0A C_in, 0x0B C_out, 0x0C GO, 0x0D/0x0E out
+# W/H, 0x0F sign, 0x10 fused act, 0x11 slope).
+PIPE_COEFF_BASE = 0x100
+# L1 (conv2d_outpar): coeff 0x100 + o*128 + tap (tap = r*9+c, 0..80,
+# the 9x9 grid, kernel at the top-left); bias lo 0x2100+o, hi 0x2140+o
+# (after the 0x100..0x20FF coeff range -- 0x300/0x400 would overlap).
+PIPE_L1_BIAS_LO = 0x2100
+PIPE_L1_BIAS_HI = 0x2140
+PIPE_L1_TAPS = 81
+PIPE_L1_STRIDE = 128
+# L2 (conv1x1_cp): coeff 0x100 + o*64 + c; bias lo 0x900+o, hi 0x920+o.
+PIPE_L2_BIAS_LO = 0x0900
+PIPE_L2_BIAS_HI = 0x0920
+PIPE_L2_TAPS = 64
+PIPE_L2_STRIDE = 64
+# L3 (conv2d_tappar): coeff 0x100 + tap*32 + c (tap = t*5+j, 0..24),
+# contiguous 800 entries; bias lo 0x420, hi 0x440.
+PIPE_L3_BIAS_LO = 0x0420
+PIPE_L3_BIAS_HI = 0x0440
+PIPE_L3_TAPS = 800
+PIPE_L3_STRIDE = 1
+
+
+def _assign_streaming_engines(stream_layers):
+    """Assign the chain's conv layers to the pipeline engines.
+
+    ``stream_layers``: list of (op dict, node kwargs) in chain order.
+    Returns the engine descriptors (with the routed config addresses
+    and the DMA plan, but without weight_offset/ncoeff -- those are
+    filled in by _streaming_blob). Raises ValueError if the chain
+    does not fit the 3-stage pipeline.
+
+    Fit rules (from the RTL's verified shapes):
+      * exactly 3 conv layers, chained (L1 out == L2 in, L2 out == L3
+        in, channels included);
+      * L1 -> conv2d_outpar: K 3..9, C_in == 1, C_out a multiple of 16
+        in 16..64 (runtime ngroup = C_out/16);
+      * L2 -> conv1x1_cp: K == 1, C_in == 64, C_out == 32 (the
+        engine's NGROUP=5 and last-group mask are compile-time
+        parameters for exactly this shape);
+      * L3 -> conv2d_tappar: K == 5, C_in == 32, C_out == 1 (K=3 has
+        a known column-alignment limitation in the RTL, so it is
+        excluded here even though the engine accepts K=3);
+      * all layers valid conv (pad 0, stride 1) -- the pipeline was
+        verified for the SRCNN valid-conv chain; padded/strided
+        shapes need their own golden coverage first.
+    """
+    if len(stream_layers) != 3:
+        raise ValueError(
+            "streaming emission: the pipeline has exactly 3 engines, "
+            f"but the chain has {len(stream_layers)} conv layers")
+    descs = []
+    for (op, kw) in stream_layers:
+        for key in ("H", "W", "H_out", "W_out"):
+            if key not in kw:
+                raise ValueError(
+                    "streaming emission: layer "
+                    f"{op['name']} has no {key} -- run compile_model / "
+                    "infer_shapes before emitting")
+        descs.append({
+            "layer": op["name"], "K": op["K"], "C_in": op["C_in"],
+            "C_out": op["C_out"], "pad": tuple(op["pad"]),
+            "stride": tuple(op["stride"]), "shift": op["shift"],
+            "sign": op["sign"], "fused_act": op.get("fused_act"),
+            "act_slope": op.get("act_slope", 0.01),
+            "bias": [int(v) for v in op["bias"]],
+            "H": kw["H"], "W": kw["W"],
+            "H_out": kw["H_out"], "W_out": kw["W_out"],
+        })
+    l1, l2, l3 = descs
+    # L1 -> conv2d_outpar
+    if not (3 <= l1["K"] <= 9):
+        raise ValueError(
+            f"streaming emission: L1 K={l1['K']} (conv2d_outpar needs "
+            "3..9)")
+    if l1["C_in"] != 1:
+        raise ValueError(
+            "streaming emission: L1 C_in must be 1 "
+            f"(conv2d_outpar is single-channel in, got {l1['C_in']})")
+    if l1["C_out"] % 16 or not (16 <= l1["C_out"] <= 64):
+        raise ValueError(
+            "streaming emission: L1 C_out must be a multiple of 16 in "
+            f"16..64 (got {l1['C_out']})")
+    # L2 -> conv1x1_cp (compile-time shape)
+    if l2["K"] != 1 or l2["C_in"] != 64 or l2["C_out"] != 32:
+        raise ValueError(
+            "streaming emission: L2 must be K=1, C_in=64, C_out=32 "
+            f"(conv1x1_cp parameters; got K={l2['K']} "
+            f"C_in={l2['C_in']} C_out={l2['C_out']})")
+    # L3 -> conv2d_tappar (K=5 verified; K=3 has a known limitation)
+    if l3["K"] != 5 or l3["C_in"] != 32 or l3["C_out"] != 1:
+        raise ValueError(
+            "streaming emission: L3 must be K=5, C_in=32, C_out=1 "
+            f"(got K={l3['K']} C_in={l3['C_in']} C_out={l3['C_out']})")
+    for d in descs:
+        if d["pad"] != (0, 0, 0, 0) or d["stride"] != (1, 1):
+            raise ValueError(
+                "streaming emission: layer "
+                f"{d['layer']} must be valid conv (pad 0, stride 1); "
+                f"got pad={d['pad']} stride={d['stride']}")
+        if d.get("fused_act") not in (None, "none", "relu", "leaky"):
+            raise ValueError(
+                "streaming emission: layer "
+                f"{d['layer']} fused_act={d.get('fused_act')} "
+                "(pipeline engines implement relu/leaky only)")
+    # Chaining (space + channels).
+    if (l1["H_out"], l1["W_out"]) != (l2["H"], l2["W"]):
+        raise ValueError(
+            "streaming emission: L1 out "
+            f"{(l1['H_out'], l1['W_out'])} != L2 in {(l2['H'], l2['W'])}")
+    if (l2["H_out"], l2["W_out"]) != (l3["H"], l3["W"]):
+        raise ValueError(
+            "streaming emission: L2 out "
+            f"{(l2['H_out'], l2['W_out'])} != L3 in {(l3['H'], l3['W'])}")
+    if l1["C_out"] != l2["C_in"] or l2["C_out"] != l3["C_in"]:
+        raise ValueError(
+            "streaming emission: channel chain "
+            f"{l1['C_out']}->{l2['C_in']}->{l2['C_out']}->{l3['C_in']} "
+            "is broken")
+    l1.update({"engine": "conv2d_outpar", "pipe_base": PIPE_L1_BASE,
+               "bias_lo": PIPE_L1_BASE + PIPE_L1_BIAS_LO,
+               "bias_hi": PIPE_L1_BASE + PIPE_L1_BIAS_HI,
+               "dma_dst": PIPE_L1_BASE + PIPE_COEFF_BASE,
+               "dma_taps": PIPE_L1_TAPS, "dma_stride": PIPE_L1_STRIDE})
+    l2.update({"engine": "conv1x1_cp", "pipe_base": PIPE_L2_BASE,
+               "bias_lo": PIPE_L2_BASE + PIPE_L2_BIAS_LO,
+               "bias_hi": PIPE_L2_BASE + PIPE_L2_BIAS_HI,
+               "dma_dst": PIPE_L2_BASE + PIPE_COEFF_BASE,
+               "dma_taps": PIPE_L2_TAPS, "dma_stride": PIPE_L2_STRIDE})
+    l3.update({"engine": "conv2d_tappar", "pipe_base": PIPE_L3_BASE,
+               "bias_lo": PIPE_L3_BASE + PIPE_L3_BIAS_LO,
+               "bias_hi": PIPE_L3_BASE + PIPE_L3_BIAS_HI,
+               "dma_dst": PIPE_L3_BASE + PIPE_COEFF_BASE,
+               "dma_taps": PIPE_L3_TAPS, "dma_stride": PIPE_L3_STRIDE})
+    return descs
+
+
+def _streaming_blob(descs, weights):
+    """Build the streaming weight blob (int16 LE) in engine order.
+
+    L1: C_out x 81 (the 9x9 grid, kernel at the top-left, tap = r*9+c);
+    L2: C_out x 64 (o, c); L3: 25 x 32 (tap, c), tap = t*5+j, the full
+    5x5 grid (25 taps even for K < 5 -- the RTL indexes tap*32+c on
+    the 5x5 grid). Returns (blob_bytes, layout); also fills
+    weight_offset/ncoeff (in coefficients) into each descriptor.
+    """
+    blob = bytearray()
+    layout = {}
+    for d in descs:
+        name = d["layer"]
+        W_q = weights[name]["W_q"]
+        eng = d["engine"]
+        off = len(blob) // 2
+        if eng == "conv2d_outpar":
+            K, cout = d["K"], d["C_out"]
+            grid = np.zeros((cout, 81), dtype=np.int16)
+            for o in range(cout):
+                for r in range(K):
+                    grid[o, r * 9:r * 9 + K] = W_q[r, :, 0, o]
+            blob += grid.astype("<i2").tobytes()
+            ncoeff = cout * 81
+            order = "(o, tap) -- tap = r*9+c on the 9x9 grid, " \
+                "81/lane, lane stride 128"
+        elif eng == "conv1x1_cp":
+            cout, cin = d["C_out"], d["C_in"]
+            grid = np.zeros((cout, cin), dtype=np.int16)
+            for o in range(cout):
+                grid[o, :] = W_q[0, 0, :, o]
+            blob += grid.astype("<i2").tobytes()
+            ncoeff = cout * cin
+            order = "(o, c) -- 64/lane, lane stride 64"
+        else:  # conv2d_tappar
+            K, cin = d["K"], d["C_in"]
+            grid = np.zeros((25, cin), dtype=np.int16)
+            for t in range(K):
+                for j in range(K):
+                    grid[t * 5 + j, :] = W_q[t, j, :, 0]
+            blob += grid.astype("<i2").tobytes()
+            ncoeff = 25 * cin
+            order = "(tap, c) -- tap = t*5+j on the 5x5 grid, " \
+                "contiguous 800"
+        layout[name] = {"offset": off, "ncoeff": ncoeff, "order": order}
+        d["weight_offset"] = off
+        d["ncoeff"] = ncoeff
+    return bytes(blob), layout
+
+
+def _emit_streaming_instrs(descs):
+    """Instruction stream for the fused streaming program.
+
+    Per engine, in chain order: geometry + bias config writes, then
+    one DMA loading that engine's coefficients. Then GO (as plain W
+    writes to L1 0x000C and L3 0x800C; L2 has no GO) and a single
+    STREAM marker. No bare GO, no WAIT -- the frame streams through
+    all three engines concurrently.
+    """
+    instrs = []
+    instrs.append("# streaming pipeline program (Stage 7b): one fused "
+                  "program for the whole SRCNN chain")
+    instrs.append("# weights preloaded once at startup; one STREAM per "
+                  "frame; no per-layer GO/WAIT")
+    for d in descs:
+        base = d["pipe_base"]
+        nm = d["layer"]
+        instrs.append(f"# layer {nm} ({d['engine']}, pipe "
+                      f"{base:#06x}): K={d['K']} Cin={d['C_in']} "
+                      f"Cout={d['C_out']}")
+        if d["engine"] == "conv1x1_cp":
+            # No geometry: it processes vectors as they arrive.
+            instrs.append(f"W {base + 0x01:#06x} {d['shift']:#06x}")
+            instrs.append(f"W {base + 0x0A:#06x} {d['C_in']:#06x}")
+            instrs.append(f"W {base + 0x0B:#06x} {d['C_out']:#06x}")
+        else:
+            instrs.append(f"W {base + 0x00:#06x} {d['K']:#06x}")
+            instrs.append(f"W {base + 0x01:#06x} {d['shift']:#06x}")
+            instrs.append(f"W {base + 0x02:#06x} {d['W']:#06x}")
+            instrs.append(f"W {base + 0x03:#06x} {d['H']:#06x}")
+            for a in (0x04, 0x05, 0x06, 0x07):
+                instrs.append(f"W {base + a:#06x} 0x0000")
+            instrs.append(f"W {base + 0x08:#06x} 0x0001")
+            instrs.append(f"W {base + 0x09:#06x} 0x0001")
+            instrs.append(f"W {base + 0x0A:#06x} {d['C_in']:#06x}")
+            instrs.append(f"W {base + 0x0B:#06x} {d['C_out']:#06x}")
+            instrs.append(f"W {base + 0x0D:#06x} {d['W_out']:#06x}")
+            instrs.append(f"W {base + 0x0E:#06x} {d['H_out']:#06x}")
+        instrs.append(f"W {base + 0x0F:#06x} {d['sign']:#06x}")
+        fa = FUSED_ACT_CODE.get(d.get("fused_act") or "none", 0)
+        instrs.append(f"W {base + 0x10:#06x} {fa:#06x}")
+        if d.get("fused_act") == "leaky":
+            slope = int(round(d.get("act_slope", 0.01) * 65536.0))
+            instrs.append(f"W {base + 0x11:#06x} {slope:#06x}")
+        # Bias (int32 per output channel, lo/hi halves).
+        for o in range(d["C_out"]):
+            b = int(d["bias"][o])
+            instrs.append(f"W {d['bias_lo'] + o:#06x} {b & 0xFFFF:#06x}"
+                          f"  # bias o={o} (lo)")
+            instrs.append(f"W {d['bias_hi'] + o:#06x} "
+                          f"{(b >> 16) & 0xFFFF:#06x}  # bias o={o} (hi)")
+        # One DMA loads this engine's coefficients.
+        dram_off = d["weight_offset"] * 2  # byte offset in weights.bin
+        instrs.append(
+            f"DMA {dram_off} {d['ncoeff']} {d['dma_dst']:#06x} "
+            f"{d['dma_taps']} {d['dma_stride']}  # {nm} coeffs")
+    # Start: GO to L1 and L3 as plain config writes (L2 has no GO).
+    instrs.append("W 0x000c 0x0001  # GO L1 (conv2d_outpar)")
+    instrs.append("W 0x800c 0x0001  # GO L3 (conv2d_tappar)")
+    instrs.append("STREAM  # input frame (VDMA, Stages 8-11)")
+    return instrs
+
+
 def write_program(program, instrs, blob, outdir):
     """Write program.json, program.txt, weights.bin to outdir.
     Returns the paths."""
@@ -383,9 +731,65 @@ def write_program(program, instrs, blob, outdir):
     with open(tp, "w") as f:
         f.write("# FPGA accelerator program (Stage 5 compiler)\n")
         f.write(f"# model: {program['model']}\n")
+        if program.get("streaming", {}).get("enabled"):
+            f.write("# mode: streaming (Stage 7b pipeline: weights "
+                    "preloaded once, one STREAM per frame)\n")
         for line in instrs:
             f.write(line + "\n")
     bp = os.path.join(outdir, "weights.bin")
     with open(bp, "wb") as f:
         f.write(blob)
     return jp, tp, bp
+
+
+# ---------------------------------------------------------------------------
+# Stage 7b (PE array): streaming emission as PE assignments.
+#
+# emit_pe_program is the compiler's streaming emission for the generic
+# PE array (rtl/pe_array.sv). It wraps the scheduling pass
+# (sw/sched_pe.py): given the model's layers and the input feature map,
+# it emits the tile-step program -- one tile-step per (M-tile, N-chunk,
+# K-chunk) -- that the pe_array dispatcher executes. This REPLACES the
+# K^2 streaming emission above (emit_program(streaming=True), which
+# targets the superseded rtl/srcnn_pipe.sv) for the PE array; the K^2
+# streaming code is kept as reference and is not deleted. The
+# tile-step program has no per-layer GO/WAIT serialization (one
+# weight-load phase, then the frame streams as tile-steps); the
+# scheduler decides the mode/TM/TN/TK and the PE assignment per layer.
+# ---------------------------------------------------------------------------
+def emit_pe_program(layers, inp, device_name="zu19eg"):
+    """Emit the PE-array tile-step program for a model.
+
+    ``layers``: list of layer dicts (K, C_out, mode_dot, sign_in,
+    sign_out, shift, act, slope, W_q, b_q) as returned by
+    sched_pe.load_srcnn(). ``inp``: the model's input feature map
+    (HxWxC_in uint8). ``device_name``: a device in sw/devices.py.
+    Returns (program_dict, steps_by_layer) where program_dict is
+    {"mode": "streaming_pe", "device": device_name, "layers": [...]}
+    and steps_by_layer is a list of (layer_name, steps, shape) per
+    layer. The steps are consumed by the pe_array TB/driver
+    (sw/run_pe_srcnn.py); they are NOT an instruction stream for the
+    C driver (the PE array is programmed by tile-steps, not by
+    per-layer GO/WAIT).
+    """
+    import sched_pe
+    from devices import get as get_device
+    dev = get_device(device_name)
+    program = {"mode": "streaming_pe", "device": device_name, "layers": []}
+    steps_by_layer = []
+    cur = inp
+    for L in layers:
+        steps, shape = sched_pe.gen_layer_steps(L, cur, L["W_q"],
+                                                L["b_q"], dev)
+        program["layers"].append({
+            "name": L["name"], "K": L["K"], "C_out": L["C_out"],
+            "mode_dot": L["mode_dot"], "shift": L["shift"],
+            "n_steps": len(steps), "out_shape": list(shape),
+        })
+        steps_by_layer.append((L["name"], steps, shape))
+        # The next layer's input is this layer's golden output (the
+        # driver replaces it with the RTL output wave-by-wave; here
+        # the golden is used only to size the next layer's steps).
+        from funcsim import conv2d_fixed_rhu
+        cur = conv2d_fixed_rhu(cur, L["W_q"], L["b_q"], L["shift"])
+    return program, steps_by_layer

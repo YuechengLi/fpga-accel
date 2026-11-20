@@ -1,0 +1,6 @@
+Warning: Replacing memory \s2 with list of registers. See critpath_dense.sv:94
+Warning: Replacing memory \s1 with list of registers. See critpath_dense.sv:94, critpath_dense.sv:92
+Warning: Replacing memory \r with list of registers. See critpath_dense.sv:65
+Warning: Replacing memory \s2 with list of registers. See critpath_dense.sv:126
+Warning: Replacing memory \s1 with list of registers. See critpath_dense.sv:126, critpath_dense.sv:124
+Warning: Replacing memory \r with list of registers. See critpath_dense.sv:120

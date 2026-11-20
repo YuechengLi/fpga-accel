@@ -1,0 +1,12 @@
+Stage 7b cycle model: SRCNN raster streaming pipeline
+frame 1920x1080 in, L1/L2 out 1912x1072 (2049664 pos), L3 out 1908x1068 (2037744 pos)
+  L1 9x9 1->64: P_OUT=16 DSPs=1296 stream=8294400cy compute=8198656cy fill=15360cy total=8309760cy
+  L2 1x1 64->32: DSPs=448 5cy/pos x 2049664 pos + fill 0cy = 10248320cy
+  L3 5x5 32->1: DSPs=160 5cy/pos x 2037744 pos + fill 38400cy = 10227120cy
+  total DSPs = 1904 / 1968 (96.7%)
+  slowest stage: L2 1x1 64->32 10248320cy
+  @ 300 MHz: 29.3 fps [BELOW 30fps]
+  @ 360 MHz: 35.1 fps [MEETS 30fps]
+  @ 400 MHz: 39.0 fps [MEETS 30fps]
+  minimum clock for 30 fps: 307 MHz
+MODEL CHECK: ALL OK

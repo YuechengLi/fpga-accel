@@ -1,0 +1,1946 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2025  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)
+
+-- Running command `read_verilog -sv rtl/adder_tree.sv; hierarchy -top adder_tree; synth_ecp5 -top adder_tree; stat' --
+
+1. Executing Verilog-2005 frontend: rtl/adder_tree.sv
+Parsing SystemVerilog input from `rtl/adder_tree.sv' to AST representation.
+Generating RTLIL representation for module `\adder_tree'.
+Warning: Replacing memory \in with list of registers. See rtl/adder_tree.sv:67
+Warning: Replacing memory \s6 with list of registers. See rtl/adder_tree.sv:136
+Warning: Replacing memory \s4 with list of registers. See rtl/adder_tree.sv:135
+Warning: Replacing memory \s2 with list of registers. See rtl/adder_tree.sv:134
+Warning: Replacing memory \l8 with list of registers. See rtl/adder_tree.sv:129
+Warning: Replacing memory \l7 with list of registers. See rtl/adder_tree.sv:129, rtl/adder_tree.sv:123
+Warning: Replacing memory \l6 with list of registers. See rtl/adder_tree.sv:116
+Warning: Replacing memory \l5 with list of registers. See rtl/adder_tree.sv:116, rtl/adder_tree.sv:112
+Warning: Replacing memory \l4 with list of registers. See rtl/adder_tree.sv:105
+Warning: Replacing memory \l3 with list of registers. See rtl/adder_tree.sv:105, rtl/adder_tree.sv:101
+Warning: Replacing memory \l2 with list of registers. See rtl/adder_tree.sv:94
+Warning: Replacing memory \l1 with list of registers. See rtl/adder_tree.sv:94, rtl/adder_tree.sv:90
+Successfully finished Verilog frontend.
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+
+2.1. Analyzing design hierarchy..
+Top module:  \adder_tree
+
+2.2. Analyzing design hierarchy..
+Top module:  \adder_tree
+Removed 0 unused modules.
+
+3. Executing SYNTH_ECP5 pass.
+
+3.1. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/ecp5/cells_sim.v
+Parsing Verilog input from `/usr/bin/../share/yosys/ecp5/cells_sim.v' to AST representation.
+Generating RTLIL representation for module `\LUT4'.
+Generating RTLIL representation for module `\$__ABC9_LUT5'.
+Generating RTLIL representation for module `\$__ABC9_LUT6'.
+Generating RTLIL representation for module `\$__ABC9_LUT7'.
+Generating RTLIL representation for module `\L6MUX21'.
+Generating RTLIL representation for module `\CCU2C'.
+Generating RTLIL representation for module `\TRELLIS_RAM16X2'.
+Generating RTLIL representation for module `\PFUMX'.
+Generating RTLIL representation for module `\TRELLIS_DPR16X4'.
+Generating RTLIL representation for module `\DPR16X4C'.
+Generating RTLIL representation for module `\LUT2'.
+Generating RTLIL representation for module `\TRELLIS_FF'.
+Generating RTLIL representation for module `\TRELLIS_IO'.
+Generating RTLIL representation for module `\INV'.
+Generating RTLIL representation for module `\TRELLIS_COMB'.
+Generating RTLIL representation for module `\DP16KD'.
+Generating RTLIL representation for module `\FD1P3AX'.
+Generating RTLIL representation for module `\FD1P3AY'.
+Generating RTLIL representation for module `\FD1P3BX'.
+Generating RTLIL representation for module `\FD1P3DX'.
+Generating RTLIL representation for module `\FD1P3IX'.
+Generating RTLIL representation for module `\FD1P3JX'.
+Generating RTLIL representation for module `\FD1S3AX'.
+Generating RTLIL representation for module `\FD1S3AY'.
+Generating RTLIL representation for module `\FD1S3BX'.
+Generating RTLIL representation for module `\FD1S3DX'.
+Generating RTLIL representation for module `\FD1S3IX'.
+Generating RTLIL representation for module `\FD1S3JX'.
+Generating RTLIL representation for module `\IFS1P3BX'.
+Generating RTLIL representation for module `\IFS1P3DX'.
+Generating RTLIL representation for module `\IFS1P3IX'.
+Generating RTLIL representation for module `\IFS1P3JX'.
+Generating RTLIL representation for module `\OFS1P3BX'.
+Generating RTLIL representation for module `\OFS1P3DX'.
+Generating RTLIL representation for module `\OFS1P3IX'.
+Generating RTLIL representation for module `\OFS1P3JX'.
+Generating RTLIL representation for module `\IB'.
+Generating RTLIL representation for module `\IBPU'.
+Generating RTLIL representation for module `\IBPD'.
+Generating RTLIL representation for module `\OB'.
+Generating RTLIL representation for module `\OBZ'.
+Generating RTLIL representation for module `\OBZPU'.
+Generating RTLIL representation for module `\OBZPD'.
+Generating RTLIL representation for module `\OBCO'.
+Generating RTLIL representation for module `\BB'.
+Generating RTLIL representation for module `\BBPU'.
+Generating RTLIL representation for module `\BBPD'.
+Generating RTLIL representation for module `\ILVDS'.
+Generating RTLIL representation for module `\OLVDS'.
+Successfully finished Verilog frontend.
+
+3.2. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/ecp5/cells_bb.v
+Parsing Verilog input from `/usr/bin/../share/yosys/ecp5/cells_bb.v' to AST representation.
+Generating RTLIL representation for module `\MULT18X18D'.
+Generating RTLIL representation for module `\ALU54B'.
+Generating RTLIL representation for module `\EHXPLLL'.
+Generating RTLIL representation for module `\DTR'.
+Generating RTLIL representation for module `\OSCG'.
+Generating RTLIL representation for module `\USRMCLK'.
+Generating RTLIL representation for module `\JTAGG'.
+Generating RTLIL representation for module `\DELAYF'.
+Generating RTLIL representation for module `\DELAYG'.
+Generating RTLIL representation for module `\IDDRX1F'.
+Generating RTLIL representation for module `\IDDRX2F'.
+Generating RTLIL representation for module `\IDDR71B'.
+Generating RTLIL representation for module `\IDDRX2DQA'.
+Generating RTLIL representation for module `\ODDRX1F'.
+Generating RTLIL representation for module `\ODDRX2F'.
+Generating RTLIL representation for module `\ODDR71B'.
+Generating RTLIL representation for module `\OSHX2A'.
+Generating RTLIL representation for module `\ODDRX2DQA'.
+Generating RTLIL representation for module `\ODDRX2DQSB'.
+Generating RTLIL representation for module `\TSHX2DQA'.
+Generating RTLIL representation for module `\TSHX2DQSA'.
+Generating RTLIL representation for module `\DQSBUFM'.
+Generating RTLIL representation for module `\DDRDLLA'.
+Generating RTLIL representation for module `\DLLDELD'.
+Generating RTLIL representation for module `\CLKDIVF'.
+Generating RTLIL representation for module `\ECLKSYNCB'.
+Generating RTLIL representation for module `\ECLKBRIDGECS'.
+Generating RTLIL representation for module `\DCCA'.
+Generating RTLIL representation for module `\DCSC'.
+Generating RTLIL representation for module `\DCUA'.
+Generating RTLIL representation for module `\EXTREFB'.
+Generating RTLIL representation for module `\PCSCLKDIV'.
+Generating RTLIL representation for module `\PUR'.
+Generating RTLIL representation for module `\GSR'.
+Generating RTLIL representation for module `\SGSR'.
+Generating RTLIL representation for module `\PDPW16KD'.
+Successfully finished Verilog frontend.
+
+3.3. Executing HIERARCHY pass (managing design hierarchy).
+
+3.3.1. Analyzing design hierarchy..
+Top module:  \adder_tree
+
+3.3.2. Analyzing design hierarchy..
+Top module:  \adder_tree
+Removed 0 unused modules.
+
+3.4. Executing PROC pass (convert processes to netlists).
+
+3.4.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 1 empty switch in `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:213$219'.
+Found and cleaned up 2 empty switches in `\adder_tree.$proc$rtl/adder_tree.sv:121$97'.
+Found and cleaned up 2 empty switches in `\adder_tree.$proc$rtl/adder_tree.sv:110$92'.
+Found and cleaned up 2 empty switches in `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+Found and cleaned up 2 empty switches in `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+Cleaned up 9 empty switches.
+
+3.4.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:350$326 in module TRELLIS_FF.
+Marked 1 switch rules as full_case in process $proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:285$278 in module DPR16X4C.
+Marked 1 switch rules as full_case in process $proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:221$220 in module TRELLIS_DPR16X4.
+Marked 2 switch rules as full_case in process $proc$rtl/adder_tree.sv:132$99 in module adder_tree.
+Removed a total of 0 dead cases.
+
+3.4.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 220 assignments to connections.
+
+3.4.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `\TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$327'.
+  Set init value: \Q = 1'0
+
+3.4.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+
+3.4.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~5 debug messages>
+
+3.4.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$327'.
+Creating decoders for process `\TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:350$326'.
+     1/1: $0\Q[0:0]
+Creating decoders for process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+Creating decoders for process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:285$278'.
+     1/3: $1$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:287$277_EN[3:0]$284
+     2/3: $1$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:287$277_DATA[3:0]$283
+     3/3: $1$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:287$277_ADDR[3:0]$282
+Creating decoders for process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+Creating decoders for process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:221$220'.
+     1/3: $1$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:223$218_EN[3:0]$226
+     2/3: $1$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:223$218_DATA[3:0]$225
+     3/3: $1$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:223$218_ADDR[3:0]$224
+Creating decoders for process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:213$219'.
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+     1/32: $6\i[31:0]
+     2/32: $5\i[31:0]
+     3/32: $0\s6[1][30:0]
+     4/32: $0\s6[0][30:0]
+     5/32: $0\s4[5][28:0]
+     6/32: $0\s4[4][28:0]
+     7/32: $0\s4[3][28:0]
+     8/32: $0\s4[2][28:0]
+     9/32: $0\s4[1][28:0]
+    10/32: $0\s4[0][28:0]
+    11/32: $0\s2[20][26:0]
+    12/32: $0\s2[19][26:0]
+    13/32: $0\s2[18][26:0]
+    14/32: $0\s2[17][26:0]
+    15/32: $0\s2[16][26:0]
+    16/32: $0\s2[15][26:0]
+    17/32: $0\s2[14][26:0]
+    18/32: $0\s2[13][26:0]
+    19/32: $0\s2[12][26:0]
+    20/32: $0\s2[11][26:0]
+    21/32: $0\s2[10][26:0]
+    22/32: $0\s2[9][26:0]
+    23/32: $0\s2[8][26:0]
+    24/32: $0\s2[7][26:0]
+    25/32: $0\s2[6][26:0]
+    26/32: $0\s2[5][26:0]
+    27/32: $0\s2[4][26:0]
+    28/32: $0\s2[3][26:0]
+    29/32: $0\s2[2][26:0]
+    30/32: $0\s2[1][26:0]
+    31/32: $0\s2[0][26:0]
+    32/32: $0\out[32:0]
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:121$97'.
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:110$92'.
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+
+3.4.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\adder_tree.\in[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[4]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[5]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[6]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[7]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[8]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[9]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[10]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[11]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[12]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[13]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[14]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[15]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[16]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[17]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[18]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[19]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[20]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[21]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[22]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[23]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[24]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[25]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[26]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[27]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[28]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[29]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[30]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[31]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[32]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[33]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[34]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[35]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[36]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[37]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[38]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[39]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[40]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[41]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[42]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[43]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[44]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[45]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[46]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[47]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[48]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[49]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[50]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[51]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[52]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[53]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[54]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[55]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[56]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[57]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[58]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[59]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[60]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[61]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[62]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[63]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[64]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[65]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[66]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[67]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[68]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[69]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[70]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[71]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[72]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[73]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[74]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[75]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[76]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[77]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[78]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[79]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\in[80]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+No latch inferred for signal `\adder_tree.\i' from process `\adder_tree.$proc$rtl/adder_tree.sv:121$97'.
+No latch inferred for signal `\adder_tree.\l7[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:121$97'.
+No latch inferred for signal `\adder_tree.\l8[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:121$97'.
+No latch inferred for signal `\adder_tree.\i' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$92'.
+No latch inferred for signal `\adder_tree.\l5[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$92'.
+No latch inferred for signal `\adder_tree.\l5[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$92'.
+No latch inferred for signal `\adder_tree.\l5[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$92'.
+No latch inferred for signal `\adder_tree.\l6[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$92'.
+No latch inferred for signal `\adder_tree.\l6[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$92'.
+No latch inferred for signal `\adder_tree.\i' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l3[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l3[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l3[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l3[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l3[4]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l3[5]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l3[6]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l3[7]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l3[8]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l3[9]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l3[10]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l4[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l4[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l4[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l4[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l4[4]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\l4[5]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+No latch inferred for signal `\adder_tree.\i' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[4]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[5]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[6]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[7]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[8]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[9]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[10]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[11]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[12]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[13]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[14]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[15]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[16]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[17]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[18]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[19]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[20]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[21]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[22]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[23]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[24]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[25]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[26]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[27]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[28]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[29]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[30]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[31]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[32]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[33]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[34]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[35]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[36]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[37]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[38]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[39]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l1[40]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[4]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[5]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[6]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[7]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[8]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[9]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[10]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[11]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[12]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[13]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[14]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[15]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[16]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[17]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[18]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[19]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+No latch inferred for signal `\adder_tree.\l2[20]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+
+3.4.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\TRELLIS_FF.\Q' using process `\TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:350$326'.
+  created $dff cell `$procdff$444' with positive edge clock.
+Creating register for signal `\DPR16X4C.\i' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$262_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$263_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$264_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$265_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$266_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$267_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$268_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$269_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$270_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$271_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$272_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$273_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$274_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$275_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:281$276_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:287$277_ADDR' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:285$278'.
+  created $dff cell `$procdff$445' with positive edge clock.
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:287$277_DATA' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:285$278'.
+  created $dff cell `$procdff$446' with positive edge clock.
+Creating register for signal `\DPR16X4C.$memwr$\ram$/usr/bin/../share/yosys/ecp5/cells_sim.v:287$277_EN' using process `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:285$278'.
+  created $dff cell `$procdff$447' with positive edge clock.
+Creating register for signal `\TRELLIS_DPR16X4.\i' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$202_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$203_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$204_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$205_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$206_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$207_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$208_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$209_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$210_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$211_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$212_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$213_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$214_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$215_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$216_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:207$217_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:223$218_ADDR' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:221$220'.
+  created $dff cell `$procdff$448' with positive edge clock.
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:223$218_DATA' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:221$220'.
+  created $dff cell `$procdff$449' with positive edge clock.
+Creating register for signal `\TRELLIS_DPR16X4.$memwr$\mem$/usr/bin/../share/yosys/ecp5/cells_sim.v:223$218_EN' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:221$220'.
+  created $dff cell `$procdff$450' with positive edge clock.
+Creating register for signal `\TRELLIS_DPR16X4.\muxwre' using process `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:213$219'.
+  created direct connection (no actual register cell created).
+Creating register for signal `\adder_tree.\out' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$455' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\i' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$460' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[0]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$465' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[1]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$470' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[2]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$475' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[3]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$480' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[4]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$485' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[5]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$490' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[6]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$495' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[7]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$500' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[8]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$505' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[9]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$510' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[10]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$515' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[11]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$520' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[12]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$525' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[13]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$530' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[14]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$535' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[15]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$540' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[16]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$545' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[17]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$550' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[18]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$555' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[19]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$560' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[20]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$565' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[0]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$570' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[1]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$575' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[2]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$580' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[3]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$585' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[4]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$590' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[5]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$595' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s6[0]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$600' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s6[1]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+  created $adff cell `$procdff$605' with positive edge clock and positive level reset.
+
+3.4.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.4.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$327'.
+Found and cleaned up 2 empty switches in `\TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:350$326'.
+Removing empty process `TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:350$326'.
+Removing empty process `DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$301'.
+Found and cleaned up 1 empty switch in `\DPR16X4C.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:285$278'.
+Removing empty process `TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$244'.
+Found and cleaned up 1 empty switch in `\TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:221$220'.
+Removing empty process `TRELLIS_DPR16X4.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:213$219'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:0$102'.
+Found and cleaned up 1 empty switch in `\adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:132$99'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:121$97'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:110$92'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:99$76'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:88$15'.
+Cleaned up 5 empty switches.
+
+3.4.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+<suppressed ~93 debug messages>
+
+3.5. Executing FLATTEN pass (flatten design).
+
+3.6. Executing TRIBUF pass.
+
+3.7. Executing DEMINOUT pass (demote inout ports to input or output).
+
+3.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 35 unused cells and 386 unused wires.
+<suppressed ~36 debug messages>
+
+3.10. Executing CHECK pass (checking for obvious problems).
+Checking module adder_tree...
+Found and reported 0 problems.
+
+3.11. Executing OPT pass (performing simple optimizations).
+
+3.11.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.11.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.11.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~30 debug messages>
+
+3.11.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.11.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.11.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.11.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.11.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.11.9. Finished OPT passes. (There is nothing left to do.)
+
+3.12. Executing FSM pass (extract and optimize FSM).
+
+3.12.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+3.12.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+3.12.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.12.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.12.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.12.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+3.12.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+3.12.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+3.13. Executing OPT pass (performing simple optimizations).
+
+3.13.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.13.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.13.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~30 debug messages>
+
+3.13.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.13.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.13.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$605 ($adff) from module adder_tree (D = { \l5[2] [29] \l5[2] }, Q = \s6[1]).
+Adding EN signal on $procdff$600 ($adff) from module adder_tree (D = \l6[0], Q = \s6[0]).
+Adding EN signal on $procdff$595 ($adff) from module adder_tree (D = { \s2[20] [26] \s2[20] [26] \s2[20] }, Q = \s4[5]).
+Adding EN signal on $procdff$590 ($adff) from module adder_tree (D = \l4[4], Q = \s4[4]).
+Adding EN signal on $procdff$585 ($adff) from module adder_tree (D = \l4[3], Q = \s4[3]).
+Adding EN signal on $procdff$580 ($adff) from module adder_tree (D = \l4[2], Q = \s4[2]).
+Adding EN signal on $procdff$575 ($adff) from module adder_tree (D = \l4[1], Q = \s4[1]).
+Adding EN signal on $procdff$570 ($adff) from module adder_tree (D = \l4[0], Q = \s4[0]).
+Adding EN signal on $procdff$565 ($adff) from module adder_tree (D = { \in_flat [2024] \in_flat [2024] \in_flat [2024:2000] }, Q = \s2[20]).
+Adding EN signal on $procdff$560 ($adff) from module adder_tree (D = \l2[19], Q = \s2[19]).
+Adding EN signal on $procdff$555 ($adff) from module adder_tree (D = \l2[18], Q = \s2[18]).
+Adding EN signal on $procdff$550 ($adff) from module adder_tree (D = \l2[17], Q = \s2[17]).
+Adding EN signal on $procdff$545 ($adff) from module adder_tree (D = \l2[16], Q = \s2[16]).
+Adding EN signal on $procdff$540 ($adff) from module adder_tree (D = \l2[15], Q = \s2[15]).
+Adding EN signal on $procdff$535 ($adff) from module adder_tree (D = \l2[14], Q = \s2[14]).
+Adding EN signal on $procdff$530 ($adff) from module adder_tree (D = \l2[13], Q = \s2[13]).
+Adding EN signal on $procdff$525 ($adff) from module adder_tree (D = \l2[12], Q = \s2[12]).
+Adding EN signal on $procdff$520 ($adff) from module adder_tree (D = \l2[11], Q = \s2[11]).
+Adding EN signal on $procdff$515 ($adff) from module adder_tree (D = \l2[10], Q = \s2[10]).
+Adding EN signal on $procdff$510 ($adff) from module adder_tree (D = \l2[9], Q = \s2[9]).
+Adding EN signal on $procdff$505 ($adff) from module adder_tree (D = \l2[8], Q = \s2[8]).
+Adding EN signal on $procdff$500 ($adff) from module adder_tree (D = \l2[7], Q = \s2[7]).
+Adding EN signal on $procdff$495 ($adff) from module adder_tree (D = \l2[6], Q = \s2[6]).
+Adding EN signal on $procdff$490 ($adff) from module adder_tree (D = \l2[5], Q = \s2[5]).
+Adding EN signal on $procdff$485 ($adff) from module adder_tree (D = \l2[4], Q = \s2[4]).
+Adding EN signal on $procdff$480 ($adff) from module adder_tree (D = \l2[3], Q = \s2[3]).
+Adding EN signal on $procdff$475 ($adff) from module adder_tree (D = \l2[2], Q = \s2[2]).
+Adding EN signal on $procdff$470 ($adff) from module adder_tree (D = \l2[1], Q = \s2[1]).
+Adding EN signal on $procdff$465 ($adff) from module adder_tree (D = \l2[0], Q = \s2[0]).
+Adding EN signal on $procdff$455 ($adff) from module adder_tree (D = { \l7[0] [31] \l7[0] }, Q = \out).
+
+3.13.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 30 unused cells and 30 unused wires.
+<suppressed ~31 debug messages>
+
+3.13.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.13.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.13.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.13.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.13.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.13.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.13.16. Finished OPT passes. (There is nothing left to do.)
+
+3.14. Executing WREDUCE pass (reducing word size of cells).
+Removed top 1 bits (of 33) from FF cell adder_tree.$auto$ff.cc:266:slice$635 ($adffe).
+Removed top 2 bits (of 27) from FF cell adder_tree.$auto$ff.cc:266:slice$614 ($adffe).
+Removed top 4 bits (of 29) from FF cell adder_tree.$auto$ff.cc:266:slice$608 ($adffe).
+Removed top 1 bits (of 31) from FF cell adder_tree.$auto$ff.cc:266:slice$606 ($adffe).
+Removed top 4 bits (of 29) from port B of cell adder_tree.$add$rtl/adder_tree.sv:112$95 ($add).
+Removed top 1 bits (of 31) from port B of cell adder_tree.$add$rtl/adder_tree.sv:123$98 ($add).
+
+3.15. Executing PEEPOPT pass (run peephole optimizers).
+
+3.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.17. Executing SHARE pass (SAT-based resource sharing).
+
+3.18. Executing TECHMAP pass (map to technology primitives).
+
+3.18.1. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/cmp2lut.v
+Parsing Verilog input from `/usr/bin/../share/yosys/cmp2lut.v' to AST representation.
+Generating RTLIL representation for module `\_90_lut_cmp_'.
+Successfully finished Verilog frontend.
+
+3.18.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~6 debug messages>
+
+3.19. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.20. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.21. Executing TECHMAP pass (map to technology primitives).
+
+3.21.1. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/mul2dsp.v
+Parsing Verilog input from `/usr/bin/../share/yosys/mul2dsp.v' to AST representation.
+Generating RTLIL representation for module `\_80_mul'.
+Generating RTLIL representation for module `\_90_soft_mul'.
+Successfully finished Verilog frontend.
+
+3.21.2. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/ecp5/dsp_map.v
+Parsing Verilog input from `/usr/bin/../share/yosys/ecp5/dsp_map.v' to AST representation.
+Generating RTLIL representation for module `\$__MUL18X18'.
+Successfully finished Verilog frontend.
+
+3.21.3. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~5 debug messages>
+
+3.22. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module adder_tree:
+  creating $macc model for $add$rtl/adder_tree.sv:101$77 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$78 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$79 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$80 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$81 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$82 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$83 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$84 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$85 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$86 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$87 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$88 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$89 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$90 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$91 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:112$93 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:112$94 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:112$95 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:116$96 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:123$98 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$16 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$17 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$18 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$19 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$20 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$21 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$22 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$23 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$24 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$25 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$26 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$27 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$28 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$29 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$30 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$31 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$32 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$33 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$34 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$35 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$36 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$37 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$38 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$39 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$40 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$41 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$42 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$43 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$44 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$45 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$46 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$47 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$48 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$49 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$50 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$51 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$52 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$53 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$54 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$55 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$56 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$57 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$58 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$59 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$60 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$61 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$62 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$63 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$64 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$65 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$66 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$67 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$68 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$69 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$70 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$71 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$72 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$73 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$74 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$75 ($add).
+  merging $macc model for $add$rtl/adder_tree.sv:90$54 into $add$rtl/adder_tree.sv:94$75.
+  merging $macc model for $add$rtl/adder_tree.sv:90$55 into $add$rtl/adder_tree.sv:94$75.
+  merging $macc model for $add$rtl/adder_tree.sv:90$52 into $add$rtl/adder_tree.sv:94$74.
+  merging $macc model for $add$rtl/adder_tree.sv:90$53 into $add$rtl/adder_tree.sv:94$74.
+  merging $macc model for $add$rtl/adder_tree.sv:90$50 into $add$rtl/adder_tree.sv:94$73.
+  merging $macc model for $add$rtl/adder_tree.sv:90$51 into $add$rtl/adder_tree.sv:94$73.
+  merging $macc model for $add$rtl/adder_tree.sv:90$48 into $add$rtl/adder_tree.sv:94$72.
+  merging $macc model for $add$rtl/adder_tree.sv:90$49 into $add$rtl/adder_tree.sv:94$72.
+  merging $macc model for $add$rtl/adder_tree.sv:90$46 into $add$rtl/adder_tree.sv:94$71.
+  merging $macc model for $add$rtl/adder_tree.sv:90$47 into $add$rtl/adder_tree.sv:94$71.
+  merging $macc model for $add$rtl/adder_tree.sv:90$44 into $add$rtl/adder_tree.sv:94$70.
+  merging $macc model for $add$rtl/adder_tree.sv:90$45 into $add$rtl/adder_tree.sv:94$70.
+  merging $macc model for $add$rtl/adder_tree.sv:90$42 into $add$rtl/adder_tree.sv:94$69.
+  merging $macc model for $add$rtl/adder_tree.sv:90$43 into $add$rtl/adder_tree.sv:94$69.
+  merging $macc model for $add$rtl/adder_tree.sv:90$40 into $add$rtl/adder_tree.sv:94$68.
+  merging $macc model for $add$rtl/adder_tree.sv:90$41 into $add$rtl/adder_tree.sv:94$68.
+  merging $macc model for $add$rtl/adder_tree.sv:90$38 into $add$rtl/adder_tree.sv:94$67.
+  merging $macc model for $add$rtl/adder_tree.sv:90$39 into $add$rtl/adder_tree.sv:94$67.
+  merging $macc model for $add$rtl/adder_tree.sv:90$36 into $add$rtl/adder_tree.sv:94$66.
+  merging $macc model for $add$rtl/adder_tree.sv:90$37 into $add$rtl/adder_tree.sv:94$66.
+  merging $macc model for $add$rtl/adder_tree.sv:90$34 into $add$rtl/adder_tree.sv:94$65.
+  merging $macc model for $add$rtl/adder_tree.sv:90$35 into $add$rtl/adder_tree.sv:94$65.
+  merging $macc model for $add$rtl/adder_tree.sv:90$32 into $add$rtl/adder_tree.sv:94$64.
+  merging $macc model for $add$rtl/adder_tree.sv:90$33 into $add$rtl/adder_tree.sv:94$64.
+  merging $macc model for $add$rtl/adder_tree.sv:90$30 into $add$rtl/adder_tree.sv:94$63.
+  merging $macc model for $add$rtl/adder_tree.sv:90$31 into $add$rtl/adder_tree.sv:94$63.
+  merging $macc model for $add$rtl/adder_tree.sv:90$28 into $add$rtl/adder_tree.sv:94$62.
+  merging $macc model for $add$rtl/adder_tree.sv:90$29 into $add$rtl/adder_tree.sv:94$62.
+  merging $macc model for $add$rtl/adder_tree.sv:90$26 into $add$rtl/adder_tree.sv:94$61.
+  merging $macc model for $add$rtl/adder_tree.sv:90$27 into $add$rtl/adder_tree.sv:94$61.
+  merging $macc model for $add$rtl/adder_tree.sv:90$24 into $add$rtl/adder_tree.sv:94$60.
+  merging $macc model for $add$rtl/adder_tree.sv:90$25 into $add$rtl/adder_tree.sv:94$60.
+  merging $macc model for $add$rtl/adder_tree.sv:90$22 into $add$rtl/adder_tree.sv:94$59.
+  merging $macc model for $add$rtl/adder_tree.sv:90$23 into $add$rtl/adder_tree.sv:94$59.
+  merging $macc model for $add$rtl/adder_tree.sv:90$20 into $add$rtl/adder_tree.sv:94$58.
+  merging $macc model for $add$rtl/adder_tree.sv:90$21 into $add$rtl/adder_tree.sv:94$58.
+  merging $macc model for $add$rtl/adder_tree.sv:90$18 into $add$rtl/adder_tree.sv:94$57.
+  merging $macc model for $add$rtl/adder_tree.sv:90$19 into $add$rtl/adder_tree.sv:94$57.
+  merging $macc model for $add$rtl/adder_tree.sv:90$16 into $add$rtl/adder_tree.sv:94$56.
+  merging $macc model for $add$rtl/adder_tree.sv:90$17 into $add$rtl/adder_tree.sv:94$56.
+  merging $macc model for $add$rtl/adder_tree.sv:112$93 into $add$rtl/adder_tree.sv:116$96.
+  merging $macc model for $add$rtl/adder_tree.sv:112$94 into $add$rtl/adder_tree.sv:116$96.
+  merging $macc model for $add$rtl/adder_tree.sv:101$85 into $add$rtl/adder_tree.sv:105$91.
+  merging $macc model for $add$rtl/adder_tree.sv:101$86 into $add$rtl/adder_tree.sv:105$91.
+  merging $macc model for $add$rtl/adder_tree.sv:101$83 into $add$rtl/adder_tree.sv:105$90.
+  merging $macc model for $add$rtl/adder_tree.sv:101$84 into $add$rtl/adder_tree.sv:105$90.
+  merging $macc model for $add$rtl/adder_tree.sv:101$81 into $add$rtl/adder_tree.sv:105$89.
+  merging $macc model for $add$rtl/adder_tree.sv:101$82 into $add$rtl/adder_tree.sv:105$89.
+  merging $macc model for $add$rtl/adder_tree.sv:101$79 into $add$rtl/adder_tree.sv:105$88.
+  merging $macc model for $add$rtl/adder_tree.sv:101$80 into $add$rtl/adder_tree.sv:105$88.
+  merging $macc model for $add$rtl/adder_tree.sv:101$77 into $add$rtl/adder_tree.sv:105$87.
+  merging $macc model for $add$rtl/adder_tree.sv:101$78 into $add$rtl/adder_tree.sv:105$87.
+  creating $alu model for $macc $add$rtl/adder_tree.sv:123$98.
+  creating $alu model for $macc $add$rtl/adder_tree.sv:112$95.
+  creating $macc cell for $add$rtl/adder_tree.sv:94$59: $auto$alumacc.cc:365:replace_macc$637
+  creating $macc cell for $add$rtl/adder_tree.sv:94$58: $auto$alumacc.cc:365:replace_macc$638
+  creating $macc cell for $add$rtl/adder_tree.sv:94$61: $auto$alumacc.cc:365:replace_macc$639
+  creating $macc cell for $add$rtl/adder_tree.sv:94$60: $auto$alumacc.cc:365:replace_macc$640
+  creating $macc cell for $add$rtl/adder_tree.sv:94$63: $auto$alumacc.cc:365:replace_macc$641
+  creating $macc cell for $add$rtl/adder_tree.sv:94$62: $auto$alumacc.cc:365:replace_macc$642
+  creating $macc cell for $add$rtl/adder_tree.sv:94$56: $auto$alumacc.cc:365:replace_macc$643
+  creating $macc cell for $add$rtl/adder_tree.sv:116$96: $auto$alumacc.cc:365:replace_macc$644
+  creating $macc cell for $add$rtl/adder_tree.sv:94$57: $auto$alumacc.cc:365:replace_macc$645
+  creating $macc cell for $add$rtl/adder_tree.sv:94$65: $auto$alumacc.cc:365:replace_macc$646
+  creating $macc cell for $add$rtl/adder_tree.sv:94$64: $auto$alumacc.cc:365:replace_macc$647
+  creating $macc cell for $add$rtl/adder_tree.sv:105$91: $auto$alumacc.cc:365:replace_macc$648
+  creating $macc cell for $add$rtl/adder_tree.sv:105$90: $auto$alumacc.cc:365:replace_macc$649
+  creating $macc cell for $add$rtl/adder_tree.sv:105$89: $auto$alumacc.cc:365:replace_macc$650
+  creating $macc cell for $add$rtl/adder_tree.sv:105$88: $auto$alumacc.cc:365:replace_macc$651
+  creating $macc cell for $add$rtl/adder_tree.sv:105$87: $auto$alumacc.cc:365:replace_macc$652
+  creating $macc cell for $add$rtl/adder_tree.sv:94$67: $auto$alumacc.cc:365:replace_macc$653
+  creating $macc cell for $add$rtl/adder_tree.sv:94$66: $auto$alumacc.cc:365:replace_macc$654
+  creating $macc cell for $add$rtl/adder_tree.sv:94$69: $auto$alumacc.cc:365:replace_macc$655
+  creating $macc cell for $add$rtl/adder_tree.sv:94$68: $auto$alumacc.cc:365:replace_macc$656
+  creating $macc cell for $add$rtl/adder_tree.sv:94$71: $auto$alumacc.cc:365:replace_macc$657
+  creating $macc cell for $add$rtl/adder_tree.sv:94$70: $auto$alumacc.cc:365:replace_macc$658
+  creating $macc cell for $add$rtl/adder_tree.sv:94$73: $auto$alumacc.cc:365:replace_macc$659
+  creating $macc cell for $add$rtl/adder_tree.sv:94$72: $auto$alumacc.cc:365:replace_macc$660
+  creating $macc cell for $add$rtl/adder_tree.sv:94$75: $auto$alumacc.cc:365:replace_macc$661
+  creating $macc cell for $add$rtl/adder_tree.sv:94$74: $auto$alumacc.cc:365:replace_macc$662
+  creating $alu cell for $add$rtl/adder_tree.sv:112$95: $auto$alumacc.cc:495:replace_alu$663
+  creating $alu cell for $add$rtl/adder_tree.sv:123$98: $auto$alumacc.cc:495:replace_alu$666
+  created 2 $alu and 26 $macc cells.
+
+3.23. Executing OPT pass (performing simple optimizations).
+
+3.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.23.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.23.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.23.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.23.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.23.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 52 unused cells and 52 unused wires.
+<suppressed ~104 debug messages>
+
+3.23.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.23.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.23.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.23.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.23.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.23.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.23.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.23.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.23.16. Finished OPT passes. (There is nothing left to do.)
+
+3.24. Executing MEMORY pass.
+
+3.24.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+3.24.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+3.24.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+3.24.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+3.24.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+3.24.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.24.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+3.24.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+3.24.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.24.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+3.25. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.26. Executing MEMORY_LIBMAP pass (mapping memories to cells).
+
+3.27. Executing TECHMAP pass (map to technology primitives).
+
+3.27.1. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/ecp5/lutrams_map.v
+Parsing Verilog input from `/usr/bin/../share/yosys/ecp5/lutrams_map.v' to AST representation.
+Generating RTLIL representation for module `\$__TRELLIS_DPR16X4_'.
+Successfully finished Verilog frontend.
+
+3.27.2. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/ecp5/brams_map.v
+Parsing Verilog input from `/usr/bin/../share/yosys/ecp5/brams_map.v' to AST representation.
+Generating RTLIL representation for module `\$__ECP5_DP16KD_'.
+Generating RTLIL representation for module `\$__ECP5_PDPW16KD_'.
+Successfully finished Verilog frontend.
+
+3.27.3. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~5 debug messages>
+
+3.28. Executing OPT pass (performing simple optimizations).
+
+3.28.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.28.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.28.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.28.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.28.5. Finished fast OPT passes.
+
+3.29. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+3.30. Executing OPT pass (performing simple optimizations).
+
+3.30.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.30.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.30.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.30.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.30.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.30.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.30.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.30.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.30.9. Finished OPT passes. (There is nothing left to do.)
+
+3.31. Executing TECHMAP pass (map to technology primitives).
+
+3.31.1. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/usr/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `\$__div_mod_u'.
+Generating RTLIL representation for module `\$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `\$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_pmux'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Successfully finished Verilog frontend.
+
+3.31.2. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/ecp5/arith_map.v
+Parsing Verilog input from `/usr/bin/../share/yosys/ecp5/arith_map.v' to AST representation.
+Generating RTLIL representation for module `\_80_ecp5_alu'.
+Successfully finished Verilog frontend.
+
+3.31.3. Continuing TECHMAP pass.
+Using extmapper maccmap for cells of type $macc_v2.
+  add \s4[0] (29 bits, signed)
+  add \s4[2] (29 bits, signed)
+  add \s4[1] (29 bits, signed)
+  add \s4[3] (29 bits, signed)
+  add \in_flat [924:900] (25 bits, signed)
+  add \in_flat [974:950] (25 bits, signed)
+  add \in_flat [949:925] (25 bits, signed)
+  add \in_flat [999:975] (25 bits, signed)
+  add \in_flat [524:500] (25 bits, signed)
+  add \in_flat [574:550] (25 bits, signed)
+  add \in_flat [549:525] (25 bits, signed)
+  add \in_flat [599:575] (25 bits, signed)
+  add \in_flat [224:200] (25 bits, signed)
+  add \in_flat [274:250] (25 bits, signed)
+  add \in_flat [249:225] (25 bits, signed)
+  add \in_flat [299:275] (25 bits, signed)
+  add \in_flat [724:700] (25 bits, signed)
+  add \in_flat [774:750] (25 bits, signed)
+  add \in_flat [749:725] (25 bits, signed)
+  add \in_flat [799:775] (25 bits, signed)
+  add \in_flat [424:400] (25 bits, signed)
+  add \in_flat [474:450] (25 bits, signed)
+  add \in_flat [449:425] (25 bits, signed)
+  add \in_flat [499:475] (25 bits, signed)
+  add \in_flat [24:0] (25 bits, signed)
+  add \in_flat [74:50] (25 bits, signed)
+  add \in_flat [49:25] (25 bits, signed)
+  add \in_flat [99:75] (25 bits, signed)
+  add \in_flat [624:600] (25 bits, signed)
+  add \in_flat [674:650] (25 bits, signed)
+  add \in_flat [649:625] (25 bits, signed)
+  add \in_flat [699:675] (25 bits, signed)
+  add \s2[16] (27 bits, signed)
+  add \s2[18] (27 bits, signed)
+  add \s2[17] (27 bits, signed)
+  add \s2[19] (27 bits, signed)
+  add \in_flat [824:800] (25 bits, signed)
+  add \in_flat [874:850] (25 bits, signed)
+  add \in_flat [849:825] (25 bits, signed)
+  add \in_flat [899:875] (25 bits, signed)
+  add \in_flat [1324:1300] (25 bits, signed)
+  add \in_flat [1374:1350] (25 bits, signed)
+  add \in_flat [1349:1325] (25 bits, signed)
+  add \in_flat [1399:1375] (25 bits, signed)
+  add \in_flat [1024:1000] (25 bits, signed)
+  add \in_flat [1074:1050] (25 bits, signed)
+  add \in_flat [1049:1025] (25 bits, signed)
+  add \in_flat [1099:1075] (25 bits, signed)
+  add \in_flat [1524:1500] (25 bits, signed)
+  add \in_flat [1574:1550] (25 bits, signed)
+  add \in_flat [1549:1525] (25 bits, signed)
+  add \in_flat [1599:1575] (25 bits, signed)
+  add \in_flat [1224:1200] (25 bits, signed)
+  add \in_flat [1274:1250] (25 bits, signed)
+  add \in_flat [1249:1225] (25 bits, signed)
+  add \in_flat [1299:1275] (25 bits, signed)
+  add \in_flat [1724:1700] (25 bits, signed)
+  add \in_flat [1774:1750] (25 bits, signed)
+  add \in_flat [1749:1725] (25 bits, signed)
+  add \in_flat [1799:1775] (25 bits, signed)
+  add \in_flat [1424:1400] (25 bits, signed)
+  add \in_flat [1474:1450] (25 bits, signed)
+  add \in_flat [1449:1425] (25 bits, signed)
+  add \in_flat [1499:1475] (25 bits, signed)
+  add \in_flat [1924:1900] (25 bits, signed)
+  add \in_flat [1974:1950] (25 bits, signed)
+  add \in_flat [1949:1925] (25 bits, signed)
+  add \in_flat [1999:1975] (25 bits, signed)
+  add \in_flat [1624:1600] (25 bits, signed)
+  add \in_flat [1674:1650] (25 bits, signed)
+  add \in_flat [1649:1625] (25 bits, signed)
+  add \in_flat [1699:1675] (25 bits, signed)
+Using template $paramod$db68490778fda3a2ea88f2968ef06babc85bc2b2\_80_ecp5_alu for cells of type $alu.
+  add \in_flat [1824:1800] (25 bits, signed)
+  add \in_flat [1874:1850] (25 bits, signed)
+  add \in_flat [1849:1825] (25 bits, signed)
+  add \in_flat [1899:1875] (25 bits, signed)
+  add \in_flat [1124:1100] (25 bits, signed)
+  add \in_flat [1174:1150] (25 bits, signed)
+  add \in_flat [1149:1125] (25 bits, signed)
+  add \in_flat [1199:1175] (25 bits, signed)
+  add \s2[0] (27 bits, signed)
+  add \s2[2] (27 bits, signed)
+  add \s2[1] (27 bits, signed)
+  add \s2[3] (27 bits, signed)
+  add \s2[4] (27 bits, signed)
+  add \s2[6] (27 bits, signed)
+  add \s2[5] (27 bits, signed)
+  add \s2[7] (27 bits, signed)
+  add \s2[8] (27 bits, signed)
+  add \s2[10] (27 bits, signed)
+  add \s2[9] (27 bits, signed)
+  add \s2[11] (27 bits, signed)
+  add \s2[12] (27 bits, signed)
+  add \s2[14] (27 bits, signed)
+  add \s2[13] (27 bits, signed)
+  add \s2[15] (27 bits, signed)
+Using template $paramod$6b05ee2f2fec4729b7b88b7f3fde55b852713f03\_80_ecp5_alu for cells of type $alu.
+  add \in_flat [124:100] (25 bits, signed)
+  add \in_flat [174:150] (25 bits, signed)
+  add \in_flat [149:125] (25 bits, signed)
+  add \in_flat [199:175] (25 bits, signed)
+  add \in_flat [324:300] (25 bits, signed)
+  add \in_flat [374:350] (25 bits, signed)
+  add \in_flat [349:325] (25 bits, signed)
+  add \in_flat [399:375] (25 bits, signed)
+Using extmapper simplemap for cells of type $adffe.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011011 for cells of type $fa.
+Using template $paramod$f02bbbf710bba6238f4bdfa41b3051acfe2064a8\_80_ecp5_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011101 for cells of type $fa.
+Using template $paramod$88ebedc0964674c5b2e447c66b33a42fc7e7abe0\_80_ecp5_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $logic_or.
+Using extmapper simplemap for cells of type $logic_and.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011111 for cells of type $fa.
+Using template $paramod$ebf89ea36a793f0f77858f212141d47c833068ad\_80_ecp5_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $xor.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $pos.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $and.
+No more expansions possible.
+<suppressed ~2399 debug messages>
+
+3.32. Executing OPT pass (performing simple optimizations).
+
+3.32.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+<suppressed ~1094 debug messages>
+
+3.32.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+<suppressed ~1182 debug messages>
+Removed a total of 394 cells.
+
+3.32.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.32.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 3000 unused cells and 2712 unused wires.
+<suppressed ~3001 debug messages>
+
+3.32.5. Finished fast OPT passes.
+
+3.33. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.34. Executing DFFLEGALIZE pass (convert FFs to types supported by the target).
+
+3.35. Executing TECHMAP pass (map to technology primitives).
+
+3.35.1. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/ecp5/cells_map.v
+Parsing Verilog input from `/usr/bin/../share/yosys/ecp5/cells_map.v' to AST representation.
+Generating RTLIL representation for module `\$_DFF_N_'.
+Generating RTLIL representation for module `\$_DFF_P_'.
+Generating RTLIL representation for module `\$_DFFE_NN_'.
+Generating RTLIL representation for module `\$_DFFE_PN_'.
+Generating RTLIL representation for module `\$_DFFE_NP_'.
+Generating RTLIL representation for module `\$_DFFE_PP_'.
+Generating RTLIL representation for module `\$_DFF_NP0_'.
+Generating RTLIL representation for module `\$_DFF_NP1_'.
+Generating RTLIL representation for module `\$_DFF_PP0_'.
+Generating RTLIL representation for module `\$_DFF_PP1_'.
+Generating RTLIL representation for module `\$_SDFF_NP0_'.
+Generating RTLIL representation for module `\$_SDFF_NP1_'.
+Generating RTLIL representation for module `\$_SDFF_PP0_'.
+Generating RTLIL representation for module `\$_SDFF_PP1_'.
+Generating RTLIL representation for module `\$_DFFE_NP0P_'.
+Generating RTLIL representation for module `\$_DFFE_NP1P_'.
+Generating RTLIL representation for module `\$_DFFE_PP0P_'.
+Generating RTLIL representation for module `\$_DFFE_PP1P_'.
+Generating RTLIL representation for module `\$_DFFE_NP0N_'.
+Generating RTLIL representation for module `\$_DFFE_NP1N_'.
+Generating RTLIL representation for module `\$_DFFE_PP0N_'.
+Generating RTLIL representation for module `\$_DFFE_PP1N_'.
+Generating RTLIL representation for module `\$_SDFFE_NP0P_'.
+Generating RTLIL representation for module `\$_SDFFE_NP1P_'.
+Generating RTLIL representation for module `\$_SDFFE_PP0P_'.
+Generating RTLIL representation for module `\$_SDFFE_PP1P_'.
+Generating RTLIL representation for module `\$_SDFFE_NP0N_'.
+Generating RTLIL representation for module `\$_SDFFE_NP1N_'.
+Generating RTLIL representation for module `\$_SDFFE_PP0N_'.
+Generating RTLIL representation for module `\$_SDFFE_PP1N_'.
+Generating RTLIL representation for module `\$_ALDFF_NP_'.
+Generating RTLIL representation for module `\$_ALDFF_PP_'.
+Generating RTLIL representation for module `\$_ALDFFE_NPN_'.
+Generating RTLIL representation for module `\$_ALDFFE_NPP_'.
+Generating RTLIL representation for module `\$_ALDFFE_PPN_'.
+Generating RTLIL representation for module `\$_ALDFFE_PPP_'.
+Generating RTLIL representation for module `\FD1P3AX'.
+Generating RTLIL representation for module `\FD1P3AY'.
+Generating RTLIL representation for module `\FD1P3BX'.
+Generating RTLIL representation for module `\FD1P3DX'.
+Generating RTLIL representation for module `\FD1P3IX'.
+Generating RTLIL representation for module `\FD1P3JX'.
+Generating RTLIL representation for module `\FD1S3AX'.
+Generating RTLIL representation for module `\FD1S3AY'.
+Generating RTLIL representation for module `\FD1S3BX'.
+Generating RTLIL representation for module `\FD1S3DX'.
+Generating RTLIL representation for module `\FD1S3IX'.
+Generating RTLIL representation for module `\FD1S3JX'.
+Generating RTLIL representation for module `\IFS1P3BX'.
+Generating RTLIL representation for module `\IFS1P3DX'.
+Generating RTLIL representation for module `\IFS1P3IX'.
+Generating RTLIL representation for module `\IFS1P3JX'.
+Generating RTLIL representation for module `\OFS1P3BX'.
+Generating RTLIL representation for module `\OFS1P3DX'.
+Generating RTLIL representation for module `\OFS1P3IX'.
+Generating RTLIL representation for module `\OFS1P3JX'.
+Generating RTLIL representation for module `\IB'.
+Generating RTLIL representation for module `\IBPU'.
+Generating RTLIL representation for module `\IBPD'.
+Generating RTLIL representation for module `\OB'.
+Generating RTLIL representation for module `\OBZ'.
+Generating RTLIL representation for module `\OBZPU'.
+Generating RTLIL representation for module `\OBZPD'.
+Generating RTLIL representation for module `\OBCO'.
+Generating RTLIL representation for module `\BB'.
+Generating RTLIL representation for module `\BBPU'.
+Generating RTLIL representation for module `\BBPD'.
+Generating RTLIL representation for module `\ILVDS'.
+Generating RTLIL representation for module `\OLVDS'.
+Successfully finished Verilog frontend.
+
+3.35.2. Continuing TECHMAP pass.
+Using template \$_DFFE_PP0N_ for cells of type $_DFFE_PP0N_.
+No more expansions possible.
+<suppressed ~899 debug messages>
+
+3.36. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.37. Executing SIMPLEMAP pass (map simple cells to gate primitives).
+
+3.38. Executing LATTICE_GSR pass (implement FF init values).
+Handling GSR in adder_tree.
+
+3.39. Executing ATTRMVCP pass (move or copy attributes).
+
+3.40. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 0 unused cells and 4968 unused wires.
+<suppressed ~1 debug messages>
+
+3.41. Executing TECHMAP pass (map to technology primitives).
+
+3.41.1. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/ecp5/latches_map.v
+Parsing Verilog input from `/usr/bin/../share/yosys/ecp5/latches_map.v' to AST representation.
+Generating RTLIL representation for module `\$_DLATCH_N_'.
+Generating RTLIL representation for module `\$_DLATCH_P_'.
+Successfully finished Verilog frontend.
+
+3.41.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~4 debug messages>
+
+3.42. Executing ABC9 pass.
+
+3.42.1. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.42.2. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.42.3. Executing PROC pass (convert processes to netlists).
+
+3.42.3.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.42.3.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:344$16004 in module $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.
+Removed a total of 0 dead cases.
+
+3.42.3.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 1 assignment to connection.
+
+3.42.3.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `$paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$16005'.
+  Set init value: \Q = 1'0
+
+3.42.3.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \muxlsr in `$paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:344$16004'.
+
+3.42.3.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+3.42.3.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `$paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$16005'.
+Creating decoders for process `$paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:344$16004'.
+     1/1: $0\Q[0:0]
+
+3.42.3.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+3.42.3.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `$paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.\Q' using process `$paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:344$16004'.
+  created $adff cell `$procdff$16010' with positive edge clock and positive level reset.
+
+3.42.3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.42.3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `$paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:0$16005'.
+Found and cleaned up 1 empty switch in `$paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:344$16004'.
+Removing empty process `$paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.$proc$/usr/bin/../share/yosys/ecp5/cells_sim.v:344$16004'.
+Cleaned up 1 empty switch.
+
+3.42.3.12. Executing OPT_EXPR pass (perform const folding).
+
+3.42.4. Executing SCC pass (detecting logic loops).
+Found 0 SCCs in module adder_tree.
+Found 0 SCCs.
+
+3.42.5. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.42.6. Executing PROC pass (convert processes to netlists).
+
+3.42.6.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.42.6.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Removed a total of 0 dead cases.
+
+3.42.6.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 0 assignments to connections.
+
+3.42.6.4. Executing PROC_INIT pass (extract init attributes).
+
+3.42.6.5. Executing PROC_ARST pass (detect async resets in processes).
+
+3.42.6.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+
+3.42.6.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+
+3.42.6.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+3.42.6.9. Executing PROC_DFF pass (convert process syncs to FFs).
+
+3.42.6.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.42.6.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.42.6.12. Executing OPT_EXPR pass (perform const folding).
+
+3.42.7. Executing TECHMAP pass (map to technology primitives).
+
+3.42.7.1. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/usr/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `\$__div_mod_u'.
+Generating RTLIL representation for module `\$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `\$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_pmux'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Successfully finished Verilog frontend.
+
+3.42.7.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~164 debug messages>
+
+3.42.8. Executing OPT pass (performing simple optimizations).
+
+3.42.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.
+
+3.42.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF'.
+Removed a total of 0 cells.
+
+3.42.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.42.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.
+Performed a total of 0 changes.
+
+3.42.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF'.
+Removed a total of 0 cells.
+
+3.42.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.42.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF..
+
+3.42.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.
+
+3.42.8.9. Finished OPT passes. (There is nothing left to do.)
+
+3.42.9. Executing TECHMAP pass (map to technology primitives).
+
+3.42.9.1. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/abc9_map.v
+Parsing Verilog input from `/usr/bin/../share/yosys/abc9_map.v' to AST representation.
+Successfully finished Verilog frontend.
+
+3.42.9.2. Continuing TECHMAP pass.
+Using template $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF for cells of type $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.
+No more expansions possible.
+<suppressed ~831 debug messages>
+
+3.42.10. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/abc9_model.v
+Parsing Verilog input from `/usr/bin/../share/yosys/abc9_model.v' to AST representation.
+Generating RTLIL representation for module `$__ABC9_DELAY'.
+Generating RTLIL representation for module `$__ABC9_SCC_BREAKER'.
+Generating RTLIL representation for module `$__DFF_N__$abc9_flop'.
+Generating RTLIL representation for module `$__DFF_P__$abc9_flop'.
+Successfully finished Verilog frontend.
+
+3.42.11. Executing ABC9_OPS pass (helper functions for ABC9).
+<suppressed ~2 debug messages>
+
+3.42.12. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.42.13. Executing ABC9_OPS pass (helper functions for ABC9).
+<suppressed ~2 debug messages>
+
+3.42.14. Executing TECHMAP pass (map to technology primitives).
+
+3.42.14.1. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/usr/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `\$__div_mod_u'.
+Generating RTLIL representation for module `\$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `\$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_pmux'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Successfully finished Verilog frontend.
+
+3.42.14.2. Continuing TECHMAP pass.
+Using template $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C for cells of type $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod\LUT2\INIT=4'1010 for cells of type LUT2.
+Using template $paramod\LUT4\INIT=16'1001011010101010 for cells of type LUT4.
+Using extmapper simplemap for cells of type $mux.
+No more expansions possible.
+<suppressed ~203 debug messages>
+
+3.42.15. Executing OPT pass (performing simple optimizations).
+
+3.42.15.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+<suppressed ~18 debug messages>
+
+3.42.15.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+<suppressed ~6 debug messages>
+Removed a total of 2 cells.
+
+3.42.15.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.42.15.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.42.15.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.42.15.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.42.15.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 0 unused cells and 55 unused wires.
+<suppressed ~1 debug messages>
+
+3.42.15.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.42.15.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.42.15.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.42.15.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.42.15.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.42.15.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.42.15.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.42.15.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.42.15.16. Finished OPT passes. (There is nothing left to do.)
+
+3.42.16. Executing AIGMAP pass (map logic to AIG).
+Module adder_tree: replaced 18 cells with 120 new cells, skipped 39 cells.
+  replaced 3 cell types:
+       2 $_OR_
+       2 $_XOR_
+      14 $_MUX_
+  not replaced 3 cell types:
+      31 $specify2
+       4 $_NOT_
+       4 $_AND_
+
+3.42.17. Executing AIGMAP pass (map logic to AIG).
+Module adder_tree: replaced 4010 cells with 24086 new cells, skipped 5568 cells.
+  replaced 2 cell types:
+    1328 $_OR_
+    2682 $_XOR_
+  not replaced 5 cell types:
+     828 $_NOT_
+    2682 $_AND_
+     402 $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C
+     828 $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF
+     828 $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF_$abc9_byp
+
+3.42.17.1. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.42.17.2. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.42.17.3. Executing XAIGER backend.
+<suppressed ~11 debug messages>
+Extracted 12056 AND gates and 33843 wires from module `adder_tree' to a netlist network with 2856 inputs and 1664 outputs.
+
+3.42.17.4. Executing ABC9_EXE pass (technology mapping using ABC9).
+
+3.42.17.5. Executing ABC9.
+Running ABC command: "<yosys-exe-dir>/yosys-abc" -s -f <abc-temp-dir>/abc.script 2>&1
+ABC: ABC command line: "source <abc-temp-dir>/abc.script".
+ABC: 
+ABC: + read_lut <abc-temp-dir>/input.lut 
+ABC: + read_box <abc-temp-dir>/input.box 
+ABC: + &read <abc-temp-dir>/input.xaig 
+ABC: + &ps 
+ABC: <abc-temp-dir>/input : i/o =   2856/   1664  and =    9374  lev =    8 (1.60)  mem = 0.29 MB  box = 1230  bb = 828
+ABC: + &scorr 
+ABC: Warning: The network is combinational.
+ABC: + &sweep 
+ABC: + &dc2 
+ABC: + &dch -f 
+ABC: + &ps 
+ABC: <abc-temp-dir>/input : i/o =   2856/   1664  and =    9348  lev =    8 (1.59)  mem = 0.29 MB  ch =    0  box = 1230  bb = 828
+ABC: cst =       0  cls =      0  lit =       0  unused =   14238  proof =     0
+ABC: + &if -W 300 -v 
+ABC: K = 7. Memory (bytes): Truth =    0. Cut =   64. Obj =  148. Set =  672. CutMin = no
+ABC: Node =    9348.  Ch =     0.  Total mem =    3.31 MB. Peak cut mem =    0.01 MB.
+ABC: P:  Del = 2398.00.  Ar =    5846.0.  Edge =     9348.  Cut =   156876.  T =     0.01 sec
+ABC: P:  Del = 2398.00.  Ar =    5846.0.  Edge =     9348.  Cut =   156876.  T =     0.04 sec
+ABC: P:  Del = 2398.00.  Ar =    5144.0.  Edge =    10596.  Cut =   202174.  T =     0.02 sec
+ABC: F:  Del = 2398.00.  Ar =    2908.0.  Edge =     8412.  Cut =   111596.  T =     0.01 sec
+ABC: A:  Del = 2398.00.  Ar =    2908.0.  Edge =     8412.  Cut =   124544.  T =     0.01 sec
+ABC: A:  Del = 2398.00.  Ar =    2908.0.  Edge =     8412.  Cut =   124544.  T =     0.01 sec
+ABC: Total time =     0.10 sec
+ABC: + &write -n <abc-temp-dir>/output.aig 
+ABC: + &mfs 
+ABC: The network is not changed by "&mfs".
+ABC: + &ps -l 
+ABC: <abc-temp-dir>/input : i/o =   2856/   1664  and =   16072  lev =    8 (1.59)  mem = 0.37 MB  box = 1230  bb = 828
+ABC: Mapping (K=6)  :  lut =   2538  edge =    8412  lev =    2 (0.39)  levB =   19  mem = 0.16 MB
+ABC: LUT = 2538 : 2=170 6.7 %  3=1716 67.6 %  4=390 15.4 %  5=208 8.2 %  6=54 2.1 %  Ave = 3.31
+ABC: + &write -n <abc-temp-dir>/output.aig 
+ABC: + time 
+ABC: elapse: 3.24 seconds, total: 3.24 seconds
+
+3.42.17.6. Executing AIGER frontend.
+<suppressed ~9052 debug messages>
+Removed 29306 unused cells and 40307 unused wires.
+
+3.42.17.7. Executing ABC9_OPS pass (helper functions for ABC9).
+ABC RESULTS:              $lut cells:     2539
+ABC RESULTS:   $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C cells:      402
+ABC RESULTS:   $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF_$abc9_byp cells:      828
+ABC RESULTS:           input signals:      832
+ABC RESULTS:          output signals:      858
+Removing temp directory.
+
+3.42.18. Executing TECHMAP pass (map to technology primitives).
+
+3.42.18.1. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/abc9_unmap.v
+Parsing Verilog input from `/usr/bin/../share/yosys/abc9_unmap.v' to AST representation.
+Generating RTLIL representation for module `\$__DFF_x__$abc9_flop'.
+Generating RTLIL representation for module `\$__ABC9_SCC_BREAKER'.
+Successfully finished Verilog frontend.
+
+3.42.18.2. Continuing TECHMAP pass.
+Using template $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C for cells of type $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C.
+Using template $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF for cells of type $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF.
+Using template $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF_$abc9_byp for cells of type $paramod$fc0db0418c65f8f3e9cd6d60036af078dabe316c\TRELLIS_FF_$abc9_byp.
+No more expansions possible.
+<suppressed ~2066 debug messages>
+Removed 664 unused cells and 51882 unused wires.
+
+3.43. Executing TECHMAP pass (map to technology primitives).
+
+3.43.1. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/ecp5/cells_map.v
+Parsing Verilog input from `/usr/bin/../share/yosys/ecp5/cells_map.v' to AST representation.
+Generating RTLIL representation for module `\$_DFF_N_'.
+Generating RTLIL representation for module `\$_DFF_P_'.
+Generating RTLIL representation for module `\$_DFFE_NN_'.
+Generating RTLIL representation for module `\$_DFFE_PN_'.
+Generating RTLIL representation for module `\$_DFFE_NP_'.
+Generating RTLIL representation for module `\$_DFFE_PP_'.
+Generating RTLIL representation for module `\$_DFF_NP0_'.
+Generating RTLIL representation for module `\$_DFF_NP1_'.
+Generating RTLIL representation for module `\$_DFF_PP0_'.
+Generating RTLIL representation for module `\$_DFF_PP1_'.
+Generating RTLIL representation for module `\$_SDFF_NP0_'.
+Generating RTLIL representation for module `\$_SDFF_NP1_'.
+Generating RTLIL representation for module `\$_SDFF_PP0_'.
+Generating RTLIL representation for module `\$_SDFF_PP1_'.
+Generating RTLIL representation for module `\$_DFFE_NP0P_'.
+Generating RTLIL representation for module `\$_DFFE_NP1P_'.
+Generating RTLIL representation for module `\$_DFFE_PP0P_'.
+Generating RTLIL representation for module `\$_DFFE_PP1P_'.
+Generating RTLIL representation for module `\$_DFFE_NP0N_'.
+Generating RTLIL representation for module `\$_DFFE_NP1N_'.
+Generating RTLIL representation for module `\$_DFFE_PP0N_'.
+Generating RTLIL representation for module `\$_DFFE_PP1N_'.
+Generating RTLIL representation for module `\$_SDFFE_NP0P_'.
+Generating RTLIL representation for module `\$_SDFFE_NP1P_'.
+Generating RTLIL representation for module `\$_SDFFE_PP0P_'.
+Generating RTLIL representation for module `\$_SDFFE_PP1P_'.
+Generating RTLIL representation for module `\$_SDFFE_NP0N_'.
+Generating RTLIL representation for module `\$_SDFFE_NP1N_'.
+Generating RTLIL representation for module `\$_SDFFE_PP0N_'.
+Generating RTLIL representation for module `\$_SDFFE_PP1N_'.
+Generating RTLIL representation for module `\$_ALDFF_NP_'.
+Generating RTLIL representation for module `\$_ALDFF_PP_'.
+Generating RTLIL representation for module `\$_ALDFFE_NPN_'.
+Generating RTLIL representation for module `\$_ALDFFE_NPP_'.
+Generating RTLIL representation for module `\$_ALDFFE_PPN_'.
+Generating RTLIL representation for module `\$_ALDFFE_PPP_'.
+Generating RTLIL representation for module `\FD1P3AX'.
+Generating RTLIL representation for module `\FD1P3AY'.
+Generating RTLIL representation for module `\FD1P3BX'.
+Generating RTLIL representation for module `\FD1P3DX'.
+Generating RTLIL representation for module `\FD1P3IX'.
+Generating RTLIL representation for module `\FD1P3JX'.
+Generating RTLIL representation for module `\FD1S3AX'.
+Generating RTLIL representation for module `\FD1S3AY'.
+Generating RTLIL representation for module `\FD1S3BX'.
+Generating RTLIL representation for module `\FD1S3DX'.
+Generating RTLIL representation for module `\FD1S3IX'.
+Generating RTLIL representation for module `\FD1S3JX'.
+Generating RTLIL representation for module `\IFS1P3BX'.
+Generating RTLIL representation for module `\IFS1P3DX'.
+Generating RTLIL representation for module `\IFS1P3IX'.
+Generating RTLIL representation for module `\IFS1P3JX'.
+Generating RTLIL representation for module `\OFS1P3BX'.
+Generating RTLIL representation for module `\OFS1P3DX'.
+Generating RTLIL representation for module `\OFS1P3IX'.
+Generating RTLIL representation for module `\OFS1P3JX'.
+Generating RTLIL representation for module `\IB'.
+Generating RTLIL representation for module `\IBPU'.
+Generating RTLIL representation for module `\IBPD'.
+Generating RTLIL representation for module `\OB'.
+Generating RTLIL representation for module `\OBZ'.
+Generating RTLIL representation for module `\OBZPU'.
+Generating RTLIL representation for module `\OBZPD'.
+Generating RTLIL representation for module `\OBCO'.
+Generating RTLIL representation for module `\BB'.
+Generating RTLIL representation for module `\BBPU'.
+Generating RTLIL representation for module `\BBPD'.
+Generating RTLIL representation for module `\ILVDS'.
+Generating RTLIL representation for module `\OLVDS'.
+Generating RTLIL representation for module `\$lut'.
+Successfully finished Verilog frontend.
+
+3.43.2. Continuing TECHMAP pass.
+Using template $paramod\$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'10010110 for cells of type $lut.
+Using template $paramod\$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'00010111 for cells of type $lut.
+Using template $paramod\$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'10001110 for cells of type $lut.
+Using template $paramod\$lut\WIDTH=32'00000000000000000000000000000010\LUT=4'0110 for cells of type $lut.
+Using template $paramod$5ddfd1ea4f5227b248c326983159684afd6d7d86\$lut for cells of type $lut.
+Using template $paramod\$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'01101001 for cells of type $lut.
+Using template $paramod$4282def8dbd6df3d1248ad282c629bee684502c2\$lut for cells of type $lut.
+Using template $paramod$d309c420122d35a8f70edfaeeb7908db5137817a\$lut for cells of type $lut.
+Using template $paramod$7c57228df39eed5240de04995e61ac6a2ad834e4\$lut for cells of type $lut.
+Using template $paramod$39cd8733c1cb3eddde2c7f68a282400acbcf8fb7\$lut for cells of type $lut.
+Using template $paramod\$lut\WIDTH=32'00000000000000000000000000000001\LUT=2'01 for cells of type $lut.
+Using template $paramod$a8e32e80792f96ac903824073fb456e69f22375f\$lut for cells of type $lut.
+Using template $paramod$fd904e9e35cfd343a9df248824bd3f1408724879\$lut for cells of type $lut.
+Using template $paramod$0de052767abdccc3aefc818722bdc3c7850d25d6\$lut for cells of type $lut.
+Using template $paramod$3db2dbecc7992925684f9be6f117ad582f1777da\$lut for cells of type $lut.
+Using template $paramod$0c6a2b6e9180ec88ede8d228d1bee3905e4818c2\$lut for cells of type $lut.
+No more expansions possible.
+<suppressed ~2819 debug messages>
+
+3.44. Executing OPT_LUT_INS pass (discard unused LUT inputs).
+Optimizing LUTs in adder_tree.
+Removed 0 unused cells and 6101 unused wires.
+
+3.45. Executing AUTONAME pass.
+Renamed 41388 objects in module adder_tree (42 iterations).
+<suppressed ~7964 debug messages>
+
+3.46. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `adder_tree'. Setting top module to adder_tree.
+
+3.46.1. Analyzing design hierarchy..
+Top module:  \adder_tree
+
+3.46.2. Analyzing design hierarchy..
+Top module:  \adder_tree
+Removed 0 unused modules.
+
+3.47. Printing statistics.
+
+=== adder_tree ===
+
+   Number of wires:               3579
+   Number of wire bits:          10673
+   Number of public wires:        3579
+   Number of public wire bits:   10673
+   Number of ports:                  5
+   Number of port bits:           2061
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               4509
+     CCU2C                         402
+     L6MUX21                        54
+     LUT4                         2909
+     PFUMX                         316
+     TRELLIS_FF                    828
+
+3.48. Executing CHECK pass (checking for obvious problems).
+Checking module adder_tree...
+Found and reported 0 problems.
+
+4. Printing statistics.
+
+=== adder_tree ===
+
+   Number of wires:               3579
+   Number of wire bits:          10673
+   Number of public wires:        3579
+   Number of public wire bits:   10673
+   Number of ports:                  5
+   Number of port bits:           2061
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               4509
+     CCU2C                         402
+     L6MUX21                        54
+     LUT4                         2909
+     PFUMX                         316
+     TRELLIS_FF                    828
+
+Warnings: 12 unique messages, 12 total
+End of script. Logfile hash: 7f6cfff1c0, CPU: user 4.29s system 0.21s, MEM: 121.96 MB peak
+Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)
+Time spent: 34% 1x abc9_exe (2 sec), 10% 11x techmap (0 sec), ...

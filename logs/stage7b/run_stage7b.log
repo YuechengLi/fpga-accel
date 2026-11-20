@@ -1,0 +1,22 @@
+=== 1. adder_tree smoke test + synth_ecp5 ===
+[PASS] adder_tree compile
+[PASS] adder_tree smoke (200 vectors x 4 sizes)
+=== 2. PE (pe_mac) golden ===
+[PASS] pe_mac compile
+[PASS] pe_mac sim
+[PASS] pe_mac golden (11 cases, outer+dot)
+=== 3. PE-array SRCNN chain (24x24, one wave per layer) ===
+[PASS] pe_array SRCNN chain (L1/L2/L3 max|err|=0, PSNR ~43.5 dB)
+=== 4. K^2 reference engines (re-verified after the adder_tree port) ===
+[PASS] L2 compile
+[PASS] L2 golden (4/4 PASS)
+[PASS] L3 compile
+[PASS] L3 sim
+[PASS] L3 golden K=5 (3/3 PASS; K=3 known limitation, see design.md)
+=== 5. Cycle model (device-driven, ZU19EG + ECP5) ===
+[PASS] cycle model (MODEL CHECK ALL OK)
+=== 6. synth_ecp5 (vendor neutrality) ===
+[PASS] adder_tree synth_ecp5
+[PASS] linebuf synth_ecp5 (DP16KD)
+
+=== STAGE 7b RESULT: ALL PASS ===

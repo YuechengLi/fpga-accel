@@ -112,6 +112,19 @@ module line_buffer_bram_mc #(
             else                     ptr <= ptr + 1'b1;
         end
     end
+    // dout powers up 0 (initial) instead of an async reset: an X dout
+    // would be written into the NEXT line buffer's memory in a chain
+    // (lb_in = lb_out) and poison the whole chain -- the X then reloads
+    // into the window on every advance and never flushes out. The
+    // initial block gives the same power-up 0 as the reset did, and it
+    // is REQUIRED for Yosys BRAM inference: an async reset on the BRAM
+    // output register makes Yosys replace the memory with registers
+    // (verified 2026-11-20: V0 async-reset -> 2344 cells, 0 BRAM;
+    // this form -> 1 DP16KD, 24 cells, synth_ecp5). Reset is only
+    // asserted at startup, so the initial block covers the power-up
+    // case; dout holds its last value (never X) if reset is re-asserted
+    // mid-stream.
+    initial dout = '0;
     always_ff @(posedge clk) begin
         if (en) begin
             dout <= mem[ptr];
