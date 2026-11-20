@@ -938,3 +938,193 @@ coefficient. `STAGE 5 RTL RESULT: ALL PASS`.
   a cast for the ternary form).
 - A 4-wide bank write would match the AXI bus rate but needs a
   scheduler hardware change (follow-up, recorded in `sw/README.md`).
+
+# Stage 6 — Model numerical verification (SRCNN / DnCNN / RetinexNet)
+
+## Method
+
+Each model is compiled by the Stage 5 compiler (`sw/`), and each conv
+layer is driven through `rtl/conv2d_mc.sv` (C_PAR=4, per-output-channel
+bias, signed intermediates) with weights loaded via the AXI-MM weight
+DMA (`rtl/weight_dma.sv`). Layers run in waves: wave 1 = layers whose
+input is known (the test image or a functional-simulator output), wave
+2 = layers fed by a wave-1 RTL output, so the chain is real. The DnCNN
+denoised step goes through `rtl/residual.sv` mode 3 (sub with B
+sign-extended). The RetinexNet sigmoid goes through `rtl/act.sv` PWL
+mode 2 with the compiler's 32-segment table. Driver: `sw/stage6.py`
+(plus `sw/stage6_float_layers.py` for the per-layer vs-float numbers);
+testbench `tb/tb_stage6_mc.sv` (no random in_valid gaps / out_ready
+stalls -- backpressure was verified in Stage 3, Stage 6 is numerical
+verification, so speed matters; framing is still checked);
+orchestrator `tb/run_stage6.sh` (models + Stage 5 acceptance +
+Stage 1-4 regressions).
+
+Error budget: RTL vs functional simulator must be EXACT (max|err| = 0)
+for every conv layer -- the functional simulator is the reference, so
+an RTL-vs-simulator mismatch is a hardware bug (or a testbench-driving
+bug), never a simulator bug unless proven with a minimal case. The PWL
+sigmoid is allowed max|err| <= 1 LSB (the RTL uses integer >>10
+arithmetic, the simulator float -- a rounding-boundary difference).
+Per-layer vs float is the quantization error (RTL == simulator exactly,
+so simulator-vs-float = RTL-vs-float). RetinexNet is compared against
+a ZERO-pad float reference for the quantization check (the RTL uses
+zero padding, the model was trained with replicate padding); the
+replicate-vs-zero border difference is reported separately, never mixed
+into the quantization number.
+
+## Measured results (freshly run, traceable to `logs/stage6/`)
+
+`tb/run_stage6.sh`: **STAGE 6 RESULT: ALL PASS**. Stage 5 acceptance
+re-run: ALL PASS. Stage 1-4 RTL regressions re-run: ALL PASS (2439s).
+
+### SRCNN (full chain, 24x24 input, all channels, 649.9s)
+
+| Layer | vs funcsim max\|err\| | vs float max\|err\| | vs float PSNR |
+|---|---|---|---|
+| L1 conv2d (9x9, 1->64) | 0.00 | 1 | 71.58 dB |
+| L2 conv2d_1 (1x1, 64->32) | 0.00 | 2 | 55.48 dB |
+| L3 conv2d_2 (5x5, 32->1) | 0.00 | 6 | 43.38 dB |
+| End-to-end | -- | 5.53 | 43.51 dB (prep 42.76 dB) |
+
+### DnCNN fragment (16x16 input, 755.3s)
+
+L1 (full 64 out), L2 (8 out), L3 (8 out), L16 (8 out), L17 (1 out),
+all vs funcsim max|err| = 0.00. Denoised (residual mode 3) vs funcsim
+max|err| = 0.00 (PSNR inf); vs float max|err| = 1.37, PSNR 53.23 dB
+(prep 48.23 dB). L4-L15 NOT run in RTL -- same 3x3 64->64 shape as
+L2/L3/L16, verified by sampling; output channels are computed serially
+and independently (identical datapath, only weights differ), so
+sampling verifies the layer shape. Per-layer vs float for all 17
+layers (functional simulator): 1-8 LSB, PSNR 49.84-77.49 dB
+(worst L15, 8 LSB / 49.84 dB).
+
+### RetinexNet Decom-Net (full chain, 16x16 input, 1029.0s)
+
+conv0 (full 64 out), conv1 (8 out, fed by RTL conv0), conv2-5 (4 out
+each), recon (full 4 out), all vs funcsim max|err| = 0.00. Sigmoid
+(PWL mode 2, 32 segments, r_in=3 r_out=0) vs funcsim max|err| = 1.00
+(budget <= 1). Per-layer vs float (zero-pad): conv0 1 (73.11 dB),
+conv1 1 (61.30 dB), conv2 2 (60.51 dB), conv3 2 (58.08 dB), conv4 4
+(55.24 dB), conv5 17 (48.02 dB), recon 5 (50.81 dB), sigmoid 8
+(45.93 dB). End-to-end vs float (ZERO pad): R PSNR 45.37 dB
+(max|err| 8.18), L PSNR 49.99 dB (max|err| 2.57). Vs float (REPLICATE
+pad, original model): R 26.72 dB, L 36.71 dB -- the drop is the border
+effect, not quantization.
+
+Border analysis (replicate vs zero, funcsim fixed-point): R full
+max|diff| = 55, PSNR 26.78 dB; R interior (5px excluded) max|diff| =
+3, PSNR 45.91 dB; L full max|diff| = 21, PSNR 36.90 dB; L interior
+max|diff| = 1, PSNR 55.91 dB. Float-only padding difference: R
+27.12 dB, L 37.47 dB. The border dominates the full-frame number; the
+interior is clean. This matches the Stage 6 prep finding (R max|diff|
+65.98, PSNR 28.95 dB).
+
+### r_out re-validation (wider/natural data) + accumulator bound
+
+The stored r_out (calibrated on small synthetic test images) is too
+small for 4 layers -- activations exceed 2^r_out and clip to 255. This
+is a calibration finding, NOT an RTL bug: the RTL correctly implements
+whatever r_out it is given. Corrected r_out: DnCNN L3 stored 1 ->
+required 2 (max|act| 2.18), DnCNN L7 stored 1 -> required 2
+(max|act| 2.28), DnCNN L15 stored 0 -> required 1 (max|act| 1.09),
+RetinexNet conv4 stored 0 -> required 1 (max|act| 1.12). SRCNN: no
+saturation on wider data. Saturation is mild (max exceeds the range by
+< 20% in all cases). The quantize pass should calibrate on
+wider/more representative data (follow-up).
+
+Accumulator bound: the 32-bit accumulator stays in range for all
+layers in all three models (max 20,688,812, DnCNN L1, well below
+2^31). The bound is on the FULL sum after all C_in tiles + bias, not
+the per-tile partial, because the RTL's 32-bit acc_mem holds the
+running sum and modular addition means intermediate wraps do not
+corrupt the final sum as long as the final sum is within [-2^31, 2^31).
+
+## Bugs found and fixed during Stage 6
+
+- **conv2d_mc had no bias register (real gap).** The functional
+  simulator always added the per-output-channel bias (acc = ... +
+  b_q[o]), and `models/common.py` conv2d_fixed also adds b_q, but
+  `rtl/conv2d_mc.sv` had no bias register and `sw/emit.py` emitted no
+  bias writes. The bias is NOT negligible: DnCNN L2 b_q range up to
+  ~+/-10.6M (shift 15 -> up to ~+/-325 LSBs contribution); SRCNN L3
+  b_q = 105236 (shift 13 -> ~12.8 LSBs). Without the fix every layer
+  would fail by the bias offset. Fix: config 0x12 (bias lo) / 0x13
+  (bias hi), signed 32-bit bias_r, reset 0; acc_wr_val = (cur_t==0) ?
+  (tile_partial + bias_r) : (acc_rd + tile_partial) -- bias added once
+  per output pixel, on the first C_in tile. `sw/emit.py` `_emit_mc_layer`
+  now emits two W instructions per output channel (lo then hi) before
+  the first tile's DMA for that channel. Default bias 0, so the Stage 3
+  TB (which never writes 0x12/0x13) is unaffected. Verified with a bias
+  sanity test (one small MC case, 64 outputs, 0 mismatches) and by the
+  full Stage 6 runs.
+- **residual.sv treated both streams as UNSIGNED (real gap for
+  DnCNN).** Mode 1 sub computed A - B with B unsigned. DnCNN's final
+  step is denoised = clip(noisy - residual, 0, 255) where the residual
+  (L17 output) is signed (~50% negative). A negative residual byte
+  (e.g. -5 = 0xFB) would be treated as 251. Fix: mode 3 added (sub with
+  B sign-extended: out = clamp(A - sign_extend(B), 0, 255), via a 10-bit
+  signed difference). Modes 0-2 unchanged. `tb/golden_residual.py`
+  mode 3 added; residual regression 8/8 PASS (including the new mode-3
+  case).
+- **DMA/emitter coefficient placement (Stage 5 bug, caught by the
+  Stage 6 DMA integration check).** The Stage 5 emitter stored only
+  the K^2 contiguous taps in the weight blob and programmed the DMA
+  with taps=K^2. But `conv2d_mc`'s (and `conv2d_dense`'s) coefficient
+  memory is indexed by the 11x11 grid (k = i*11+j); the MAC reads
+  coeff[ln][i*11+j]. So DMA-loaded coefficients landed at the wrong
+  addresses for K < 11 (DMA integration check, SRCNN L1 ch5, K=9:
+  245/256 outputs wrong, systematically low -- most taps read as 0).
+  The Stage 5 standalone DMA test never caught this because it verified
+  the DMA against its own documented addressing, not against what the
+  MC needs; the Stage 4 scheduler TB already used the 121 grid, so the
+  scheduler path was correct. Fix (no RTL change): `sw/emit.py` now
+  stores the FULL 121-entry grid per lane in the blob, and the DMA is
+  programmed with taps=121 (MC path ncoeff = (t1-t0)*121; scheduler path
+  ncoeff=121, taps=121). Blob sizes grew (SRCNN 16064 B -> 518848 B;
+  DnCNN ~14.9 MB; RetinexNet 5080064 B) -- loaded once per model run,
+  DRAM is plentiful, load still hidden. Cost model updated accordingly
+  (ncoeff per pass = C_in_tile x 121; per-pass budget C_PAR x 128 = 512;
+  K=11 is NOT bank-limited, C_in_tile=4, 484 <= 512). DMA integration
+  check after the fix: PASSED (256 outputs, exact); DMA done in 139
+  cycles for 121 coeffs. Scheduler-path check: PASSED (256 outputs,
+  exact, bias=0).
+- **Driver 32-bit DMA truncation (exposed by the grid fix).** The C
+  driver's dma_write interface and the mock stored DMA registers as
+  uint16_t, truncating the source byte offset to 16 bits. The old blob
+  (16064 B) fit in 64 KB so it was harmless; the new grid blob (SRCNN
+  518 KB) exceeds 64 KB. Fix: widened the DMA register interface to
+  32-bit (`sw/driver/driver.h`, `driver.c`, `mock_mmio.h`,
+  `mock_mmio.c`). The RTL's reg_src is 32-bit, so the hardware was fine.
+- **Sigmoid act table is PWL, not MLUT.** The RetinexNet sigmoid's
+  compiler table has impl="pwl" (32-segment PWL, Q1.15 y0/dslope), not
+  the MLUT (H1/H2/base/sel/fine) that `run_act_sigmoid` first assumed
+  (KeyError 'H1'). Fixed by dispatching on the table's `impl` in
+  `sw/stage6.py`: PWL uses `act.sv` mode 2 with the 32-segment table
+  (input Q5.11, output Q1.15), MLUT uses mode 6. The input scale comes
+  from the act op's r_in (RetinexNet recon r_out=3, so the sigmoid
+  r_in=3 -- x = a / 31.875, not a / 255).
+
+## Notes
+
+- The dense path (`conv2d_dense` / unified engine) has NO bias
+  register (conv2d_dense uses 8-bit config addresses; coeff base is
+  0x10 so 0x12/0x13 would collide with coefficients; the engine uses
+  0x000C for mode select). No Stage 6 model layer is single-channel, so
+  no model layer uses the scheduler path; the scheduler-path check uses
+  a real single-channel slice (SRCNN L1 output channel 5) with bias
+  forced to 0 in the reference. The missing dense-path bias is a
+  documented follow-up, not a Stage 6 blocker. The MC path (where all
+  model layers run) has full bias support.
+- The RTL uses round-half-up shift; the Stage 6 weights-prep golden
+  uses floor shift -- the <=1 LSB difference is expected and is noted
+  here, NOT "fixed" in the RTL.
+- 3/4-level MLUT tables are NOT emitted for the current act.sv (2
+  levels only); a 4-wide bank write would match the AXI bus rate but
+  needs a scheduler hardware change (follow-ups, recorded in
+  `sw/README.md`).
+- Toolchain note (2026-11-20): the VM was replaced and /usr/bin
+  iverilog + yosys vanished. Reinstalled from direct Ubuntu-pool .deb
+  downloads (iverilog 13.0-2, yosys 0.52-2 + yosys-abc, libjs-sphinxdoc,
+  python3-click), never `apt-get update` (hangs). Cached .debs live in
+  `~/tools-dl/`. The run scripts already check for iverilog and point
+  at `~/tools-dl/iverilog_13.0-2_amd64.deb` when it is missing.

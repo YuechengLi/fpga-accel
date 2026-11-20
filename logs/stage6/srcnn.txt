@@ -1,0 +1,38 @@
+Stage 6 srcnn verification
+result: PASS
+{
+  "conv2d": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 1.0,
+    "psnr_float": 71.58268580432672,
+    "shape": [
+      16,
+      16,
+      64
+    ]
+  },
+  "conv2d_1": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 2.0,
+    "psnr_float": 55.48357052185034,
+    "shape": [
+      16,
+      16,
+      32
+    ]
+  },
+  "conv2d_2": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 6.0,
+    "psnr_float": 43.37974397383573,
+    "shape": [
+      12,
+      12,
+      1
+    ]
+  },
+  "end_to_end": {
+    "max_err_float": 5.5322058756622425,
+    "psnr_float": 43.51327954332188
+  }
+}

@@ -1,4 +1,4 @@
-TB residual: 7 cases
+TB residual: 8 cases
 case 0 (mode=0 16x16): 256 outputs, framing errors=0
 case 1 (mode=0 15x13): 195 outputs, framing errors=0
 case 2 (mode=0 16x16): 256 outputs, framing errors=0
@@ -6,5 +6,6 @@ case 3 (mode=1 16x16): 256 outputs, framing errors=0
 case 4 (mode=1 15x13): 195 outputs, framing errors=0
 case 5 (mode=2 16x16): 256 outputs, framing errors=0
 case 6 (mode=0 1x1): 1 outputs, framing errors=0
+case 7 (mode=3 16x16): 256 outputs, framing errors=0
 TB residual DONE
-tb_residual.sv:165: $finish called at 44505000 (1ps)
+tb_residual.sv:165: $finish called at 52635000 (1ps)

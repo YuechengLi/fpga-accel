@@ -24,9 +24,10 @@ typedef struct {
     uint32_t n_writes;
     /* coefficient memory (the engine's / banks' registers) */
     uint16_t coeff[MOCK_COEFF_WORDS];
-    /* DMA registers */
-    uint16_t dma_src, dma_count, dma_dst, dma_taps, dma_stride;
-    uint16_t dma_status;
+    /* DMA registers (32-bit -- the AXI-Lite slave is 32-bit; the
+     * blob can exceed 64 KB, so src/count must not be 16-bit). */
+    uint32_t dma_src, dma_count, dma_dst, dma_taps, dma_stride;
+    uint32_t dma_status;
     /* weights blob (for the DMA to copy from) */
     const uint8_t *weights;
     size_t weights_len;
@@ -38,7 +39,7 @@ void mock_mmio_init(mock_mmio_t *m, const uint8_t *weights,
 /* accel_mmio_t vtable (pass &mock as ctx). */
 void mock_cfg_write(void *ctx, uint16_t addr, uint16_t data);
 uint16_t mock_cfg_read(void *ctx, uint16_t addr);
-void mock_dma_write(void *ctx, uint16_t reg, uint16_t data);
-uint16_t mock_dma_read(void *ctx, uint16_t reg);
+void mock_dma_write(void *ctx, uint16_t reg, uint32_t data);
+uint32_t mock_dma_read(void *ctx, uint16_t reg);
 
 #endif /* MOCK_MMIO_H */

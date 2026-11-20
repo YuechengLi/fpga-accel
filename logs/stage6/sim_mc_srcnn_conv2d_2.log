@@ -1,0 +1,4 @@
+TB stage6_mc: 1 cases
+case 0 ch 0 (K=5 16x16 C_in=32 C_out=1 shift=13 pad=(0,0,0,0) stride=(1,1) out=12x12 bias=105236): 144 outputs, framing errors=0
+TB stage6_mc DONE
+tb_stage6_mc.sv:252: $finish called at 203215000 (1ps)

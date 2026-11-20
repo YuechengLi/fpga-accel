@@ -106,6 +106,34 @@ reference (replicate padding). conv0 signed intermediate: range
   scheduler hardware change (follow-up).
 - 3/4-level MLUT tables are not emitted for the current act.sv
   (2 levels only); recorded as a follow-up.
+- Cost model (corrected 2026-11-20, Stage 6): ncoeff per pass =
+  C_in_tile x 121 (the full 11x11 coefficient grid per lane), not
+  C_in_tile x K^2; per-pass budget C_PAR x 128 = 512; K=11 is NOT
+  bank-limited (C_in_tile=4, 484 <= 512). SRCNN L1 load 141cy,
+  DnCNN L2 load 528cy -- still hidden in all cases.
+- r_out calibration (Stage 6 finding): the stored r_out (calibrated
+  on small synthetic images) is too small for 4 layers on wider data
+  (DnCNN L3/L7/L15, RetinexNet conv4 -- activations exceed 2^r_out
+  and clip). The quantize pass should calibrate on wider/more
+  representative data.
+
+## Stage 6 — model numerical verification (RTL vs functional simulator)
+
+`sw/stage6.py` + `tb/tb_stage6_mc.sv` + `tb/run_stage6.sh`.
+SRCNN full chain (24x24, all channels), DnCNN fragment (16x16, L1/L2/
+L3/L16/L17 + denoised via residual mode 3), RetinexNet Decom-Net full
+chain (16x16, conv0-5 + recon + PWL sigmoid). RTL vs functional
+simulator: EXACT (max|err| = 0) for every conv layer; PWL sigmoid
+max|err| = 1 (budget <= 1). End-to-end vs float: SRCNN 43.51 dB,
+DnCNN denoised 53.23 dB, RetinexNet R 45.37 dB / L 49.99 dB (zero-pad
+reference). RetinexNet border analysis: the replicate-vs-zero padding
+difference dominates the full frame (R 26.78 dB) but the interior
+(5px excluded) is clean (R 45.91 dB, L 55.91 dB). Full results in
+`logs/stage6/{srcnn,dncnn,retinexnet}.txt` and `docs/plan.md` Stage 6.
+Bugs fixed during Stage 6: conv2d_mc bias register (config 0x12/0x13),
+residual mode 3 (signed sub), emitter/DMA 121-entry coefficient grid
+(taps=121), C driver 32-bit DMA registers, sigmoid PWL-vs-MLUT dispatch
+(r_in from the act op). See `rtl/README.md` Stage 6 for detail.
 
 ## Running
 
@@ -117,4 +145,7 @@ python3 sw/demo_retinexnet.py --outdir sw/out/retinexnet
 make -C sw/driver test       # C driver host test
 bash tb/run_stage5_rtl.sh    # RTL weight DMA
 bash sw/run_regressions.sh   # Stage 1-4 regressions
+bash tb/run_stage6.sh        # Stage 6 model verification + Stage 5 + regressions (~1-2 h)
+python3 sw/stage6.py --model srcnn|dncnn|retinexnet|all   # Stage 6 models only
+python3 sw/stage6_float_layers.py   # per-layer vs float (pure Python, no RTL)
 ```

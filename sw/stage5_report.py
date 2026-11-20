@@ -82,8 +82,8 @@ def main():
               f"compute={r['compute_per_pass']:4d}cy  "
               f"hidden={r['load_hidden']}  "
               f"total={r['total_eff_cycles']}cy")
-    print("  K=11 is bank-limited: C_in_tile=2 (2*121=242 <= 289);")
-    print("  C_in_tile=4 would need 484 > 289. The optimum varies per")
+    print("  K=11 is NOT bank-limited: C_in_tile=4 (4*121=484 <= 512,"
+          " the MC's per-lane memory). The optimum varies per")
     print("  layer; load is hidden in all cases above.")
     print()
 

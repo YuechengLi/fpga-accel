@@ -41,9 +41,15 @@ class TestEmit(unittest.TestCase):
         self.assertEqual(self.report["weight_blob_bytes"], len(self.blob))
 
     def test_blob_size_matches_weights(self):
-        # SRCNN weights: L1 9*9*1*64 + L2 1*1*64*32 + L3 5*5*32*1
-        # coeffs, int16 (2 bytes each).
-        ncoeff = 9 * 9 * 1 * 64 + 1 * 1 * 64 * 32 + 5 * 5 * 32 * 1
+        # SRCNN weights, one full 121-entry 11x11 grid per (o, c)
+        # lane (Stage 6 fix: the MC's coefficient memory is indexed
+        # by the grid, so the blob carries the grid, not just the
+        # K*K taps). Each (o, c) pair is exactly one lane, so the
+        # blob is sum(C_in * C_out * 121) int16 coeffs.
+        ncoeff = 0
+        for o in self.program["ops"]:
+            if o["op"] in ("conv2d", "dw_conv2d", "linear"):
+                ncoeff += o["C_in"] * o["C_out"] * 121
         self.assertEqual(len(self.blob), ncoeff * 2)
 
     def test_instr_stream_opcodes(self):

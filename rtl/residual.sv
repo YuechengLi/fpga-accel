@@ -4,8 +4,15 @@
 //
 // Two input streams A and B (same W/H), one output stream.
 //   out = clamp(A + B, 0, 255)   (mode 0, add)
-//   out = clamp(A - B, 0, 255)   (mode 1, subtract)
+//   out = clamp(A - B, 0, 255)   (mode 1, subtract; B unsigned)
 //   out = A                      (mode 2, bypass)
+//   out = clamp(A - B_signed, 0, 255)  (mode 3, Stage 6: subtract with
+//     B sign-extended, i.e. B is a signed int8. This is the DnCNN
+//     final step: denoised = clip(noisy - residual, 0, 255), where the
+//     residual (the L17 output) is signed (~50% negative). Mode 1
+//     would treat a negative residual byte (e.g. -5 = 0xFB) as 251
+//     and compute noisy - 251 instead of noisy + 5, which is wrong
+//     for half the pixels. Mode 3 is additive: modes 0-2 are unchanged.)
 // The two streams are aligned by small FIFOs (depth 4 each), so the TB may
 // send A and B with independent random gaps. Output framing is generated
 // from the W/H config (raster order, out_sof on the first output pixel,
@@ -124,14 +131,22 @@ module residual #(
     logic [12:0] out_row, out_col;
     logic [8:0]  sum_ab;
     logic [8:0]  diff_ab;
+    logic signed [9:0] diff_ab_signed;  // mode 3: A - sign_extend(B)
     logic [7:0]  result;
     assign sum_ab = {1'b0, fifo_a[rd_a[1:0]]} + {1'b0, fifo_b[rd_b[1:0]]};
     assign diff_ab = {1'b0, fifo_a[rd_a[1:0]]} - {1'b0, fifo_b[rd_b[1:0]]};
+    assign diff_ab_signed = $signed({1'b0, fifo_a[rd_a[1:0]]})
+                            - $signed(fifo_b[rd_b[1:0]]);
     always @* begin
         if (mode_r == 2'd0) begin
             result = (sum_ab > 9'd255) ? 8'd255 : sum_ab[7:0];
         end else if (mode_r == 2'd1) begin
             result = diff_ab[8] ? 8'd0 : diff_ab[7:0];
+        end else if (mode_r == 2'd3) begin
+            // Signed-B subtract (Stage 6): A - sign_extend(B), clamp.
+            result = (diff_ab_signed < 10'sd0) ? 8'd0 :
+                     (diff_ab_signed > 10'sd255) ? 8'd255 :
+                     diff_ab_signed[7:0];
         end else begin
             result = fifo_a[rd_a[1:0]];
         end

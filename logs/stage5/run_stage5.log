@@ -1,5 +1,5 @@
 === Stage 5: unit tests (43) ===
-............................./home/hatch/workspace/fpga-accel/sw/tests/test_emit.py:74: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp6jn40wcq/program.json' mode='r' encoding='utf-8'>
+............................./home/hatch/workspace/fpga-accel/sw/tests/test_emit.py:80: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp5vzhbbtd/program.json' mode='r' encoding='utf-8'>
   pub = json.load(open(jp))
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 .../home/hatch/workspace/fpga-accel/sw/passes/mlut.py:104: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
@@ -9,7 +9,7 @@ ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ..........
 ----------------------------------------------------------------------
-Ran 43 tests in 28.908s
+Ran 43 tests in 21.161s
 
 OK
 [stage5] unit tests (43): PASS
@@ -24,10 +24,10 @@ quantize:
   * conv2d_1: shift=15 r_in=2 r_out=2 e=15 signed_out=False max_act=2.6156
   * conv2d_2: shift=13 r_in=2 r_out=0 e=15 signed_out=False max_act=0.9536
 tiling:
-  * Layer(K=9 Cin=1 Cout=64 33x33 -> 25x25 dense): C_in_tile=1 HxW tile=25x25 ncoeff/pass=81 load=101cy compute/pass=649cy load_hidden=True total=41637cy (138.8 us @300MHz)
-  * Layer(K=1 Cin=64 Cout=32 25x25 -> 25x25 dense): C_in_tile=4 HxW tile=25x25 ncoeff/pass=4 load=20cy compute/pass=649cy load_hidden=True total=332308cy (1107.7 us @300MHz)
-  * Layer(K=5 Cin=32 Cout=1 25x25 -> 21x21 dense): C_in_tile=2 HxW tile=3x21 ncoeff/pass=50 load=66cy compute/pass=87cy load_hidden=True total=14112cy (47.0 us @300MHz)
-emitted: 1824 instrs, 16064 B weight blob
+  * Layer(K=9 Cin=1 Cout=64 33x33 -> 25x25 dense): C_in_tile=1 HxW tile=25x25 ncoeff/pass=121 load=141cy compute/pass=649cy load_hidden=True total=41677cy (138.9 us @300MHz)
+  * Layer(K=1 Cin=64 Cout=32 25x25 -> 25x25 dense): C_in_tile=4 HxW tile=25x25 ncoeff/pass=484 load=528cy compute/pass=649cy load_hidden=True total=332816cy (1109.4 us @300MHz)
+  * Layer(K=5 Cin=32 Cout=1 25x25 -> 21x21 dense): C_in_tile=2 HxW tile=21x21 ncoeff/pass=242 load=270cy compute/pass=465cy load_hidden=True total=14112cy (47.0 us @300MHz)
+emitted: 2018 instrs, 518848 B weight blob
 wrote /home/hatch/workspace/fpga-accel/sw/out/srcnn/program.json
       /home/hatch/workspace/fpga-accel/sw/out/srcnn/program.txt
       /home/hatch/workspace/fpga-accel/sw/out/srcnn/weights.bin
@@ -65,10 +65,10 @@ quantize:
 activation tables:
   * sigmoid (sigmoid): PWL 32-seg max_err=0.0030
 tiling (first 3):
-  * Layer(K=9 Cin=4 Cout=64 32x32 -> 32x32 dense): C_in_tile=2 HxW tile=32x32 ncoeff/pass=162 load=186cy compute/pass=1048cy load_hidden=True total=134330cy (447.8 us @300MHz)
-  * Layer(K=3 Cin=64 Cout=64 32x32 -> 32x32 dense): C_in_tile=4 HxW tile=32x32 ncoeff/pass=36 load=52cy compute/pass=1048cy load_hidden=True total=1073204cy (3577.3 us @300MHz)
-  * Layer(K=3 Cin=64 Cout=64 32x32 -> 32x32 dense): C_in_tile=4 HxW tile=32x32 ncoeff/pass=36 load=52cy compute/pass=1048cy load_hidden=True total=1073204cy (3577.3 us @300MHz)
-emitted: 16113 instrs, 414720 B weight blob
+  * Layer(K=9 Cin=4 Cout=64 32x32 -> 32x32 dense): C_in_tile=4 HxW tile=32x32 ncoeff/pass=484 load=528cy compute/pass=1048cy load_hidden=True total=67600cy (225.3 us @300MHz)
+  * Layer(K=3 Cin=64 Cout=64 32x32 -> 32x32 dense): C_in_tile=4 HxW tile=32x32 ncoeff/pass=484 load=528cy compute/pass=1048cy load_hidden=True total=1073680cy (3578.9 us @300MHz)
+  * Layer(K=3 Cin=64 Cout=64 32x32 -> 32x32 dense): C_in_tile=4 HxW tile=32x32 ncoeff/pass=484 load=528cy compute/pass=1048cy load_hidden=True total=1073680cy (3578.9 us @300MHz)
+emitted: 16697 instrs, 5080064 B weight blob
 wrote /home/hatch/workspace/fpga-accel/sw/out/retinexnet/program.json
       /home/hatch/workspace/fpga-accel/sw/out/retinexnet/program.txt
       /home/hatch/workspace/fpga-accel/sw/out/retinexnet/weights.bin
@@ -81,9 +81,9 @@ STAGE 5 RETINEXNET DEMO: PASS
 === Stage 5: C driver host test ===
 make: Entering directory '/home/hatch/workspace/fpga-accel/sw/driver'
 ./test_driver ../out/srcnn
-program: W=42 DMA=592 GO=592 WAIT=592 STREAM=3
-driver:  writes=634 dma=592 go=592 wait=592 stream=3
-DRIVER TEST: PASS (634 config writes, 592 DMA, 592 GO)
+program: W=236 DMA=592 GO=592 WAIT=592 STREAM=3
+driver:  writes=828 dma=592 go=592 wait=592 stream=3
+DRIVER TEST: PASS (828 config writes, 592 DMA, 592 GO)
 make: Leaving directory '/home/hatch/workspace/fpga-accel/sw/driver'
 [stage5] C driver host test: PASS
 === Stage 5: RTL weight DMA ===
@@ -172,11 +172,10 @@ RetinexNet             unfused   96.45  fused   0.90  (weights 0.02)
   VDMA 4K60 in+out 2.99 GB/s, engine budget 23.01 GB/s (ok=True)
 
 --- Cost model: tile search (load hidden = load <= compute) ---
-SRCNN L1  K=9  Cin=1 C_in_tile=1  ncoeff= 81  load_axi=101cy  compute= 649cy  hidden=True  total=41637cy
-DnCNN L2  K=3  Cin=64 C_in_tile=4  ncoeff= 36  load_axi= 52cy  compute=1048cy  hidden=True  total=1073204cy
-K=11      Cin=64     C_in_tile=2  ncoeff=242  load_axi=270cy  compute=1048cy  hidden=True  total=2146574cy
-  K=11 is bank-limited: C_in_tile=2 (2*121=242 <= 289);
-  C_in_tile=4 would need 484 > 289. The optimum varies per
+SRCNN L1  K=9  Cin=1 C_in_tile=1  ncoeff=121  load_axi=141cy  compute= 649cy  hidden=True  total=41677cy
+DnCNN L2  K=3  Cin=64 C_in_tile=4  ncoeff=484  load_axi=528cy  compute=1048cy  hidden=True  total=1073680cy
+K=11      Cin=64     C_in_tile=4  ncoeff=484  load_axi=528cy  compute=1048cy  hidden=True  total=1073680cy
+  K=11 is NOT bank-limited: C_in_tile=4 (4*121=484 <= 512, the MC's per-lane memory). The optimum varies per
   layer; load is hidden in all cases above.
 
 --- Roofline bound (fused, 1080p) ---

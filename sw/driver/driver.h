@@ -22,9 +22,13 @@
  *     0x0200+i bank A, 0x0400+i bank B.
  *   weight DMA (rtl/weight_dma.sv, AXI-Lite slave at DMA_BASE):
  *     0x00 src (DRAM byte offset), 0x01 count (coefficients),
- *     0x02 dst (config-bus base), 0x03 taps (K*K per lane),
+ *     0x02 dst (config-bus base), 0x03 taps (121 per lane -- the
+ *       full 11x11 grid, Stage 6 fix; was K*K),
  *     0x04 stride (address stride between lanes),
  *     0x05 ctrl (bit0 start), 0x06 status (bit0 done, bit1 busy).
+ *   The DMA registers are 32-bit (AXI-Lite); the config bus is
+ *   16-bit. The blob can exceed 64 KB (SRCNN grid blob is 518 KB),
+ *   so the DMA src/count must NOT be truncated to 16 bits.
  */
 #ifndef ACCEL_DRIVER_H
 #define ACCEL_DRIVER_H
@@ -75,13 +79,15 @@
 
 /* --- MMIO abstraction ---------------------------------------------- */
 /* write(addr, data): config-bus write (16-bit). read(addr): config-bus
- * read (16-bit). dma_write/dma_read: the DMA register block. On the
- * PS these are AXI-Lite accesses; on the host they are the mock. */
+ * read (16-bit). dma_write/dma_read: the DMA register block (32-bit
+ * data -- the AXI-Lite slave is 32-bit; truncating to 16 bits would
+ * break blobs > 64 KB). On the PS these are AXI-Lite accesses; on
+ * the host they are the mock. */
 typedef struct {
     void (*cfg_write)(void *ctx, uint16_t addr, uint16_t data);
     uint16_t (*cfg_read)(void *ctx, uint16_t addr);
-    void (*dma_write)(void *ctx, uint16_t reg, uint16_t data);
-    uint16_t (*dma_read)(void *ctx, uint16_t reg);
+    void (*dma_write)(void *ctx, uint16_t reg, uint32_t data);
+    uint32_t (*dma_read)(void *ctx, uint16_t reg);
     void *ctx;
 } accel_mmio_t;
 

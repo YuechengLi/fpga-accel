@@ -10,13 +10,15 @@ value. The cost model is:
       cycles_pass = H_out_tile * W_out_tile + pipe_latency
       (1 output pixel/cycle in steady state; the K^2 MACs are
       parallel in the datapath, so K cancels out of the cycle count)
-  weight load (per pass, ncoeff = C_in_tile * K^2):
-      AXI-MM:  cycles = ncoeff + n_bursts*4 + 12 (sw/dram.py
-               weight_dma_cycles). The transfer is DRAIN-limited at
-               1 coeff/cycle (the config-bus write rate into the
-               bank); the 64-bit AXI bus (4 coeffs/beat) is faster
-               than the drain. The DMA is ~2x the config bus in
-               cycles and autonomous (no PS per-coefficient work).
+  weight load (per pass, ncoeff = C_in_tile * 121):
+      The MC loads one full 11x11 grid (121 entries) per lane, not
+      just the K*K taps (Stage 6 fix -- the MC's coefficient memory
+      is indexed by the grid, r*11+c). AXI-MM: cycles = ncoeff +
+      n_bursts*4 + 12 (sw/dram.py weight_dma_cycles). The transfer
+      is DRAIN-limited at 1 coeff/cycle (the config-bus write rate
+      into the bank); the 64-bit AXI bus (4 coeffs/beat) is faster
+      than the drain. The DMA is ~2x the config bus in cycles and
+      autonomous (no PS per-coefficient work).
       config bus (Stage 4, for comparison): 2 cycles/coeff
   input stream (per spatial tile, once, reused for all C_out):
       cycles = H_tile * W_tile * C_in  (1 byte/cycle pixel stream)
@@ -28,7 +30,10 @@ value. The cost model is:
         load >  compute: total = n_passes * load + compute_last
 
 Constraints:
-  * weight bank: ncoeff = C_in_tile * K^2 <= 289 (scheduler bank)
+  * weight bank (MC): ncoeff = C_in_tile * 121 <= C_PAR * 128 = 512
+    (each lane holds one 121-entry grid in its 128-entry memory).
+    C_in_tile <= C_PAR (= 4, the lane count) is the binding limit;
+    the 289-entry scheduler bank does NOT limit the MC path.
   * C_in_tile <= C_PAR (= 4, the lane count)
   * tile buffer: H_tile * W_tile * C_in <= 256 KB (plan §2)
   * spatial tile: H_tile, W_tile <= 64 (line-buffer / tile-buffer
@@ -37,7 +42,9 @@ Constraints:
 import math
 
 C_PAR = 4
-BANK_COEFF = 289
+MC_GRID = 121            # entries per lane (11x11 grid, Stage 6 fix)
+MC_LANE_MEM = 128        # coefficient-memory entries per MC lane
+BANK_COEFF = C_PAR * MC_LANE_MEM  # 512, MC per-pass coefficient budget
 TILE_BUFFER_BUDGET = 64 * 64 * 64  # bytes
 PIPE_LATENCY_DENSE = 24   # cycles (Stage 1)
 PIPE_LATENCY_DW = 24
@@ -112,7 +119,11 @@ def tile_search(layer, f_clk_mhz=300.0, verbose=False):
     """
     K = layer.K
     # C_in_tile is bounded by the lane count AND the weight bank.
-    cin_max = min(C_PAR, BANK_COEFF // (K * K), layer.C_in)
+    # The MC loads one 121-entry grid per lane (Stage 6 fix), so the
+    # per-pass coefficient count is C_in_tile * 121, bounded by the
+    # MC's per-lane memory (C_PAR * 128 = 512). This no longer limits
+    # C_in_tile below C_PAR for any K (4*121=484 <= 512).
+    cin_max = min(C_PAR, BANK_COEFF // MC_GRID, layer.C_in)
     cin_tiles = [c for c in range(1, cin_max + 1)
                  if layer.C_in % c == 0 or c == cin_max]
     if not cin_tiles:
@@ -135,7 +146,7 @@ def tile_search(layer, f_clk_mhz=300.0, verbose=False):
     best = None
     table = []
     for cin_t in cin_tiles:
-        ncoeff = cin_t * K * K
+        ncoeff = cin_t * MC_GRID
         load_axi = weight_load_cycles_axi(ncoeff)
         load_cfg = weight_load_cycles_cfg(ncoeff)
         n_cin_passes = math.ceil(layer.C_in / cin_t)

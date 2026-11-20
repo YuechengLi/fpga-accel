@@ -1,0 +1,35 @@
+TB stage6_mc: 1 cases
+case 0 ch 0 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=257485): 256 outputs, framing errors=0
+case 0 ch 1 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=277226): 256 outputs, framing errors=0
+case 0 ch 2 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=147955): 256 outputs, framing errors=0
+case 0 ch 3 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=107490): 256 outputs, framing errors=0
+case 0 ch 4 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=122091): 256 outputs, framing errors=0
+case 0 ch 5 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=274761): 256 outputs, framing errors=0
+case 0 ch 6 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=169149): 256 outputs, framing errors=0
+case 0 ch 7 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=212092): 256 outputs, framing errors=0
+case 0 ch 8 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=116804): 256 outputs, framing errors=0
+case 0 ch 9 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=109215): 256 outputs, framing errors=0
+case 0 ch 10 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=-234235): 256 outputs, framing errors=0
+case 0 ch 11 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=155880): 256 outputs, framing errors=0
+case 0 ch 12 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=-215184): 256 outputs, framing errors=0
+case 0 ch 13 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=225984): 256 outputs, framing errors=0
+case 0 ch 14 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=327695): 256 outputs, framing errors=0
+case 0 ch 15 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=380734): 256 outputs, framing errors=0
+case 0 ch 16 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=141652): 256 outputs, framing errors=0
+case 0 ch 17 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=-58213): 256 outputs, framing errors=0
+case 0 ch 18 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=228908): 256 outputs, framing errors=0
+case 0 ch 19 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=71553): 256 outputs, framing errors=0
+case 0 ch 20 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=125095): 256 outputs, framing errors=0
+case 0 ch 21 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=-100659): 256 outputs, framing errors=0
+case 0 ch 22 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=156215): 256 outputs, framing errors=0
+case 0 ch 23 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=-153290): 256 outputs, framing errors=0
+case 0 ch 24 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=-46168): 256 outputs, framing errors=0
+case 0 ch 25 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=-103353): 256 outputs, framing errors=0
+case 0 ch 26 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=338): 256 outputs, framing errors=0
+case 0 ch 27 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=350674): 256 outputs, framing errors=0
+case 0 ch 28 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=-180495): 256 outputs, framing errors=0
+case 0 ch 29 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=126317): 256 outputs, framing errors=0
+case 0 ch 30 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=-362184): 256 outputs, framing errors=0
+case 0 ch 31 (K=1 16x16 C_in=64 C_out=32 shift=15 pad=(0,0,0,0) stride=(1,1) out=16x16 bias=554619): 256 outputs, framing errors=0
+TB stage6_mc DONE
+tb_stage6_mc.sv:252: $finish called at 1830815000 (1ps)

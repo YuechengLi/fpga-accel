@@ -1,0 +1,178 @@
+=== SRCNN (full end-to-end chain, all channels, 24x24 input) ===
+  input (24, 24, 1), range [46,243]
+  captured: 6 IR nodes
+  emitted: 2018 instrs, 518848 B weight blob
+  conv layers: ['conv2d', 'conv2d_1', 'conv2d_2']
+  wrote /home/hatch/workspace/fpga-accel/tb/vectors_stage6_mc.txt: 1 cases
+  iverilog ok (0.1s); running vvp [srcnn_conv2d] ...
+  vvp done rc=0 (158.9s)
+    TB stage6_mc DONE
+  conv2d: vs funcsim max|err|=0.00 [OK]
+  wrote /home/hatch/workspace/fpga-accel/tb/vectors_stage6_mc.txt: 1 cases
+  iverilog ok (0.1s); running vvp [srcnn_conv2d_1] ...
+  vvp done rc=0 (453.3s)
+    TB stage6_mc DONE
+  conv2d_1: vs funcsim max|err|=0.00 [OK]
+  wrote /home/hatch/workspace/fpga-accel/tb/vectors_stage6_mc.txt: 1 cases
+  iverilog ok (0.1s); running vvp [srcnn_conv2d_2] ...
+  vvp done rc=0 (32.2s)
+    TB stage6_mc DONE
+  conv2d_2: vs funcsim max|err|=0.00 [OK]
+  END-TO-END vs float: max|err|=5.53 PSNR=43.51 dB (Stage 6 prep: 42.76 dB, max|err| 5.79)
+  captured: 6 IR nodes
+  emitted: 2018 instrs, 518848 B weight blob
+== srcnn (float ref: model pad) ==
+  conv2d: vs float max|err|=1.00 PSNR=71.58 dB (r_out=2 signed_out=False)
+  conv2d_1: vs float max|err|=2.00 PSNR=55.48 dB (r_out=2 signed_out=False)
+  conv2d_2: vs float max|err|=6.00 PSNR=43.38 dB (r_out=0 signed_out=False)
+  [srcnn] PASS (649.9s)
+=== DnCNN fragment (L1-L3 + L16-L17, 16x16 input) ===
+  input (16, 16, 1), range [27,255]
+  captured: 34 IR nodes
+  emitted: 48690 instrs, 14899456 B weight blob
+  conv layers: 17 (L1..L17)
+  wrote /home/hatch/workspace/fpga-accel/tb/vectors_stage6_mc.txt: 4 cases
+  iverilog ok (0.1s); running vvp [dncnn_w1] ...
+  vvp done rc=0 (545.5s)
+    TB stage6_mc DONE
+  wrote /home/hatch/workspace/fpga-accel/tb/vectors_stage6_mc.txt: 1 cases
+  iverilog ok (0.1s); running vvp [dncnn_w2] ...
+  vvp done rc=0 (202.4s)
+    TB stage6_mc DONE
+  conv2d: vs funcsim max|err|=0.00 [OK]
+  conv2d_1: vs funcsim max|err|=0.00 [OK]
+  conv2d_2: vs funcsim max|err|=0.00 [OK]
+  conv2d_15: vs funcsim max|err|=0.00 [OK]
+  conv2d_16: vs funcsim max|err|=0.00 [OK]
+  denoised (residual mode 3): vs funcsim max|err|=0.00 PSNR=inf dB [OK]
+  denoised vs float: max|err|=1.37 PSNR=53.23 dB (Stage 6 prep: 48.23 dB, max|err| 3.53)
+  captured: 34 IR nodes
+  emitted: 48690 instrs, 14899456 B weight blob
+== dncnn (float ref: model pad) ==
+  conv2d: vs float max|err|=1.00 PSNR=77.49 dB (r_out=0 signed_out=False)
+  conv2d_1: vs float max|err|=2.00 PSNR=59.53 dB (r_out=1 signed_out=False)
+  conv2d_2: vs float max|err|=2.00 PSNR=56.97 dB (r_out=1 signed_out=False)
+  conv2d_3: vs float max|err|=3.00 PSNR=55.48 dB (r_out=1 signed_out=False)
+  conv2d_4: vs float max|err|=3.00 PSNR=54.78 dB (r_out=1 signed_out=False)
+  conv2d_5: vs float max|err|=3.00 PSNR=54.26 dB (r_out=1 signed_out=False)
+  conv2d_6: vs float max|err|=3.00 PSNR=53.90 dB (r_out=1 signed_out=False)
+  conv2d_7: vs float max|err|=2.00 PSNR=57.22 dB (r_out=2 signed_out=False)
+  conv2d_8: vs float max|err|=2.00 PSNR=56.09 dB (r_out=2 signed_out=False)
+  conv2d_9: vs float max|err|=2.00 PSNR=55.65 dB (r_out=2 signed_out=False)
+  conv2d_10: vs float max|err|=4.00 PSNR=52.33 dB (r_out=1 signed_out=False)
+  conv2d_11: vs float max|err|=3.00 PSNR=53.49 dB (r_out=1 signed_out=False)
+  conv2d_12: vs float max|err|=4.00 PSNR=52.88 dB (r_out=1 signed_out=False)
+  conv2d_13: vs float max|err|=4.00 PSNR=53.73 dB (r_out=1 signed_out=False)
+  conv2d_14: vs float max|err|=8.00 PSNR=49.84 dB (r_out=0 signed_out=False)
+  conv2d_15: vs float max|err|=1.00 PSNR=59.92 dB (r_out=0 signed_out=False)
+  conv2d_16: vs float max|err|=1.00 PSNR=52.00 dB (r_out=0 signed_out=True)
+  [dncnn] PASS (755.3s)
+=== RetinexNet Decom-Net (full end-to-end, 16x16 input) ===
+  input (16, 16, 4), range [8,63]
+  captured: 21 IR nodes
+  emitted: 16697 instrs, 5080064 B weight blob
+  conv layers: ['conv2d', 'conv2d_1', 'conv2d_2', 'conv2d_3', 'conv2d_4', 'conv2d_5', 'conv2d_6'] (conv0, conv1-5, recon)
+  act nodes: ['sigmoid']
+  wrote /home/hatch/workspace/fpga-accel/tb/vectors_stage6_mc.txt: 6 cases
+  iverilog ok (0.1s); running vvp [retinexnet_w1] ...
+  vvp done rc=0 (808.1s)
+    TB stage6_mc DONE
+  wrote /home/hatch/workspace/fpga-accel/tb/vectors_stage6_mc.txt: 1 cases
+  iverilog ok (0.1s); running vvp [retinexnet_w2] ...
+  vvp done rc=0 (215.7s)
+    TB stage6_mc DONE
+  conv2d: vs funcsim max|err|=0.00 [OK]
+  conv2d_1: vs funcsim max|err|=0.00 [OK]
+  conv2d_2: vs funcsim max|err|=0.00 [OK]
+  conv2d_3: vs funcsim max|err|=0.00 [OK]
+  conv2d_4: vs funcsim max|err|=0.00 [OK]
+  conv2d_5: vs funcsim max|err|=0.00 [OK]
+  conv2d_6: vs funcsim max|err|=0.00 [OK]
+  sigmoid (act PWL (mode 2, 32 seg), r_in=3 r_out=0): vs funcsim(zero-pad) max|err|=1.00 (budget <=1) [OK]
+  END-TO-END vs float (ZERO pad): R PSNR=45.37 dB max|err|=8.18  L PSNR=49.99 dB max|err|=2.57
+  END-TO-END vs float (REPLICATE pad, original model): R PSNR=26.72 dB  L PSNR=36.71 dB (border effect included)
+  BORDER (replicate vs zero, funcsim, fixed-point):
+    R full: max|diff|=55.00 PSNR=26.78 dB  interior(5px): max|diff|=3.00 PSNR=45.91 dB
+    L full: max|diff|=21.00 PSNR=36.90 dB  interior(5px): max|diff|=1.00 PSNR=55.91 dB
+    float-only padding difference: R PSNR=27.12 dB  L PSNR=37.47 dB
+  captured: 21 IR nodes
+  emitted: 16697 instrs, 5080064 B weight blob
+== retinexnet (float ref: zero-pad) ==
+  conv2d: vs float max|err|=1.00 PSNR=73.11 dB (r_out=0 signed_out=True)
+  conv2d_1: vs float max|err|=1.00 PSNR=61.30 dB (r_out=0 signed_out=False)
+  conv2d_2: vs float max|err|=2.00 PSNR=60.51 dB (r_out=0 signed_out=False)
+  conv2d_3: vs float max|err|=2.00 PSNR=58.08 dB (r_out=0 signed_out=False)
+  conv2d_4: vs float max|err|=4.00 PSNR=55.24 dB (r_out=0 signed_out=False)
+  conv2d_5: vs float max|err|=17.00 PSNR=48.02 dB (r_out=1 signed_out=False)
+  conv2d_6: vs float max|err|=5.00 PSNR=50.81 dB (r_out=3 signed_out=True)
+  sigmoid (act): vs float max|err|=8.00 PSNR=45.93 dB
+  [retinexnet] PASS (1029.0s)
+=== r_out re-validation + accumulator bounds ===
+  captured: 6 IR nodes
+  emitted: 2018 instrs, 518848 B weight blob
+  r_out re-validation (srcnn, 3 wider inputs) ...
+    conv2d: stored r_out=2 required r_out=1 max|act|=1.9466 [ok]
+    conv2d_1: stored r_out=2 required r_out=2 max|act|=2.4714 [ok]
+    conv2d_2: stored r_out=0 required r_out=0 max|act|=0.8942 [ok]
+  accumulator bound check (32-bit, must be < 2^31) ...
+    conv2d: max|acc|=4335470 (OK)
+    conv2d_1: max|acc|=5458455 (OK)
+    conv2d_2: max|acc|=2319190 (OK)
+  captured: 34 IR nodes
+  emitted: 48690 instrs, 14899456 B weight blob
+  r_out re-validation (dncnn, 2 wider inputs) ...
+    conv2d: stored r_out=0 required r_out=0 max|act|=0.6577 [ok]
+    conv2d_1: stored r_out=1 required r_out=1 max|act|=1.8424 [ok]
+    conv2d_2: stored r_out=1 required r_out=2 max|act|=2.1791 [SATURATES]
+    conv2d_3: stored r_out=1 required r_out=1 max|act|=1.7371 [ok]
+    conv2d_4: stored r_out=1 required r_out=1 max|act|=1.8985 [ok]
+    conv2d_5: stored r_out=1 required r_out=1 max|act|=1.6424 [ok]
+    conv2d_6: stored r_out=1 required r_out=2 max|act|=2.2850 [SATURATES]
+    conv2d_7: stored r_out=2 required r_out=2 max|act|=3.0258 [ok]
+    conv2d_8: stored r_out=2 required r_out=2 max|act|=3.1936 [ok]
+    conv2d_9: stored r_out=2 required r_out=2 max|act|=3.0525 [ok]
+    conv2d_10: stored r_out=1 required r_out=1 max|act|=1.5562 [ok]
+    conv2d_11: stored r_out=1 required r_out=1 max|act|=1.4383 [ok]
+    conv2d_12: stored r_out=1 required r_out=1 max|act|=1.2861 [ok]
+    conv2d_13: stored r_out=1 required r_out=1 max|act|=1.1799 [ok]
+    conv2d_14: stored r_out=0 required r_out=1 max|act|=1.0870 [SATURATES]
+    conv2d_15: stored r_out=0 required r_out=0 max|act|=0.4006 [ok]
+    conv2d_16: stored r_out=0 required r_out=0 max|act|=0.2324 [ok]
+  accumulator bound check (32-bit, must be < 2^31) ...
+    conv2d: max|acc|=20688812 (OK)
+    conv2d_1: max|acc|=10954330 (OK)
+    conv2d_2: max|acc|=8137760 (OK)
+    conv2d_3: max|acc|=6629947 (OK)
+    conv2d_4: max|acc|=9762327 (OK)
+    conv2d_5: max|acc|=6540043 (OK)
+    conv2d_6: max|acc|=8220735 (OK)
+    conv2d_7: max|acc|=5442931 (OK)
+    conv2d_8: max|acc|=5342155 (OK)
+    conv2d_9: max|acc|=5227900 (OK)
+    conv2d_10: max|acc|=2912657 (OK)
+    conv2d_11: max|acc|=5746195 (OK)
+    conv2d_12: max|acc|=5322235 (OK)
+    conv2d_13: max|acc|=4441144 (OK)
+    conv2d_14: max|acc|=3782473 (OK)
+    conv2d_15: max|acc|=2451145 (OK)
+    conv2d_16: max|acc|=1701908 (OK)
+  captured: 21 IR nodes
+  emitted: 16697 instrs, 5080064 B weight blob
+  r_out re-validation (retinexnet, 2 wider inputs) ...
+    conv2d: stored r_out=0 required r_out=0 max|act|=0.3218 [ok]
+    conv2d_1: stored r_out=0 required r_out=0 max|act|=0.3935 [ok]
+    conv2d_2: stored r_out=0 required r_out=0 max|act|=0.3853 [ok]
+    conv2d_3: stored r_out=0 required r_out=0 max|act|=0.6752 [ok]
+    conv2d_4: stored r_out=0 required r_out=1 max|act|=1.1183 [SATURATES]
+    conv2d_5: stored r_out=1 required r_out=1 max|act|=1.9611 [ok]
+    conv2d_6: stored r_out=3 required r_out=3 max|act|=2.5373 [ok]
+    sigmoid: stored r_out=0 required r_out=0 max|act|=0.9267 [ok]
+  accumulator bound check (32-bit, must be < 2^31) ...
+    conv2d: max|acc|=2838086 (OK)
+    conv2d_1: max|acc|=13006803 (OK)
+    conv2d_2: max|acc|=4728635 (OK)
+    conv2d_3: max|acc|=7282079 (OK)
+    conv2d_4: max|acc|=11411817 (OK)
+    conv2d_5: max|acc|=10678653 (OK)
+    conv2d_6: max|acc|=2591800 (OK)
+=== STAGE 6 RESULT: ALL PASS ===

@@ -41,7 +41,7 @@ GOLDEN CHECK PASSED
 wrote vectors_dw.txt: 26 cases
 ../rtl/conv2d_dw.sv:206: vvp.tgt sorry: Case unique/unique0 qualities are ignored.
 [compile] rc=0
-[vvp] rc=0 wall=211s
+[vvp] rc=0 wall=193s
 TB dw: 26 cases
 case 0 (mode=0 k=17 d=1 24x24 shift=6 pad=(0,0,0,0) stride=(1,1) out=8x8): 64 outputs, framing errors=0
 case 1 (mode=0 k=11 d=1 20x20 shift=8 pad=(5,5,5,5) stride=(1,1) out=20x20): 400 outputs, framing errors=0
@@ -98,13 +98,13 @@ case 23 (DW-SQUARE k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) sign=(1,1) o
 case 24 (DW-SQUARE k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(1,1) sign=(1,1) out=16x16): PASS (256 pixels)
 case 25 (DW-STRIP-H k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) sign=(1,1) out=15x13): PASS (195 pixels)
 GOLDEN CHECK PASSED
-[stage 2] script exit=0 wall=211s
+[stage 2] script exit=0 wall=193s
 [stage 2] PASS
 === Stage 3 (tb/run_stage3.sh) ===
 === Stage 3: generating vectors ===
 wrote vectors_mc.txt: 15 cases
 wrote vectors_pool.txt: 8 cases
-wrote vectors_residual.txt: 7 cases
+wrote vectors_residual.txt: 8 cases
 wrote vectors_act.txt: 12 cases
 MLUT sigmoid: approx error vs float: max 5.5 Q5.11 LSBs (0.0027), RMS 1.0 LSBs
 MLUT tanh: approx error vs float: max 38.1 Q5.11 LSBs (0.0186), RMS 5.3 LSBs
@@ -240,7 +240,7 @@ case 6 (mode=2 15x13 out=1x1): PASS (1 pixels)
 case 7 (mode=2 1x1 out=1x1): PASS (1 pixels)
 GOLDEN CHECK PASSED
 === Stage 3: residual ===
-TB residual: 7 cases
+TB residual: 8 cases
 case 0 (mode=0 16x16): 256 outputs, framing errors=0
 case 1 (mode=0 15x13): 195 outputs, framing errors=0
 case 2 (mode=0 16x16): 256 outputs, framing errors=0
@@ -248,8 +248,9 @@ case 3 (mode=1 16x16): 256 outputs, framing errors=0
 case 4 (mode=1 15x13): 195 outputs, framing errors=0
 case 5 (mode=2 16x16): 256 outputs, framing errors=0
 case 6 (mode=0 1x1): 1 outputs, framing errors=0
+case 7 (mode=3 16x16): 256 outputs, framing errors=0
 TB residual DONE
-tb_residual.sv:165: $finish called at 44505000 (1ps)
+tb_residual.sv:165: $finish called at 52635000 (1ps)
 case 0 (mode=0 16x16): PASS (256 pixels)
 case 1 (mode=0 15x13): PASS (195 pixels)
 case 2 (mode=0 16x16): PASS (256 pixels)
@@ -257,6 +258,7 @@ case 3 (mode=1 16x16): PASS (256 pixels)
 case 4 (mode=1 15x13): PASS (195 pixels)
 case 5 (mode=2 16x16): PASS (256 pixels)
 case 6 (mode=0 1x1): PASS (1 pixels)
+case 7 (mode=3 16x16): PASS (256 pixels)
 GOLDEN CHECK PASSED
 === Stage 3: act ===
 TB act: 12 cases
@@ -300,7 +302,7 @@ case 24 (DW-SQUARE k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(1,1) sign=(1,1) o
 case 25 (DW-STRIP-H k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) sign=(1,1) out=15x13): PASS (195 pixels)
 GOLDEN CHECK PASSED
 === STAGE 3 RESULT: ALL PASS ===
-[stage 3] script exit=0 wall=1186s
+[stage 3] script exit=0 wall=1080s
 [stage 3] PASS
 [stage 3] PASS (all module check logs)
 === Stage 4 (tb/run_stage4.sh) ===
@@ -525,7 +527,7 @@ case 13 (24x20 k=5 shift=8 pad=(2,2,2,2) stride=(3,2) out=8x10): PASS (80 pixels
 GOLDEN CHECK PASSED
 === Stage 3 regressions (pool 8, residual 7; mc + act already run above) ===
 wrote vectors_pool.txt: 8 cases
-wrote vectors_residual.txt: 7 cases
+wrote vectors_residual.txt: 8 cases
 === Stage 4: pool ===
 TB pool: 8 cases
 case 0 (mode=0 16x16 -> 8x8): 64 outputs, framing errors=0
@@ -548,7 +550,7 @@ case 6 (mode=2 15x13 out=1x1): PASS (1 pixels)
 case 7 (mode=2 1x1 out=1x1): PASS (1 pixels)
 GOLDEN CHECK PASSED
 === Stage 4: residual ===
-TB residual: 7 cases
+TB residual: 8 cases
 case 0 (mode=0 16x16): 256 outputs, framing errors=0
 case 1 (mode=0 15x13): 195 outputs, framing errors=0
 case 2 (mode=0 16x16): 256 outputs, framing errors=0
@@ -556,8 +558,9 @@ case 3 (mode=1 16x16): 256 outputs, framing errors=0
 case 4 (mode=1 15x13): 195 outputs, framing errors=0
 case 5 (mode=2 16x16): 256 outputs, framing errors=0
 case 6 (mode=0 1x1): 1 outputs, framing errors=0
+case 7 (mode=3 16x16): 256 outputs, framing errors=0
 TB residual DONE
-tb_residual.sv:165: $finish called at 44505000 (1ps)
+tb_residual.sv:165: $finish called at 52635000 (1ps)
 case 0 (mode=0 16x16): PASS (256 pixels)
 case 1 (mode=0 15x13): PASS (195 pixels)
 case 2 (mode=0 16x16): PASS (256 pixels)
@@ -565,10 +568,11 @@ case 3 (mode=1 16x16): PASS (256 pixels)
 case 4 (mode=1 15x13): PASS (195 pixels)
 case 5 (mode=2 16x16): PASS (256 pixels)
 case 6 (mode=0 1x1): PASS (1 pixels)
+case 7 (mode=3 16x16): PASS (256 pixels)
 GOLDEN CHECK PASSED
 === STAGE 4 RESULT: ALL PASS ===
-[stage 4] script exit=0 wall=1140s
+[stage 4] script exit=0 wall=1151s
 [stage 4] PASS
 [stage 4] PASS (all module check logs)
-=== regressions total wall=2552s ===
+=== regressions total wall=2439s ===
 === ALL REGRESSIONS PASSED ===

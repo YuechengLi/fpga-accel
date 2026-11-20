@@ -1,0 +1,4 @@
+TB residual: 1 cases
+case 0 (mode=3 16x16): 256 outputs, framing errors=0
+TB residual DONE
+tb_residual.sv:165: $finish called at 8115000 (1ps)

@@ -55,6 +55,18 @@
 //     (whose BYPASS mode covers the fused / no-activation cases). The
 //     compiler (Stage 5) decides per layer which path to use.
 //   addr 0x11 : fused Leaky slope_fp (16-bit Q0.16, default 8192 = 0.125)
+//   addr 0x12 : bias low 16 bits  (Stage 6)   addr 0x13 : bias high 16
+//     bits (Stage 6). The two together are the signed 32-bit bias
+//     b_q for the current output channel (per-output-channel constant,
+//     int32). It is added to the accumulator on the FIRST C_in tile
+//     only (cur_t == 0), so it is added exactly once per output pixel.
+//     The host writes it before the first tile's GO for each output
+//     channel (the Stage 5 emitter emits the two writes per channel;
+//     the Stage 5 driver / program.txt previously had no bias writes
+//     because this register did not exist -- the Stage 5 functional
+//     simulator always included the bias, so this is a Stage 6 RTL
+//     fix, not a model change). Reset default 0 (no bias), so the
+//     Stage 3 testbench (which never writes 0x12/0x13) is unaffected.
 //   addr 0x0C : GO (write 1 = start the next (o,t) compute pass)
 //   addr 0x0D : output width  (host-computed, for emit framing)
 //   addr 0x0E : output height (host-computed, for emit framing)
@@ -158,6 +170,8 @@ module conv2d_mc #(
     localparam logic [15:0] CFG_SIGN    = 16'h000F;  // bit0: signed in, bit1: signed out
     localparam logic [15:0] CFG_ACT     = 16'h0010;  // fused activation: 0=none, 1=ReLU, 2=Leaky
     localparam logic [15:0] CFG_ACT_SLOPE = 16'h0011;  // Leaky slope_fp (Q0.16)
+    localparam logic [15:0] CFG_BIAS_LO = 16'h0012;  // bias low 16 bits (Stage 6)
+    localparam logic [15:0] CFG_BIAS_HI = 16'h0013;  // bias high 16 bits (Stage 6)
     localparam logic [15:0] CFG_COEFF_BASE = 16'h0100;
     localparam logic [15:0] CFG_COEFF_LAST = 16'h02FF;  // 0x100 + 4*128 - 1
 
@@ -180,6 +194,7 @@ module conv2d_mc #(
     logic        sign_in_r, sign_out_r;
     logic [1:0]  fuse_act_r;  // fused activation: 0=none, 1=ReLU, 2=Leaky
     logic signed [15:0] act_slope_r;  // Leaky slope_fp (Q0.16)
+    logic signed [31:0] bias_r;  // per-output-channel bias b_q (Stage 6)
     logic signed [15:0] coeff [0:C_PAR-1][0:MAX_COEFF-1];
     int ci, cj;
 
@@ -206,6 +221,7 @@ module conv2d_mc #(
             sign_out_r <= 1'b0;
             fuse_act_r <= 2'd0;
             act_slope_r <= 16'sd8192;  // 0.125
+            bias_r <= 32'sd0;
             for (ci = 0; ci < C_PAR; ci++)
                 for (cj = 0; cj < MAX_COEFF; cj++) coeff[ci][cj] <= '0;
             coeff[0][1*11+1] <= 16'sd256;
@@ -231,6 +247,8 @@ module conv2d_mc #(
                 end
                 CFG_ACT   : fuse_act_r <= cfg_data[1:0];
                 CFG_ACT_SLOPE : act_slope_r <= cfg_data;
+                CFG_BIAS_LO : bias_r[15:0] <= cfg_data;
+                CFG_BIAS_HI : bias_r[31:16] <= cfg_data;
                 default: begin
                     if (cfg_addr >= CFG_COEFF_BASE && cfg_addr <= CFG_COEFF_LAST) begin
                         // Stride 128: offset = addr - 0x100 = l*128 + k, so
@@ -711,11 +729,14 @@ module conv2d_mc #(
 
     // Accumulator (register array, combinational read). First tile of an
     // output channel overwrites (stale values ignored); later tiles add.
+    // The per-output-channel bias b_q is added on the first tile only,
+    // so it is added exactly once per output pixel (Stage 6).
     logic signed [31:0] acc_mem [0:TILE_PIX-1];
     logic signed [31:0] acc_rd;
     logic signed [31:0] acc_wr_val;
     assign acc_rd = acc_mem[acc_idx];
-    assign acc_wr_val = (cur_t == 7'd0) ? tile_partial : acc_rd + tile_partial;
+    assign acc_wr_val = (cur_t == 7'd0) ? (tile_partial + bias_r)
+                                        : (acc_rd + tile_partial);
     int mi;
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin

@@ -36,7 +36,7 @@ uint16_t mock_cfg_read(void *ctx, uint16_t addr)
     return 0;
 }
 
-void mock_dma_write(void *ctx, uint16_t reg, uint16_t data)
+void mock_dma_write(void *ctx, uint16_t reg, uint32_t data)
 {
     mock_mmio_t *m = (mock_mmio_t *)ctx;
     switch (reg) {
@@ -54,19 +54,19 @@ void mock_dma_write(void *ctx, uint16_t reg, uint16_t data)
              * +k). The blob is in hardware order (o, t, l, k), so
              * the i-th coefficient goes to lane i/taps, tap
              * i%taps. */
-            uint16_t i;
+            uint32_t i;
             m->dma_status = DMA_STATUS_BUSY;
             for (i = 0; i < m->dma_count; i++) {
                 size_t off = (size_t)m->dma_src + (size_t)i * 2;
                 uint16_t v = 0;
-                uint16_t lane, tap, dst;
+                uint32_t lane, tap, dst;
                 if (off + 1 < m->weights_len)
                     v = (uint16_t)(m->weights[off]
                                    | (m->weights[off + 1] << 8));
-                lane = (m->dma_taps == 0) ? 0 : (uint16_t)(i / m->dma_taps);
-                tap = (m->dma_taps == 0) ? i : (uint16_t)(i % m->dma_taps);
-                dst = (uint16_t)(m->dma_dst + lane * m->dma_stride + tap);
-                if ((uint32_t)dst < MOCK_COEFF_WORDS)
+                lane = (m->dma_taps == 0) ? 0 : (uint32_t)(i / m->dma_taps);
+                tap = (m->dma_taps == 0) ? i : (uint32_t)(i % m->dma_taps);
+                dst = (uint32_t)(m->dma_dst + lane * m->dma_stride + tap);
+                if (dst < MOCK_COEFF_WORDS)
                     m->coeff[dst] = v;
             }
             m->dma_status = DMA_STATUS_DONE;
@@ -77,7 +77,7 @@ void mock_dma_write(void *ctx, uint16_t reg, uint16_t data)
     }
 }
 
-uint16_t mock_dma_read(void *ctx, uint16_t reg)
+uint32_t mock_dma_read(void *ctx, uint16_t reg)
 {
     mock_mmio_t *m = (mock_mmio_t *)ctx;
     if (reg == DMA_STATUS)

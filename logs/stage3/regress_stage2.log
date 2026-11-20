@@ -1,7 +1,7 @@
 wrote vectors_dw.txt: 26 cases
 ../rtl/conv2d_dw.sv:206: vvp.tgt sorry: Case unique/unique0 qualities are ignored.
 [compile] rc=0
-[vvp] rc=0 wall=197s
+[vvp] rc=0 wall=193s
 TB dw: 26 cases
 case 0 (mode=0 k=17 d=1 24x24 shift=6 pad=(0,0,0,0) stride=(1,1) out=8x8): 64 outputs, framing errors=0
 case 1 (mode=0 k=11 d=1 20x20 shift=8 pad=(5,5,5,5) stride=(1,1) out=20x20): 400 outputs, framing errors=0

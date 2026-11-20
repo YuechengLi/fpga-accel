@@ -1,0 +1,118 @@
+Stage 6 retinexnet verification
+result: PASS
+{
+  "conv2d": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 1.0,
+    "psnr_float": 73.11496956528848,
+    "o_start": 0,
+    "o_end": 64,
+    "shape": [
+      16,
+      16,
+      64
+    ]
+  },
+  "conv2d_1": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 1.0,
+    "psnr_float": 61.29873208873206,
+    "o_start": 0,
+    "o_end": 8,
+    "shape": [
+      16,
+      16,
+      64
+    ]
+  },
+  "conv2d_2": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 2.0,
+    "psnr_float": 60.51150321160374,
+    "o_start": 0,
+    "o_end": 4,
+    "shape": [
+      16,
+      16,
+      64
+    ]
+  },
+  "conv2d_3": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 2.0,
+    "psnr_float": 58.081777917443105,
+    "o_start": 0,
+    "o_end": 4,
+    "shape": [
+      16,
+      16,
+      64
+    ]
+  },
+  "conv2d_4": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 4.0,
+    "psnr_float": 55.241182366899146,
+    "o_start": 0,
+    "o_end": 4,
+    "shape": [
+      16,
+      16,
+      64
+    ]
+  },
+  "conv2d_5": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 17.0,
+    "psnr_float": 48.01700129593102,
+    "o_start": 0,
+    "o_end": 4,
+    "shape": [
+      16,
+      16,
+      64
+    ]
+  },
+  "conv2d_6": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 5.0,
+    "psnr_float": 50.81441239778523,
+    "o_start": 0,
+    "o_end": 4,
+    "shape": [
+      16,
+      16,
+      4
+    ]
+  },
+  "sigmoid": {
+    "max_err_funcsim": 1.0,
+    "shape": [
+      16,
+      16,
+      4
+    ],
+    "max_err_float": 8.0,
+    "psnr_float": 45.926760038951535
+  },
+  "end_to_end": {
+    "R_psnr_zero_pad": 45.37408043691988,
+    "L_psnr_zero_pad": 49.987402813443815,
+    "R_max_err_zero_pad": 8.18271421533234,
+    "L_max_err_zero_pad": 2.571976044291155,
+    "R_psnr_replicate_pad": 26.723199170938138,
+    "L_psnr_replicate_pad": 36.70545907479236
+  },
+  "border": {
+    "R_full_maxdiff": 55.0,
+    "R_full_psnr": 26.78428536462014,
+    "R_interior_maxdiff": 3.0,
+    "R_interior_psnr": 45.91231611251554,
+    "L_full_maxdiff": 21.0,
+    "L_full_psnr": 36.89713694247038,
+    "L_interior_maxdiff": 1.0,
+    "L_interior_psnr": 55.91231611251554,
+    "R_float_pad_psnr": 27.119205292960963,
+    "L_float_pad_psnr": 37.47310279708665
+  }
+}

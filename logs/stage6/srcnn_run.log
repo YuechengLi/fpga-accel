@@ -1,0 +1,43 @@
+=== SRCNN (full end-to-end chain, all channels, 24x24 input) ===
+  input (24, 24, 1), range [46,243]
+  captured: 6 IR nodes
+  emitted: 2018 instrs, 16064 B weight blob
+  conv layers: ['conv2d', 'conv2d_1', 'conv2d_2']
+  wrote /home/hatch/workspace/fpga-accel/tb/vectors_stage6_mc.txt: 1 cases
+  iverilog ok (0.1s); running vvp [srcnn_conv2d] ...
+  vvp done rc=0 (161.1s)
+    TB stage6_mc DONE
+  conv2d: vs funcsim max|err|=0.00 [OK]
+  wrote /home/hatch/workspace/fpga-accel/tb/vectors_stage6_mc.txt: 1 cases
+  iverilog ok (0.1s); running vvp [srcnn_conv2d_1] ...
+  vvp done rc=0 (478.7s)
+    TB stage6_mc DONE
+  conv2d_1: vs funcsim max|err|=0.00 [OK]
+  wrote /home/hatch/workspace/fpga-accel/tb/vectors_stage6_mc.txt: 1 cases
+  iverilog ok (0.1s); running vvp [srcnn_conv2d_2] ...
+  vvp done rc=0 (36.5s)
+    TB stage6_mc DONE
+  conv2d_2: vs funcsim max|err|=0.00 [OK]
+  END-TO-END vs float: max|err|=5.53 PSNR=43.51 dB (Stage 6 prep: 42.76 dB, max|err| 5.79)
+  [srcnn] PASS (680.3s)
+=== r_out re-validation + accumulator bounds ===
+  captured: 6 IR nodes
+  emitted: 2018 instrs, 16064 B weight blob
+  r_out re-validation (srcnn, 3 wider inputs) ...
+    conv2d: stored r_out=2 required r_out=1 max|act|=1.9466 [ok]
+    conv2d_1: stored r_out=2 required r_out=2 max|act|=2.4714 [ok]
+    conv2d_2: stored r_out=0 required r_out=0 max|act|=0.8942 [ok]
+  accumulator bound check (32-bit, must be < 2^31) ...
+    conv2d: max|acc|=4335470 (OK)
+    conv2d_1: max|acc|=5458455 (OK)
+    conv2d_2: max|acc|=2319190 (OK)
+Traceback (most recent call last):
+  File "/home/hatch/workspace/fpga-accel/sw/stage6.py", line 821, in main
+    rres = run_r_validation(outdir)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hatch/workspace/fpga-accel/sw/stage6.py", line 869, in run_r_validation
+    "dncnn", models_torch.DnCNN(n_layers=17), noisy_f, noisy_u8,
+             ^^^^^^^^^^^^^^^^^^
+AttributeError: module 'models_torch' has no attribute 'DnCNN'. Did you mean: 'SRCNN'?
+  r_out validation: EXCEPTION module 'models_torch' has no attribute 'DnCNN'
+=== STAGE 6 RESULT: FAILED ===

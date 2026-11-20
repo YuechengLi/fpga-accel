@@ -1,0 +1,176 @@
+{
+  "srcnn": {
+    "conv2d": {
+      "max_err_float": 1.0,
+      "psnr_float": 71.58268580432672,
+      "r_out": 2,
+      "signed_out": false
+    },
+    "conv2d_1": {
+      "max_err_float": 2.0,
+      "psnr_float": 55.48357052185034,
+      "r_out": 2,
+      "signed_out": false
+    },
+    "conv2d_2": {
+      "max_err_float": 6.0,
+      "psnr_float": 43.37974397383573,
+      "r_out": 0,
+      "signed_out": false
+    }
+  },
+  "dncnn": {
+    "conv2d": {
+      "max_err_float": 1.0,
+      "psnr_float": 77.48746699210818,
+      "r_out": 0,
+      "signed_out": false
+    },
+    "conv2d_1": {
+      "max_err_float": 2.0,
+      "psnr_float": 59.530495812090564,
+      "r_out": 1,
+      "signed_out": false
+    },
+    "conv2d_2": {
+      "max_err_float": 2.0,
+      "psnr_float": 56.97289515592119,
+      "r_out": 1,
+      "signed_out": false
+    },
+    "conv2d_3": {
+      "max_err_float": 3.0,
+      "psnr_float": 55.47924989988658,
+      "r_out": 1,
+      "signed_out": false
+    },
+    "conv2d_4": {
+      "max_err_float": 3.0,
+      "psnr_float": 54.77639111691705,
+      "r_out": 1,
+      "signed_out": false
+    },
+    "conv2d_5": {
+      "max_err_float": 3.0,
+      "psnr_float": 54.25548896030126,
+      "r_out": 1,
+      "signed_out": false
+    },
+    "conv2d_6": {
+      "max_err_float": 3.0,
+      "psnr_float": 53.903108780148855,
+      "r_out": 1,
+      "signed_out": false
+    },
+    "conv2d_7": {
+      "max_err_float": 2.0,
+      "psnr_float": 57.21719148908665,
+      "r_out": 2,
+      "signed_out": false
+    },
+    "conv2d_8": {
+      "max_err_float": 2.0,
+      "psnr_float": 56.08867612809582,
+      "r_out": 2,
+      "signed_out": false
+    },
+    "conv2d_9": {
+      "max_err_float": 2.0,
+      "psnr_float": 55.652520848086496,
+      "r_out": 2,
+      "signed_out": false
+    },
+    "conv2d_10": {
+      "max_err_float": 4.0,
+      "psnr_float": 52.33012253504477,
+      "r_out": 1,
+      "signed_out": false
+    },
+    "conv2d_11": {
+      "max_err_float": 3.0,
+      "psnr_float": 53.4934626215321,
+      "r_out": 1,
+      "signed_out": false
+    },
+    "conv2d_12": {
+      "max_err_float": 4.0,
+      "psnr_float": 52.88323668252917,
+      "r_out": 1,
+      "signed_out": false
+    },
+    "conv2d_13": {
+      "max_err_float": 4.0,
+      "psnr_float": 53.72746366910717,
+      "r_out": 1,
+      "signed_out": false
+    },
+    "conv2d_14": {
+      "max_err_float": 8.0,
+      "psnr_float": 49.83745173194968,
+      "r_out": 0,
+      "signed_out": false
+    },
+    "conv2d_15": {
+      "max_err_float": 1.0,
+      "psnr_float": 59.91670474910819,
+      "r_out": 0,
+      "signed_out": false
+    },
+    "conv2d_16": {
+      "max_err_float": 1.0,
+      "psnr_float": 52.00131027109822,
+      "r_out": 0,
+      "signed_out": true
+    }
+  },
+  "retinexnet": {
+    "conv2d": {
+      "max_err_float": 1.0,
+      "psnr_float": 73.11496956528848,
+      "r_out": 0,
+      "signed_out": true
+    },
+    "conv2d_1": {
+      "max_err_float": 1.0,
+      "psnr_float": 61.29873208873206,
+      "r_out": 0,
+      "signed_out": false
+    },
+    "conv2d_2": {
+      "max_err_float": 2.0,
+      "psnr_float": 60.51150321160374,
+      "r_out": 0,
+      "signed_out": false
+    },
+    "conv2d_3": {
+      "max_err_float": 2.0,
+      "psnr_float": 58.081777917443105,
+      "r_out": 0,
+      "signed_out": false
+    },
+    "conv2d_4": {
+      "max_err_float": 4.0,
+      "psnr_float": 55.241182366899146,
+      "r_out": 0,
+      "signed_out": false
+    },
+    "conv2d_5": {
+      "max_err_float": 17.0,
+      "psnr_float": 48.01700129593102,
+      "r_out": 1,
+      "signed_out": false
+    },
+    "conv2d_6": {
+      "max_err_float": 5.0,
+      "psnr_float": 50.81441239778523,
+      "r_out": 3,
+      "signed_out": true
+    },
+    "sigmoid": {
+      "max_err_float": 8.0,
+      "psnr_float": 45.926760038951535,
+      "r_out": 0,
+      "signed_out": false
+    }
+  }
+}

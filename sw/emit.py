@@ -27,12 +27,15 @@ Emits the compiled program in three artifacts:
   * weights.bin -- the int16 weight blob (little-endian), in
     HARDWARE order: for a multi-channel conv, for each output
     channel o, for each C_in tile t, for each lane l, for each tap k
-    (row-major in the 11x11 grid): the coefficient. The driver writes
-    them to the engine at 0x100 + l*128 + k for that (o, t) pass.
-    For a single-channel (scheduler) layer the blob is the K*K taps
-    in row-major order, written contiguously to the bank (0x0200+i
-    / 0x0400+i) and streamed by the scheduler to the engine at
-    0x100+i.
+    (row-major in the 11x11 grid, 0..120): the coefficient. The
+    driver writes them to the engine at 0x100 + l*128 + k for that
+    (o, t) pass. For a single-channel (scheduler) layer the blob is
+    the full 121-entry grid, written contiguously to the bank
+    (0x0200+i / 0x0400+i) and streamed by the scheduler to the
+    engine at 0x100+i. (Stage 6 fix: the blob used to carry only
+    the K*K taps, but both engines index their coefficient memory
+    by the 11x11 grid, so the contiguous K*K placement put the
+    coefficients at the wrong addresses for K < 11.)
 
 Two execution paths (the Stage 4/5 boundary):
   * multi-channel conv (C_in > 1 or C_out > 1): conv2d_mc, driven
@@ -71,6 +74,8 @@ MC_OUTH = 0x0E
 MC_SIGN = 0x0F
 MC_FUSED_ACT = 0x10
 MC_SLOPE = 0x11
+MC_BIAS_LO = 0x12
+MC_BIAS_HI = 0x13
 MC_COEFF_BASE = 0x100
 MC_LANE_STRIDE = 128
 
@@ -163,14 +168,24 @@ def emit_program(graph, tile_results, act_tables, model_name="model",
                         for r in range(K):
                             grid[r * 11:(r * 11) + K] = \
                                 taps[r * K:(r * K) + K]
-                        # Only the K*K taps are stored in the blob
-                        # (the engine's tap index k is row-major
-                        # within the KxK kernel, 0..K*K-1).
-                        blob += taps.astype("<i2").tobytes()
-                        ncoeff_total += K * K
+                        # Store the FULL 121-entry grid per lane
+                        # (Stage 6 fix). The MC's coefficient memory
+                        # is indexed by the 11x11 grid (r*11+c), NOT
+                        # by the contiguous KxK row-major index: the
+                        # DMA writes tap k at dst + l*128 + k, so
+                        # the blob must carry the grid (zeros outside
+                        # the KxK kernel) or the MAC reads the wrong
+                        # coefficients. Storing only the K*K taps
+                        # (the previous code) put them at 0..K*K-1
+                        # instead of the grid positions and failed
+                        # the Stage 6 DMA integration check
+                        # (245/256 outputs wrong, SRCNN L1 ch5).
+                        blob += grid.astype("<i2").tobytes()
+                        ncoeff_total += 121
             weights[n.name] = {"W_q": W_q, "b_q": b_q}
             layout[n.name] = {"offset": off, "ncoeff": ncoeff_total,
-                              "order": "(o, t, l, k) row-major"}
+                              "order": "(o, t, l, k) -- k is the 11x11 "
+                              "grid index (0..120), 121/lane"}
             op = {"name": n.name, "op": n.op, "args": [src],
                   "K": K, "C_in": cin, "C_out": cout,
                   "pad": list(pad), "pad_mode": n.kwargs.get("pad_mode", "zero"),
@@ -283,14 +298,25 @@ def _emit_mc_layer(instrs, op, blob_off):
     # Per (o, t) pass: DMA the coefficients into the engine, then GO.
     # The blob offset for pass (o, t) is computed by the driver from
     # the layout (o, t, l, k) order; here we emit one DMA per pass.
+    # The per-output-channel bias b_q (int32) is written once per
+    # output channel, before the first tile's DMA (Stage 6: the RTL
+    # adds it on the first tile only, so one write per channel).
     idx = 0
     for o in range(cout):
         for t0 in range(0, cin, cin_tile):
             t1 = min(t0 + cin_tile, cin)
-            ncoeff = (t1 - t0) * K * K
+            # One full 121-entry grid per lane (Stage 6 fix -- see the
+            # blob construction above). taps=121, not K*K.
+            ncoeff = (t1 - t0) * 121
+            if t0 == 0:
+                b = int(op["bias"][o])
+                instrs.append(f"W {MC_BIAS_LO:#06x} {b & 0xFFFF:#06x}"
+                              f"  # bias o={o} (lo)")
+                instrs.append(f"W {MC_BIAS_HI:#06x} {(b >> 16) & 0xFFFF:#06x}"
+                              f"  # bias o={o} (hi)")
             dram_off = (blob_off + idx) * 2  # byte offset in weights.bin
             instrs.append(
-                f"DMA {dram_off} {ncoeff} {MC_COEFF_BASE:#06x} {K * K} "
+                f"DMA {dram_off} {ncoeff} {MC_COEFF_BASE:#06x} {121} "
                 f"{MC_LANE_STRIDE}  # pass o={o} cin_tile={t0}..{t1 - 1}")
             idx += ncoeff
             instrs.append("GO")
@@ -306,7 +332,11 @@ def _emit_sched_layer(instrs, op, layer_index, blob_off):
     sx, sy = op["stride"]
     bank = layer_index % 2
     bank_base = SCHED_BANK_A if bank == 0 else SCHED_BANK_B
-    ncoeff = K * K
+    # One full 121-entry grid (Stage 6 fix -- the dense engine's
+    # coefficient memory is indexed by the 11x11 grid, r*11+c, not
+    # by the contiguous K*K taps; the Stage 4 scheduler TB already
+    # uses ncoeff=121). The bank holds 289 entries, so 121 fits.
+    ncoeff = 121
     mode = MODE_FC if K == 1 else MODE_DENSE
     instrs.append(f"# layer {op['name']}: K={K} single-channel "
                   f"(scheduler layer {layer_index}, bank "
@@ -328,7 +358,7 @@ def _emit_sched_layer(instrs, op, layer_index, blob_off):
     instrs.append(f"W {SCHED_ACT:#06x} {fa:#06x}")
     instrs.append(f"W {SCHED_NCOEFF:#06x} {ncoeff:#06x}")
     dram_off = blob_off * 2
-    instrs.append(f"DMA {dram_off} {ncoeff} {bank_base:#06x} {K * K} 1"
+    instrs.append(f"DMA {dram_off} {ncoeff} {bank_base:#06x} {121} 1"
                   f"  # fill bank {'A' if bank == 0 else 'B'}")
     # The scheduler is started once, after all layer descriptors and
     # the first bank are programmed (the driver issues the start

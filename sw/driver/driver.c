@@ -54,7 +54,7 @@ int accel_wait_idle(accel_driver_t *d)
      * DMA is the only long-latency step in this skeleton). */
     uint32_t i;
     for (i = 0; i < WAIT_MAX_POLL; i++) {
-        uint16_t st = d->mmio.dma_read(d->mmio.ctx, DMA_STATUS);
+        uint32_t st = d->mmio.dma_read(d->mmio.ctx, DMA_STATUS);
         if (!(st & DMA_STATUS_BUSY))
             return 0;
     }
@@ -146,11 +146,13 @@ int accel_exec_line(accel_driver_t *d, const char *line)
         /* The weights blob must cover the transfer. */
         if (a + b * 2 > d->weights_len)
             return -2;
-        d->mmio.dma_write(d->mmio.ctx, DMA_SRC, (uint16_t)a);
-        d->mmio.dma_write(d->mmio.ctx, DMA_COUNT, (uint16_t)b);
-        d->mmio.dma_write(d->mmio.ctx, DMA_DST, (uint16_t)c);
-        d->mmio.dma_write(d->mmio.ctx, DMA_TAPS, (uint16_t)e);
-        d->mmio.dma_write(d->mmio.ctx, DMA_STRIDE, (uint16_t)f);
+        /* 32-bit DMA registers (do NOT truncate to 16 bits -- the
+         * blob can exceed 64 KB). */
+        d->mmio.dma_write(d->mmio.ctx, DMA_SRC, (uint32_t)a);
+        d->mmio.dma_write(d->mmio.ctx, DMA_COUNT, (uint32_t)b);
+        d->mmio.dma_write(d->mmio.ctx, DMA_DST, (uint32_t)c);
+        d->mmio.dma_write(d->mmio.ctx, DMA_TAPS, (uint32_t)e);
+        d->mmio.dma_write(d->mmio.ctx, DMA_STRIDE, (uint32_t)f);
         d->mmio.dma_write(d->mmio.ctx, DMA_CTRL, DMA_CTRL_START);
         d->n_dma++;
         return accel_wait_idle(d);

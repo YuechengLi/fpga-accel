@@ -19,28 +19,33 @@ from roofline import (model_macs, roofline_point, analyze_model,
 class TestCostModel(unittest.TestCase):
     def test_srcnn_l1(self):
         # SRCNN L1: K=9, Cin=1, 33x33 -> 25x25 out (valid, no pad).
+        # One 121-entry grid per lane (Stage 6 fix).
         L = LayerShape(9, 1, 64, 33, 33, pad=(0, 0, 0, 0))
         r = tile_search(L)
         self.assertEqual(r["C_in_tile"], 1)
-        self.assertEqual(r["ncoeff"], 81)
-        self.assertTrue(r["load_hidden"])  # load 101cy < compute 649cy
+        self.assertEqual(r["ncoeff"], 121)
+        self.assertTrue(r["load_hidden"])  # load 141cy < compute 649cy
 
     def test_dncnn_l2(self):
         # DnCNN L2: K=3, Cin=64, 32x32 (same-pad) -> 32x32.
+        # 4 lanes x 121-entry grid = 484 coeffs/pass (Stage 6 fix).
         L = LayerShape(3, 64, 64, 32, 32, pad=(1, 1, 1, 1))
         r = tile_search(L)
         self.assertEqual(r["C_in_tile"], 4)
-        self.assertEqual(r["ncoeff"], 36)
+        self.assertEqual(r["ncoeff"], 484)
         self.assertTrue(r["load_hidden"])
 
-    def test_k11_bank_limited(self):
-        # K=11, Cin=64: C_in_tile=4 would need 4*121=484 coeffs >
-        # the 289-coeff bank, so the tile is bank-limited to 2.
+    def test_k11_not_bank_limited(self):
+        # K=11, Cin=64: the MC loads one 121-entry grid per lane,
+        # and each lane's coefficient memory holds 128 entries, so
+        # C_in_tile=4 fits (4*121=484 <= 4*128=512). The old
+        # 289-coeff scheduler-bank limit does NOT apply to the MC
+        # path (Stage 6 fix -- it wrongly limited C_in_tile to 2).
         L = LayerShape(11, 64, 64, 32, 32, pad=(5, 5, 5, 5))
         r = tile_search(L)
-        self.assertEqual(r["C_in_tile"], 2)
-        self.assertEqual(r["ncoeff"], 242)
-        self.assertLessEqual(r["ncoeff"], 289)
+        self.assertEqual(r["C_in_tile"], 4)
+        self.assertEqual(r["ncoeff"], 484)
+        self.assertLessEqual(r["ncoeff"], 512)
         self.assertTrue(r["load_hidden"])
 
     def test_axi_faster_than_cfg(self):
@@ -56,7 +61,8 @@ class TestCostModel(unittest.TestCase):
         # The optimum tile is per-layer, not one global value.
         r1 = tile_search(LayerShape(9, 1, 64, 33, 33, pad=(0, 0, 0, 0)))
         r2 = tile_search(LayerShape(3, 64, 64, 32, 32, pad=(1, 1, 1, 1)))
-        r3 = tile_search(LayerShape(11, 64, 64, 32, 32, pad=(5, 5, 5, 5)))
+        r3 = tile_search(LayerShape(5, 32, 64, 1080, 1920,
+                                    pad=(2, 2, 2, 2)))
         tiles = {(r["C_in_tile"], r["H_tile"], r["W_tile"])
                  for r in (r1, r2, r3)}
         self.assertEqual(len(tiles), 3)

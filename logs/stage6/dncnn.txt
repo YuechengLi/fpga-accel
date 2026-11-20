@@ -1,0 +1,70 @@
+Stage 6 dncnn verification
+result: PASS
+{
+  "conv2d": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 1.0,
+    "psnr_float": 77.48746699210818,
+    "o_start": 0,
+    "o_end": 64,
+    "shape": [
+      16,
+      16,
+      64
+    ]
+  },
+  "conv2d_1": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 2.0,
+    "psnr_float": 59.530495812090564,
+    "o_start": 0,
+    "o_end": 8,
+    "shape": [
+      16,
+      16,
+      64
+    ]
+  },
+  "conv2d_2": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 2.0,
+    "psnr_float": 56.97289515592119,
+    "o_start": 0,
+    "o_end": 8,
+    "shape": [
+      16,
+      16,
+      64
+    ]
+  },
+  "conv2d_15": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 1.0,
+    "psnr_float": 59.91670474910819,
+    "o_start": 0,
+    "o_end": 8,
+    "shape": [
+      16,
+      16,
+      64
+    ]
+  },
+  "conv2d_16": {
+    "max_err_funcsim": 0.0,
+    "max_err_float": 1.0,
+    "psnr_float": 52.00131027109822,
+    "o_start": 0,
+    "o_end": 1,
+    "shape": [
+      16,
+      16,
+      1
+    ]
+  },
+  "denoised": {
+    "max_err_funcsim": 0.0,
+    "psnr_funcsim": Infinity,
+    "max_err_float": 1.3675073340148742,
+    "psnr_float": 53.22678315120211
+  }
+}

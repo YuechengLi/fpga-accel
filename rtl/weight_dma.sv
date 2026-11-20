@@ -22,7 +22,8 @@
 //   0x00 src    DRAM byte offset (source)
 //   0x01 count  number of int16 coefficients
 //   0x02 dst    config-bus base address (destination)
-//   0x03 taps   taps per lane (K*K); 0 = contiguous (stride 1)
+//   0x03 taps   taps per lane (121 = the full 11x11 grid, for the
+//                 dense engines; 0 = contiguous (stride 1))
 //   0x04 stride address stride between lanes (128 for conv2d_mc)
 //   0x05 ctrl   bit0 = start (self-clearing)
 //   0x06 status bit0 = done (sticky, cleared by a new start),

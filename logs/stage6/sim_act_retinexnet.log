@@ -1,0 +1,4 @@
+TB act: 1 cases
+case 0 (mode=2): 1024 outputs, framing errors=0
+TB act DONE
+tb_act.sv:171: $finish called at 33515000 (1ps)

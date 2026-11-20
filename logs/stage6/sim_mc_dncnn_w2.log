@@ -1,0 +1,11 @@
+TB stage6_mc: 1 cases
+case 0 ch 0 (K=3 16x16 C_in=64 C_out=8 shift=15 pad=(1,1,1,1) stride=(1,1) out=16x16 bias=2934039): 256 outputs, framing errors=0
+case 0 ch 1 (K=3 16x16 C_in=64 C_out=8 shift=15 pad=(1,1,1,1) stride=(1,1) out=16x16 bias=1387355): 256 outputs, framing errors=0
+case 0 ch 2 (K=3 16x16 C_in=64 C_out=8 shift=15 pad=(1,1,1,1) stride=(1,1) out=16x16 bias=-1933841): 256 outputs, framing errors=0
+case 0 ch 3 (K=3 16x16 C_in=64 C_out=8 shift=15 pad=(1,1,1,1) stride=(1,1) out=16x16 bias=895631): 256 outputs, framing errors=0
+case 0 ch 4 (K=3 16x16 C_in=64 C_out=8 shift=15 pad=(1,1,1,1) stride=(1,1) out=16x16 bias=-4241429): 256 outputs, framing errors=0
+case 0 ch 5 (K=3 16x16 C_in=64 C_out=8 shift=15 pad=(1,1,1,1) stride=(1,1) out=16x16 bias=1597914): 256 outputs, framing errors=0
+case 0 ch 6 (K=3 16x16 C_in=64 C_out=8 shift=15 pad=(1,1,1,1) stride=(1,1) out=16x16 bias=1431058): 256 outputs, framing errors=0
+case 0 ch 7 (K=3 16x16 C_in=64 C_out=8 shift=15 pad=(1,1,1,1) stride=(1,1) out=16x16 bias=-70796): 256 outputs, framing errors=0
+TB stage6_mc DONE
+tb_stage6_mc.sv:252: $finish called at 872735000 (1ps)

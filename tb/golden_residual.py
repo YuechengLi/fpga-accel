@@ -3,8 +3,14 @@
 
 Modes (match rtl/residual.sv):
   0 = add (a + b, saturating to [0, 255])
-  1 = sub (a - b, saturating to [0, 255])
+  1 = sub (a - b, saturating to [0, 255]; b unsigned)
   2 = bypass (a)
+  3 = sub with B signed (a - sign_extend(b), saturating to [0, 255]).
+      Stage 6: the DnCNN final step denoised = clip(noisy - residual,
+      0, 255), where the residual is a signed int8 (~50% negative).
+      The B stream carries two's-complement bytes; mode 3 sign-extends
+      them before subtracting. (A negative residual byte, e.g. -5 =
+      0xFB, is -5, not 251.)
 
 Vector file (vectors_residual.txt):
   line 1: ncases
@@ -45,6 +51,12 @@ def make_cases():
     add(1, 15, 13, 8, 9)     # sub, odd (a-b can go negative -> saturate)
     add(2, 16, 16, 10, 11)   # bypass A
     add(0, 1, 1, 12, 13)     # add, single pixel
+    # 7: mode 3, signed-B subtract (Stage 6, DnCNN denoised step).
+    # B carries two's-complement signed bytes (~50% negative); the
+    # golden sign-extends them. Uses a dedicated signed image.
+    cases.append(dict(mode=3, w=16, h=16,
+                      a=img(16, 16, 14),
+                      b=[(v - 128) & 0xFF for v in img(16, 16, 15)]))
     return cases
 
 
@@ -56,6 +68,10 @@ def golden(cs):
             out.append(max(0, min(255, a + b)))
         elif mode == 1:
             out.append(max(0, min(255, a - b)))
+        elif mode == 3:
+            # B is a signed int8 (two's complement); sign-extend first.
+            bs = b - 256 if b >= 128 else b
+            out.append(max(0, min(255, a - bs)))
         else:
             out.append(a)
     return out

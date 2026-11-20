@@ -1,0 +1,187 @@
+=== Stage 5: unit tests (43) ===
+............................./home/hatch/workspace/fpga-accel/sw/tests/test_emit.py:80: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp5vzhbbtd/program.json' mode='r' encoding='utf-8'>
+  pub = json.load(open(jp))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.../home/hatch/workspace/fpga-accel/sw/passes/mlut.py:104: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+  in12 = int(round((float(x) + 8.0) * 256.0))
+./home/hatch/workspace/fpga-accel/sw/tests/test_funcsim.py:44: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/hatch/workspace/fpga-accel/models/srcnn/srcnn_x3_quant.json' mode='r' encoding='utf-8'>
+  q = json.load(open(os.path.join(root, "srcnn_x3_quant.json")))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..........
+----------------------------------------------------------------------
+Ran 43 tests in 21.161s
+
+OK
+[stage5] unit tests (43): PASS
+=== Stage 5: SRCNN demo ===
+SRCNN input (33, 33, 1), range [33,242]
+captured: 6 IR nodes
+fusion:
+  * fuse relu relu into conv2d (conv output stage)
+  * fuse relu relu_1 into conv2d_1 (conv output stage)
+quantize:
+  * conv2d: shift=15 r_in=0 r_out=2 e=13 signed_out=False max_act=2.0804
+  * conv2d_1: shift=15 r_in=2 r_out=2 e=15 signed_out=False max_act=2.6156
+  * conv2d_2: shift=13 r_in=2 r_out=0 e=15 signed_out=False max_act=0.9536
+tiling:
+  * Layer(K=9 Cin=1 Cout=64 33x33 -> 25x25 dense): C_in_tile=1 HxW tile=25x25 ncoeff/pass=121 load=141cy compute/pass=649cy load_hidden=True total=41677cy (138.9 us @300MHz)
+  * Layer(K=1 Cin=64 Cout=32 25x25 -> 25x25 dense): C_in_tile=4 HxW tile=25x25 ncoeff/pass=484 load=528cy compute/pass=649cy load_hidden=True total=332816cy (1109.4 us @300MHz)
+  * Layer(K=5 Cin=32 Cout=1 25x25 -> 21x21 dense): C_in_tile=2 HxW tile=21x21 ncoeff/pass=242 load=270cy compute/pass=465cy load_hidden=True total=14112cy (47.0 us @300MHz)
+emitted: 2018 instrs, 518848 B weight blob
+wrote /home/hatch/workspace/fpga-accel/sw/out/srcnn/program.json
+      /home/hatch/workspace/fpga-accel/sw/out/srcnn/program.txt
+      /home/hatch/workspace/fpga-accel/sw/out/srcnn/weights.bin
+functional simulator output (21, 21, 1), range [35,242]
+per-layer (functional simulator vs round-half-up golden):
+  conv2d: vs rhu-golden max|err|=0.00 [OK]  vs float max|err|=0.53 PSNR=62.41 dB
+  conv2d_1: vs rhu-golden max|err|=0.00 [OK]  vs float max|err|=2.08 PSNR=56.82 dB
+  conv2d_2: vs rhu-golden max|err|=0.00 [OK]  vs float max|err|=6.14 PSNR=42.55 dB
+per-layer (functional simulator vs floor-shift golden, informational -- shift rounding propagates):
+  conv2d: vs floor-golden max|err|=1.00
+  conv2d_1: vs floor-golden max|err|=5.00
+  conv2d_2: vs floor-golden max|err|=10.00
+END-TO-END: vs rhu-golden max|err|=0.00 (must be 0)  vs floor-golden max|err|=10.00 (propagated rounding)  vs float max|err|=6.14 PSNR=42.55 dB (Stage 6 prep: 42.76 dB, max|err| 5.79)
+STAGE 5 SRCNN DEMO: PASS
+[stage5] SRCNN demo: PASS
+=== Stage 5: RetinexNet demo ===
+RetinexNet input (32, 32, 4), range [0,63]
+captured: 21 IR nodes
+fusion (first 5):
+  * fold pad pad (mode replicate pad=(4, 4, 4, 4)) into conv2d
+  * fold pad pad_1 (mode replicate pad=(1, 1, 1, 1)) into conv2d_1
+  * fold pad pad_2 (mode replicate pad=(1, 1, 1, 1)) into conv2d_2
+  * fold pad pad_3 (mode replicate pad=(1, 1, 1, 1)) into conv2d_3
+  * fold pad pad_4 (mode replicate pad=(1, 1, 1, 1)) into conv2d_4
+  ... (13 fusion decisions)
+quantize:
+  * conv2d: shift=15 r_in=0 r_out=0 e=15 signed_out=True max_act=0.3266
+  * conv2d_1: shift=15 r_in=0 r_out=0 e=15 signed_out=False max_act=0.4723
+  * conv2d_2: shift=15 r_in=0 r_out=0 e=15 signed_out=False max_act=0.5359
+  * conv2d_3: shift=15 r_in=0 r_out=0 e=15 signed_out=False max_act=0.9163
+  * conv2d_4: shift=15 r_in=0 r_out=1 e=14 signed_out=False max_act=1.4510
+  * conv2d_5: shift=15 r_in=1 r_out=2 e=14 signed_out=False max_act=2.5771
+  * conv2d_6: shift=15 r_in=2 r_out=3 e=14 signed_out=True max_act=3.0783
+  * sigmoid (act sigmoid): r_in=3 r_out=0 signed_out=False range=[0.0440,0.9419]
+activation tables:
+  * sigmoid (sigmoid): PWL 32-seg max_err=0.0030
+tiling (first 3):
+  * Layer(K=9 Cin=4 Cout=64 32x32 -> 32x32 dense): C_in_tile=4 HxW tile=32x32 ncoeff/pass=484 load=528cy compute/pass=1048cy load_hidden=True total=67600cy (225.3 us @300MHz)
+  * Layer(K=3 Cin=64 Cout=64 32x32 -> 32x32 dense): C_in_tile=4 HxW tile=32x32 ncoeff/pass=484 load=528cy compute/pass=1048cy load_hidden=True total=1073680cy (3578.9 us @300MHz)
+  * Layer(K=3 Cin=64 Cout=64 32x32 -> 32x32 dense): C_in_tile=4 HxW tile=32x32 ncoeff/pass=484 load=528cy compute/pass=1048cy load_hidden=True total=1073680cy (3578.9 us @300MHz)
+emitted: 16697 instrs, 5080064 B weight blob
+wrote /home/hatch/workspace/fpga-accel/sw/out/retinexnet/program.json
+      /home/hatch/workspace/fpga-accel/sw/out/retinexnet/program.txt
+      /home/hatch/workspace/fpga-accel/sw/out/retinexnet/weights.bin
+END-TO-END (functional simulator vs float, replicate pad):
+  R: PSNR=46.50 dB max|err|=7.13 (Stage 6 prep fixed-point: 39.71 dB)
+  L: PSNR=52.68 dB max|err|=1.91 (Stage 6 prep fixed-point: 45.11 dB)
+  conv0 (signed intermediate): range [-83,78] frac negative 49.2%
+STAGE 5 RETINEXNET DEMO: PASS
+[stage5] RetinexNet demo: PASS
+=== Stage 5: C driver host test ===
+make: Entering directory '/home/hatch/workspace/fpga-accel/sw/driver'
+./test_driver ../out/srcnn
+program: W=236 DMA=592 GO=592 WAIT=592 STREAM=3
+driver:  writes=828 dma=592 go=592 wait=592 stream=3
+DRIVER TEST: PASS (828 config writes, 592 DMA, 592 GO)
+make: Leaving directory '/home/hatch/workspace/fpga-accel/sw/driver'
+[stage5] C driver host test: PASS
+=== Stage 5: RTL weight DMA ===
+case A: ncoeff=81 dst=0x0200 taps=0 stride=1 expected_cycles=101
+case B: ncoeff=36 dst=0x0100 taps=9 stride=128 expected_cycles=52
+case C: ncoeff=289 dst=0x0100 taps=289 stride=128 expected_cycles=321
+case D: ncoeff=200 dst=0x0400 taps=0 stride=1 expected_cycles=228
+[compile] rc=0
+=== DMA case A (clean, cycle measurement) ===
+vectors: vectors_dma_A.txt ncoeff=81 dst=0x00000200 taps=0 stride=1
+expected_cycles=101 (model)
+measured_cycles=99 model=101 diff=-2
+DMA CHECK PASSED (81 writes, 99 cycles)
+tb_weight_dma.sv:312: $finish called at 1235000 (1ps)
+=== DMA case A (wfull backpressure) ===
+vectors: vectors_dma_A.txt ncoeff=81 dst=0x00000200 taps=0 stride=1
+expected_cycles=101 (model)
+measured_cycles=129 model=101 diff=28
+NOTE: measured exceeds model by > 20 cycles (backpressure stalls included)
+DMA CHECK PASSED (81 writes, 129 cycles)
+tb_weight_dma.sv:312: $finish called at 1535000 (1ps)
+=== DMA case B (clean, cycle measurement) ===
+vectors: vectors_dma_B.txt ncoeff=36 dst=0x00000100 taps=9 stride=128
+expected_cycles=52 (model)
+measured_cycles=47 model=52 diff=-5
+DMA CHECK PASSED (36 writes, 47 cycles)
+tb_weight_dma.sv:312: $finish called at 715000 (1ps)
+=== DMA case B (wfull backpressure) ===
+vectors: vectors_dma_B.txt ncoeff=36 dst=0x00000100 taps=9 stride=128
+expected_cycles=52 (model)
+measured_cycles=55 model=52 diff=3
+DMA CHECK PASSED (36 writes, 55 cycles)
+tb_weight_dma.sv:312: $finish called at 795000 (1ps)
+=== DMA case C (clean, cycle measurement) ===
+vectors: vectors_dma_C.txt ncoeff=289 dst=0x00000100 taps=289 stride=128
+expected_cycles=321 (model)
+measured_cycles=328 model=321 diff=7
+DMA CHECK PASSED (289 writes, 328 cycles)
+tb_weight_dma.sv:312: $finish called at 3525000 (1ps)
+=== DMA case C (wfull backpressure) ===
+vectors: vectors_dma_C.txt ncoeff=289 dst=0x00000100 taps=289 stride=128
+expected_cycles=321 (model)
+measured_cycles=427 model=321 diff=106
+NOTE: measured exceeds model by > 20 cycles (backpressure stalls included)
+DMA CHECK PASSED (289 writes, 427 cycles)
+tb_weight_dma.sv:312: $finish called at 4515000 (1ps)
+=== DMA case D (clean, cycle measurement) ===
+vectors: vectors_dma_D.txt ncoeff=200 dst=0x00000400 taps=0 stride=1
+expected_cycles=228 (model)
+measured_cycles=232 model=228 diff=4
+DMA CHECK PASSED (200 writes, 232 cycles)
+tb_weight_dma.sv:312: $finish called at 2565000 (1ps)
+=== DMA case D (wfull backpressure) ===
+vectors: vectors_dma_D.txt ncoeff=200 dst=0x00000400 taps=0 stride=1
+expected_cycles=228 (model)
+measured_cycles=298 model=228 diff=70
+NOTE: measured exceeds model by > 20 cycles (backpressure stalls included)
+DMA CHECK PASSED (200 writes, 298 cycles)
+tb_weight_dma.sv:312: $finish called at 3225000 (1ps)
+=== STAGE 5 RTL RESULT: ALL PASS ===
+[stage5] RTL weight DMA: PASS
+=== Stage 5: cost / DRAM / roofline report ===
+=== Stage 5 report: cost model / DRAM / roofline ===
+Target: 300 MHz, ZU19EG (1968 DSP, 984 BRAM36, 523K LUTs)
+Peak 590.4 GMAC/s, actual 413.3 @70%, single engine 145.2
+
+--- Roofline (1080p) ---
+SRCNN            16.5 GMACs  fps peak  35.88  actual  25.12  1-eng   8.82  4-eng  35.30
+DnCNN          1149.0 GMACs  fps peak   0.51  actual   0.36  1-eng   0.13  4-eng   0.51
+RetinexNet      430.0 GMACs  fps peak   1.37  actual   0.96  1-eng   0.34  4-eng   1.35
+  Note: plan Table 7 says SRCNN 143 GMACs; the 9-1-5 model in
+  this repo is 16.5 GMACs at 1080p. DnCNN matches (1149 vs
+  1154, 0.4%), so the method is validated and the SRCNN plan
+  number is the outlier (different variant/resolution).
+
+--- DRAM traffic (1080p60, GB/s) ---
+DnCNN                  unfused  255.12  fused   0.32  (weights 0.07)
+DnCNN (3ch in/out)     unfused  255.37  fused   0.56  (weights 0.07)
+RetinexNet             unfused   96.45  fused   0.90  (weights 0.02)
+  Note: plan Table 5 says DnCNN unfused 271 GB/s (all 17
+  layers 64ch); the real model has 1ch first/last layers,
+  so 255.37 GB/s is accurate. Plan Table 6 says fused 0.81
+  (RGB in AND out); grayscale 1ch is 0.31, 3ch-in/1ch-out
+  is 0.56. All unfused numbers are >> 27 GB/s (impossible);
+  all fused numbers are << 27 GB/s (feasible).
+  VDMA 4K60 in+out 2.99 GB/s, engine budget 23.01 GB/s (ok=True)
+
+--- Cost model: tile search (load hidden = load <= compute) ---
+SRCNN L1  K=9  Cin=1 C_in_tile=1  ncoeff=121  load_axi=141cy  compute= 649cy  hidden=True  total=41677cy
+DnCNN L2  K=3  Cin=64 C_in_tile=4  ncoeff=484  load_axi=528cy  compute=1048cy  hidden=True  total=1073680cy
+K=11      Cin=64     C_in_tile=4  ncoeff=484  load_axi=528cy  compute=1048cy  hidden=True  total=1073680cy
+  K=11 is NOT bank-limited: C_in_tile=4 (4*121=484 <= 512, the MC's per-lane memory). The optimum varies per
+  layer; load is hidden in all cases above.
+
+--- Roofline bound (fused, 1080p) ---
+DnCNN        intensity 218632.5 MACs/B  ridge   21.9  bound=compute
+RetinexNet   intensity  39876.9 MACs/B  ridge   21.9  bound=compute
+
+STAGE 5 REPORT: OK
+[stage5] cost / DRAM / roofline report: PASS
+=== STAGE 5 RESULT: ALL PASS ===
