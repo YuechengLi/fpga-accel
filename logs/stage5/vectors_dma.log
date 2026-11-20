@@ -1,0 +1,4 @@
+case A: ncoeff=81 dst=0x0200 taps=0 stride=1 expected_cycles=101
+case B: ncoeff=36 dst=0x0100 taps=9 stride=128 expected_cycles=52
+case C: ncoeff=289 dst=0x0100 taps=289 stride=128 expected_cycles=321
+case D: ncoeff=200 dst=0x0400 taps=0 stride=1 expected_cycles=228

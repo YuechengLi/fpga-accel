@@ -1,0 +1,5 @@
+vectors: vectors_dma_A.txt ncoeff=81 dst=0x00000200 taps=0 stride=1
+expected_cycles=101 (model)
+measured_cycles=99 model=101 diff=-2
+DMA CHECK PASSED (81 writes, 99 cycles)
+tb_weight_dma.sv:312: $finish called at 1235000 (1ps)

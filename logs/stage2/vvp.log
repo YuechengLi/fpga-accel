@@ -1,4 +1,4 @@
-TB dw: 23 cases
+TB dw: 26 cases
 case 0 (mode=0 k=17 d=1 24x24 shift=6 pad=(0,0,0,0) stride=(1,1) out=8x8): 64 outputs, framing errors=0
 case 1 (mode=0 k=11 d=1 20x20 shift=8 pad=(5,5,5,5) stride=(1,1) out=20x20): 400 outputs, framing errors=0
 case 2 (mode=0 k=7 d=1 15x13 shift=8 pad=(3,3,3,3) stride=(1,1) out=15x13): 195 outputs, framing errors=0
@@ -22,5 +22,8 @@ case 19 (mode=3 k=9 d=4 16x16 shift=6 pad=(16,16,16,16) stride=(1,1) out=16x16):
 case 20 (mode=3 k=5 d=4 20x20 shift=8 pad=(8,8,8,8) stride=(2,2) out=10x10): 100 outputs, framing errors=0
 case 21 (mode=3 k=7 d=2 15x13 shift=8 pad=(6,6,6,6) stride=(1,1) out=15x13): 195 outputs, framing errors=0
 case 22 (mode=3 k=9 d=2 16x16 shift=6 pad=(8,8,8,8) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 23 (mode=0 k=3 d=1 16x16 shift=0 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 24 (mode=0 k=5 d=1 16x16 shift=8 pad=(2,2,2,2) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 25 (mode=1 k=7 d=1 15x13 shift=3 pad=(0,0,3,3) stride=(1,1) out=15x13): 195 outputs, framing errors=0
 TB dw DONE
-tb_conv2d_dw.sv:163: $finish called at 444095000 (1ps)
+tb_conv2d_dw.sv:166: $finish called at 489285000 (1ps)

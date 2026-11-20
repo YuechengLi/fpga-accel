@@ -1,4 +1,4 @@
-TB mc: 12 cases
+TB mc: 15 cases
 case 0 ch 0 (K=3 16x16 C_in=3 C_out=2 shift=8 pad=(0,0,0,0) stride=(1,1) out=14x14): 196 outputs, framing errors=0
 case 0 ch 1 (K=3 16x16 C_in=3 C_out=2 shift=8 pad=(0,0,0,0) stride=(1,1) out=14x14): 196 outputs, framing errors=0
 case 1 ch 0 (K=3 16x16 C_in=8 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
@@ -79,5 +79,13 @@ case 10 ch 0 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16
 case 10 ch 1 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
 case 11 ch 0 (K=3 16x16 C_in=8 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
 case 11 ch 1 (K=3 16x16 C_in=8 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 12 ch 0 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 12 ch 1 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 13 ch 0 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 13 ch 1 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0
+case 14 ch 0 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+case 14 ch 1 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+case 14 ch 2 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
+case 14 ch 3 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1): 1 outputs, framing errors=0
 TB mc DONE
-tb_conv2d_mc.sv:222: $finish called at 3684235000 (1ps)
+tb_conv2d_mc.sv:226: $finish called at 3771805000 (1ps)

@@ -10,4 +10,7 @@ case 8 (K=3 15x13 C_in=3 C_out=2 shift=8 pad=(1,1,1,1) stride=(2,2) out=8x7 ): P
 case 9 (K=3 16x16 C_in=8 C_out=4 shift=0 pad=(0,0,0,0) stride=(1,1) out=14x14 ): PASS (784 pixels)
 case 10 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 sgn_in=1 sgn_out=1 ): PASS (512 pixels)
 case 11 (K=3 16x16 C_in=8 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 sgn_in=1 sgn_out=0 ): PASS (512 pixels)
+case 12 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 sgn_in=1 sgn_out=1 fuse_act=1 slope=8192 ): PASS (512 pixels)
+case 13 (K=3 16x16 C_in=4 C_out=2 shift=8 pad=(1,1,1,1) stride=(1,1) out=16x16 sgn_in=1 sgn_out=1 fuse_act=2 slope=8192 ): PASS (512 pixels)
+case 14 (K=1 1x1 C_in=8 C_out=4 shift=8 pad=(0,0,0,0) stride=(1,1) out=1x1 sgn_in=1 sgn_out=1 fuse_act=1 slope=8192 ): PASS (4 pixels)
 GOLDEN CHECK PASSED

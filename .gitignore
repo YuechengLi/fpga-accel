@@ -55,3 +55,7 @@ venv/
 !logs/stage*/
 !logs/stage*/*.log
 !logs/stage*/*.txt
+
+# C build products (rebuilt by make)
+*.o
+sw/driver/test_driver

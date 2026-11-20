@@ -859,3 +859,82 @@ structure, LUT/FF inferred)
 - `tb/run_stage4.sh` runs all Stage 4 modules + Stage 1 / pool /
   residual regressions. The MC sim (~19 min), DW sim (~8 min) and
   scheduler sim (~10 min) are long; each uses timeout 1800.
+
+---
+
+# Stage 5 — AXI-MM weight-streaming DMA (`rtl/weight_dma.sv`)
+
+Stage 4 loaded weights via the config bus (2 cycles/coeff,
+PS-written), which is too slow for frequent time-multiplexed
+switching. Stage 5 adds the AXI-MM weight-streaming path: the DMA
+streams int16 coefficients from DRAM into the ping-pong weight banks
+(scheduler, contiguous addressing) or directly into the engine's
+coefficient registers (conv2d_mc, strided addressing), autonomously
+(the PS only programs the registers; the C driver in `sw/driver/`
+does that).
+
+## Interface
+
+- AXI-MM read master, 64-bit, up to 16-beat INCR bursts, 2-beat
+  FIFO (circular buffer) decoupling the read from the writer.
+- AXI-Lite slave for programming (6-bit addr, 32-bit data):
+  0x00 src (DRAM byte offset), 0x01 count (coefficients),
+  0x02 dst (config-bus base), 0x03 taps (K*K per lane; 0 =
+  contiguous), 0x04 stride (address stride between lanes),
+  0x05 ctrl (bit0 start, self-clearing), 0x06 status (bit0 done,
+  bit1 busy).
+- Config-bus write port (`cfg_wr_en/addr/data`, `cfg_wr_full`
+  backpressure): one coefficient per cycle when the FIFO has data
+  and the destination is not full. The DMA stalls (does not advance
+  the coefficient pointer) while `cfg_wr_full` is asserted.
+- Addressing: coefficient i goes to lane `i/taps`, tap `i%taps`,
+  address `dst + lane*stride + tap` (taps=0: lane 0, tap = i,
+  contiguous into a scheduler bank). For conv2d_mc the stride is
+  128 (lane l at 0x100+l*128+k); for a scheduler bank the stride is
+  1.
+
+## Cycle model (must match `sw/dram.py weight_dma_cycles`)
+
+`cycles = ncoeff + n_bursts*4 + 12`, where n_bursts =
+ceil(ncoeff/64) (4 coeffs/beat x 16 beats), 4 = AR overhead per
+burst, 12 = initial latency. The drain (1 coeff/cycle) is the
+bottleneck; the 64-bit AXI bus is faster than the drain. The TB's
+AXI slave is ideal (AR ready immediately, first R data 4 cycles
+after AR accepted, then back-to-back beats), so the measured count
+matches the model.
+
+## Measured results (freshly run, traceable to `logs/stage5/`)
+
+`tb/run_stage5_rtl.sh` runs 4 cases x clean + wfull backpressure =
+8 runs, all data correct (every coefficient at the right address
+with the right value, golden from `tb/golden_dma.py`).
+
+| Case | ncoeff | dst | taps | stride | Model (cy) | Measured clean (cy) | Measured wfull (cy) |
+|---|---|---|---|---|---|---|---|
+| A | 81 | 0x0200 (bank A) | 0 (contig) | 1 | 101 | 99 (-2) | 129 |
+| B | 36 | 0x0100 (engine) | 9 | 128 | 52 | 47 (-5) | — |
+| C | 289 | 0x0100 (engine) | 289 | 128 | 321 | 328 (+7) | 427 |
+| D | 200 | 0x0400 (bank B) | 0 (contig) | 1 | 228 | 232 (+4) | 298 |
+
+Clean cycle counts are within +/-7 cycles of the Python model (the
+small offset is the AXI-Lite start-write + AR handshake latency,
+which the model's 12-cycle budget covers). Under random wfull
+backpressure (~25% of cycles) the transfer is slower but the data
+is still correct -- the DMA stalls rather than dropping a
+coefficient. `STAGE 5 RTL RESULT: ALL PASS`.
+
+## Notes
+
+- The DMA is RTL. Board-level AXI integration (SmartConnect, the
+  DRAM controller, the PS driver handshake, VDMA frame streaming)
+  is Stages 8-11 (Pittsburgh). The Python model (`sw/dram.py`) and
+  the C driver (`sw/driver/`) are the Stage 5 software side.
+- Icarus notes: `fork/join_none/join_any` and `disable fork` are
+  NOT supported (replaced with a bounded `for` wait loop); adjacent
+  string literals are NOT concatenated in `$display` (single-line
+  strings only); declarations must precede their use in the file
+  (the state/beat signals are declared before the FIFO that uses
+  them); an enum ternary needs an explicit if/else (Icarus requires
+  a cast for the ternary form).
+- A 4-wide bank write would match the AXI bus rate but needs a
+  scheduler hardware change (follow-up, recorded in `sw/README.md`).

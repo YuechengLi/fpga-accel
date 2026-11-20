@@ -10,6 +10,17 @@
 #   bash run_stage3.sh
 # Logs are written to ../logs/stage3/ and also echoed here.
 set -u
+set -o pipefail
+# Tool resolution: iverilog must be available. A VM reset can remove
+# /usr/bin tools, and a nohup/background shell may have a different PATH.
+# Prefer PATH, fall back to the absolute path, fail fast if missing.
+IVERILOG="$(command -v iverilog || true)"
+[ -n "$IVERILOG" ] || IVERILOG=/usr/bin/iverilog
+if [ ! -x "$IVERILOG" ]; then
+    echo "ERROR: iverilog not found (checked PATH and /usr/bin/iverilog)." >&2
+    echo "Reinstall from ~/tools-dl/iverilog_13.0-2_amd64.deb" >&2
+    exit 1
+fi
 cd "$(dirname "$0")"
 
 LOGDIR=../logs/stage3
@@ -20,7 +31,7 @@ run_mod() {
     # $1 = name, $2 = rtl file, $3 = tb file, $4 = vvp, $5 = golden script
     local name="$1" rtl="$2" tb="$3" vvp="$4" golden="$5"
     echo "=== Stage 3: $name ==="
-    if ! iverilog -g2012 -o "$vvp" "$rtl" "$tb" > "$LOGDIR/compile_$name.log" 2>&1; then
+    if ! "$IVERILOG" -g2012 -o "$vvp" "$rtl" "$tb" > "$LOGDIR/compile_$name.log" 2>&1; then
         echo "COMPILE FAILED ($name)"; cat "$LOGDIR/compile_$name.log"; FAIL=1; return
     fi
     timeout 1800 vvp "$vvp" > "$LOGDIR/sim_$name.log" 2>&1
@@ -35,11 +46,13 @@ run_mod() {
 }
 
 # ---------------- vector generation ----------------
+# NOTE (fixed 2026-11-20): with pipefail a failed gen makes the pipeline
+# fail, and `|| FAIL=1` records it (previously tee's rc=0 masked it).
 echo "=== Stage 3: generating vectors ==="
-python3 golden_mc.py gen       | tee "$LOGDIR/vectors_mc.log"
-python3 golden_pool.py gen     | tee "$LOGDIR/vectors_pool.log"
-python3 golden_residual.py gen | tee "$LOGDIR/vectors_residual.log"
-python3 golden_act.py gen      | tee "$LOGDIR/vectors_act.log"
+python3 golden_mc.py gen       | tee "$LOGDIR/vectors_mc.log"       || FAIL=1
+python3 golden_pool.py gen     | tee "$LOGDIR/vectors_pool.log"     || FAIL=1
+python3 golden_residual.py gen | tee "$LOGDIR/vectors_residual.log" || FAIL=1
+python3 golden_act.py gen      | tee "$LOGDIR/vectors_act.log"      || FAIL=1
 
 # ---------------- the four Stage 3 modules ----------------
 run_mod mc       ../rtl/conv2d_mc.sv tb_conv2d_mc.sv tb_mc.vvp  golden_mc.py
