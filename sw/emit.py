@@ -783,7 +783,11 @@ def emit_pe_program(layers, inp, device_name="zu19eg"):
                                                 L["b_q"], dev)
         program["layers"].append({
             "name": L["name"], "K": L["K"], "C_out": L["C_out"],
-            "mode_dot": L["mode_dot"], "shift": L["shift"],
+            # Effective mode from the emitted steps, not the layer's
+            # request: gen_layer_steps forces outer mode when TN<8
+            # (dot requires TN=8 in the RTL), so the program must not
+            # claim dot for a TN<8 device.
+            "mode_dot": steps[0]["mode_dot"], "shift": L["shift"],
             "n_steps": len(steps), "out_shape": list(shape),
         })
         steps_by_layer.append((L["name"], steps, shape))

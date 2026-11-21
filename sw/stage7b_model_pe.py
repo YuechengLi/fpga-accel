@@ -48,7 +48,9 @@ from devices import DEVICES
 
 # SRCNN layer shapes: (name, K, C_in, C_out, mode).
 #   mode outer: one k/cycle, tile-step = TK cycles.
-#   mode dot:   TN taps/cycle, tile-step = TK / TN cycles.
+#   mode dot:   TN taps/cycle, tile-step = TK / TN cycles. Dot
+#     requires TN=8 in the RTL (pe_mac.sv 8-tap tree); TN<8 falls
+#     back to outer (see model() and sw/sched_pe.py).
 LAYERS = [
     ("L1 9x9 1->64", 9, 1, 64, "outer"),
     ("L2 1x1 64->32", 1, 64, 32, "outer"),
@@ -127,6 +129,13 @@ def model(dev, fw, fh, pe_mults=None, n_pe=None):
     issues = 0
     fine_issues = 0
     for (name, K, cin, cout, mode) in LAYERS:
+        # Dot mode requires TN=8 in the RTL (pe_mac.sv 8-tap tree);
+        # with TN<8 the scheduler forces outer mode (sw/sched_pe.py),
+        # so the model must use the same mode or it overstates fps.
+        # Found 2026-11-21: ecp5u85 (TN=4) modeled L3 as dot before
+        # this guard; zu19eg (TN=8) is unaffected.
+        if mode == "dot" and tn < 8:
+            mode = "outer"
         r = layer_cycles(name, K, cin, cout, mode, fw, fh, n_pe, tm, tn)
         r["name"] = name
         per_layer.append(r)
@@ -211,14 +220,14 @@ def main():
                         pe_mults=pe_mults, n_pe=n_pe,
                         clocks=(300.0, 360.0, 400.0))
         size_results[pe_mults] = out[300.0]
-    print("\nCHOICE: 128 mults/PE (15 PEs, 1920 DSPs) -- same 1080p fps "
-          f"as 64 ({size_results[64]:.1f}) with half the PEs to dispatch; "
-          "it wastes nothing on C_out=8 (50% only on C_out=4, vs 75% "
-          "for 256 and 0% for 64). 256 reaches only 1792 DSPs "
-          f"({size_results[256]:.1f} fps) and wastes half its lanes on "
-          "C_out=8. 64 ties 128 on fps but doubles the control "
-          "(30 PEs, 30 buffer slices, 30 scoreboard entries) for "
-          "robustness SRCNN does not need (its N are 64/32/1).")
+    print("\nCHOICE: 128 mults/PE (15 PEs, 1920 DSPs) -- the only size "
+          f"meeting 30 fps at 300 MHz with margin ({size_results[128]:.1f}); "
+          "64 falls to "
+          f"{size_results[64]:.1f} fps because TN=4 forces L3 to outer "
+          "mode (32cy/step vs 4cy/step in dot), and 256 meets 30 only "
+          f"barely ({size_results[256]:.1f} fps) while wasting half its "
+          "lanes on C_out=8. 128 also halves the control vs 64 (15 PEs "
+          "vs 30 buffer slices / scoreboard entries).")
     # --- Per-device targets ---
     ok = size_results[128] >= 30.0
     for name in DEVICES:

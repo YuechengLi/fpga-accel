@@ -1312,7 +1312,7 @@ Configurable for different FPGAs (parameters, not constants): the
 RTL takes N_PE / TM / TN / TK_MAX; the scheduler takes a device
 config (sw/devices.py). XCZU19EG-2 (iW-RainboW-G35D): 15x128, 300 MHz,
 1080p30 target. LFE5U-85F (Lattice ECP5, low-power): 2x64, 100 MHz,
-small resolutions (640x480 -> 5.1 fps, 320x240 -> 21.1 fps), the
+small resolutions (640x480 -> 4.0 fps, 320x240 -> 16.5 fps), the
 FULL SRCNN pipeline at small scale (same compiler flow, same
 precision -- the parameterization scales the parallelism, never the
 feature set). The RTL is vendor-neutral (no Xilinx primitives;
@@ -1343,7 +1343,12 @@ BRAM/multipliers inferred); see the synth_ecp5 checks below.
 with the same A/B in dot mode as in outer mode (the two modes agree
 exactly). Cycle counts match the model (outer = tk cycles,
 dot = tn*(tk/8) cycles; the L3-like dot case with tn=1, tk=32 takes
-4 cycles).
+4 cycles). Dot mode requires TN=8 in the RTL: the reduction tree
+sums 8 products per row and each (n,g) step processes 8 taps, so
+at TN<8 the scheduler forces outer mode (sw/sched_pe.py guard,
+sw/tests/test_sched_pe.py) -- the TN=4 path was never RTL-simmed
+in dot mode and is wrong there (half the K-dim dropped, adjacent
+rows mixed, last row reading prod out of bounds).
 
 #### PE-array SRCNN chain (24x24, one wave per layer) -- ALL PASS
 
@@ -1357,8 +1362,9 @@ reported 43.51 dB for the same chain through conv2d_mc).
 
 `sw/stage7b_model_pe.py` (log `logs/stage7b/model_pe.log`): ZU19EG
 1080p: 15x128 -> 33.7 fps @300 MHz, 40.5 @360, 45.0 @400 (MFU 96.3%);
-7x256 -> 31.5 @300; 30x64 -> 33.7 @300. ECP5 640x480 -> 5.1 fps,
-320x240 -> 21.1 fps @100 MHz (MFU ~95.5%). Per-layer (128 config,
+7x256 -> 31.5 @300; 30x64 -> 26.0 @300 (TN=4 forces L3 to outer
+mode; dot requires TN=8 in the RTL). ECP5 640x480 -> 4.0 fps,
+320x240 -> 16.5 fps @100 MHz (MFU ~74.4%). Per-layer (128 config,
 300 MHz): L1 18.45 ms, L2 7.29 ms, L3 2.83 ms; ideal frame 8.57M
 cycles, frame 8.90M cycles (frame tile 64, edge x1.019).
 

@@ -61,7 +61,7 @@ small-N layers.
 
 | PE size | PEs | DSPs | % device | @300 MHz | MFU | coarse-task dispatch |
 |---------|-----|------|----------|----------|-----|----------------------|
-| 64 mults (TM16 x TN4) | 30 | 1920 | 97.6% | 33.7 fps | 96.3% | 0.37/cycle |
+| 64 mults (TM16 x TN4) | 30 | 1920 | 97.6% | 26.0 fps | 74.4% | 0.29/cycle |
 | 128 mults (TM16 x TN8) | 15 | 1920 | 97.6% | 33.7 fps | 96.3% | 0.19/cycle |
 | 256 mults (TM16 x TN16) | 7 | 1792 | 91.1% | 31.5 fps | 96.4% | 0.10/cycle |
 
@@ -86,11 +86,15 @@ PEs viable.
 
 ### Choice: 128 multipliers per PE, 15 PEs, 1920 DSPs
 
-The 64-mult and 128-mult configs give the same 33.7 fps at 300 MHz
-(same 1920 DSPs, zero quantization loss on SRCNN); 128 is chosen
-because it has half the control overhead (15 dispatch slots and 15
-input-buffer slices instead of 30) at the same throughput, and it is
-more robust than 256 to small-N layers (0% waste on C_out=8 vs 50%).
+The 64-mult config falls below 30 fps at 300 MHz (26.0 fps,
+MFU 74.4%): TN=4 forces L3 to outer mode, since dot mode requires
+TN=8 in the RTL (the PE's reduction tree sums 8 products per row
+and each (n,g) step processes 8 taps); the scheduler enforces this
+(sw/sched_pe.py guard, sw/tests/test_sched_pe.py). 128 is chosen
+because it meets 30 fps at 300 MHz with margin (33.7 fps) at half
+the control overhead of 64 (15 dispatch slots and 15
+input-buffer slices instead of 30), and it is more robust than 256
+to small-N layers (0% waste on C_out=8 vs 50%).
 The 256-mult config is 7% slower (31.5 fps) and marginal at
 300 MHz (1720 effective vs 1714 required). Spare DSPs: 48 (bicubic
 ~16 + margin; the merge unit uses LUT adders). 360 MHz is the
@@ -110,7 +114,8 @@ configurations, selected per tile-step by the scheduler:
 - dot-product: rows = TM=16 output positions, cols = 8 taps; one n
   per cycle; each row's 8 products reduce through a tree into one
   accumulator (for N=1 layers, where outer-product would leave 7 of
-  8 lanes idle).
+  8 lanes idle). Dot mode requires TN=8 in the RTL; at TN<8 the
+  scheduler forces outer mode (see the guard in sw/sched_pe.py).
 
 The per-row adder network is configurable, not duplicated: 8 adders
 per row act as 8 independent accumulates (outer) or a 7-adder tree +

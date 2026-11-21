@@ -208,7 +208,7 @@ structure, steps match the scheduler, no GO/WAIT).
   per layer (RTL output feeding the next layer), L1/L2/L3 vs
   funcsim max|err| = 0, final PSNR vs float 43.38 dB.
 - Cycle model (sw/stage7b_model_pe.py): ZU19EG 1080p 33.7 fps @300,
-  40.5 @360, 45.0 @400 MHz; ECP5 640x480 5.1 fps, 320x240 21.1 fps
+  40.5 @360, 45.0 @400 MHz; ECP5 640x480 4.0 fps, 320x240 16.5 fps
   @100 MHz. MODEL CHECK ALL OK.
 - Run: bash tb/run_stage7b.sh (fail-fast; PE + chain + K^2
   reference re-verification + model + synth_ecp5).

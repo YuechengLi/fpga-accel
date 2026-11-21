@@ -19,7 +19,8 @@ Devices (budgets from the vendor data, not guesses):
     blocks (18 Kbits each = 3,744 Kbits), 669 Kbits distributed RAM,
     156 18x18 multipliers (each sysDSP slice also does 2x 18x18 or
     4x 9x9). Target: SMALL-resolution images (640x480, 320x240),
-    full pipeline at a few to ~20 fps. Source: Lattice ECP5 Family
+    full pipeline at 4.0 fps (640x480) / 16.5 fps (320x240) at
+    100 MHz by the cycle model. Source: Lattice ECP5 Family
     Data Sheet FPGA-DS-02012-3.2 (Aug 2023), ECP5 selection guide
     (latticesemi.com ECP5 product page). The 100 MHz clock is a
     conservative planning assumption for a first-pass ECP5 design
@@ -32,7 +33,10 @@ PE sizing (derived in logs/stage7b/design.md, not assumed):
     spot: same DSP total as 30x64 (1920) with half the control
     overhead, and TN=8 divides every SRCNN N (64, 32) exactly while
     staying robust to small-N layers (a 256-mult PE with TN=16 wastes
-    half its lanes on C_out=8).
+    half its lanes on C_out=8). 64 falls below 30 fps at 300 MHz
+    (26.0 fps, MFU 74.4%): TN=4 forces L3 to outer mode, since dot
+    mode requires TN=8 in the RTL (pe_mac.sv 8-tap tree); see the
+    scheduler guard in sw/sched_pe.py.
   * LFE5U-85F: 2 PEs x 64 mults = 128 multipliers (82% of 156). 64
     is the right size here: 2 PEs (not 1) so the multi-PE dispatch
     and merge are exercised, and TN=4 keeps small-N layers efficient.

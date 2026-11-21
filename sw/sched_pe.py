@@ -89,10 +89,27 @@ def gen_layer_steps(layer, inp, W_q, b_q, dev):
     tk = largest_divisor(Kdim, TK_MAX)
     n_kchunk = Kdim // tk
     mode_dot = layer["mode_dot"]
-    # N-chunks: outer -> C_out/TN; dot -> C_out/tn (tn from the layer).
+    # Dot mode is only correct for TN=8: the PE's dot reduction tree
+    # sums 8 products per row (pe_mac.sv gen_rowsum reads
+    # prod[gr*TN+0..7]) and each (n,g) step processes 8 taps, so with
+    # TN<8 it mixes adjacent rows, drops half the K-dim, and reads
+    # prod out of bounds for the last row. Force outer mode there;
+    # outer mode is TN-generic (the TM x TN grid works for any TN).
+    # Found 2026-11-21: ecp5u85 (TN=4) emitted L3 as dot before this
+    # guard; zu19eg (TN=8) is unaffected.
+    if mode_dot and TN < 8:
+        mode_dot = 0
+    # N-chunks: dot -> C_out/tn (exact; tn=1 for an N=1 layer).
+    # Outer -> ceil(C_out/TN); the last chunk is zero-padded for
+    # C_out < TN (e.g. L3 C_out=1 on the ECP5 TN=4 config) -- the B
+    # and bias loops below already guard co < C_out, and
+    # assemble_output ignores co >= C_out.
     tn = layer.get("tn", TN) if mode_dot else TN
-    assert C_out % tn == 0, f"C_out {C_out} not divisible by tn {tn}"
-    n_nchunk = C_out // tn
+    if mode_dot:
+        assert C_out % tn == 0, f"C_out {C_out} not divisible by tn {tn}"
+        n_nchunk = C_out // tn
+    else:
+        n_nchunk = -(-C_out // tn)
     n_mtile_r = H_out // 4
     n_mtile_c = W_out // 4
 
