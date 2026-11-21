@@ -150,7 +150,7 @@ class TestMLUTEndToEnd(unittest.TestCase):
         r_in = act_op.get("r_in", 0)
         r_out = act_op.get("r_out", 0)
         scale_in = 255.0 / (2.0 ** r_in)
-        xf_in = conv_out.astype(np.float64) / scale_in
+        xf_in = (conv_out.astype(np.float64) / scale_in)[..., 0]
         h1, h2, base, sel, fine = (tab["H1"], tab["H2"], tab["base"],
                                    tab["sel"], tab["fine"])
         ref = np.array([[mlut_eval_float(v, h1, h2, base, sel, fine)

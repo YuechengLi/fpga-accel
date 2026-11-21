@@ -49,6 +49,12 @@ python3 sw/run_pe_srcnn.py > logs/stage7b/pe_srcnn_chain.log 2>&1
 rc=$?; [ "$rc" -eq 0 ] && pass "pe_array SRCNN chain (L1/L2/L3 max|err|=0, PSNR ~43.5 dB)" || fail "pe_array SRCNN chain (rc=$rc)"
 
 echo "=== 4. K^2 reference engines (re-verified after the adder_tree port) ==="
+# The K^2 vector files are generated, not tracked in git: a fresh clone
+# has no vectors_cp.txt / vectors_tappar.txt, and the TBs $finish with
+# an empty output file when the vectors are missing (sim exits 0, the
+# golden check then fails). Generate them here, like the PE vectors above.
+(cd tb && python3 golden_cp.py gen > /dev/null 2>&1)
+(cd tb && python3 golden_tappar.py gen > /dev/null 2>&1)
 (cd tb && iverilog -g2012 -o tb_cp.vvp ../rtl/conv1x1_cp.sv ../rtl/adder_tree.sv ../rtl/conv2d_mc.sv tb_conv1x1_cp.sv 2>/dev/null)
 rc=$?; [ "$rc" -eq 0 ] && pass "L2 compile" || fail "L2 compile (rc=$rc)"
 (cd tb && rm -f out_cp.txt && timeout 300 vvp tb_cp.vvp > out_cp_log.txt 2>&1 && python3 golden_cp.py check > /dev/null 2>&1)
