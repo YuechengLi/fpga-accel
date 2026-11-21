@@ -11,10 +11,12 @@
 # Usage: bash sw/run_regressions.sh   (or nohup sw/run_regressions.sh &)
 # Log: logs/stage5/regressions.log
 set -u
-cd ~/workspace/fpga-accel
+# Portable: run from the repo root regardless of where the script is invoked.
+cd "$(dirname "$0")/.."
 
 # Explicit PATH: a nohup/background shell may not inherit the login PATH.
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+# Keep Homebrew (macOS) first when present.
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin${PATH:+:$PATH}"
 
 # Fail fast if a tool is missing (a VM reset can remove /usr/bin tools).
 for tool in iverilog yosys python3; do

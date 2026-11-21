@@ -18,7 +18,8 @@
 # Logs: logs/stage7b/run_stage7b.log (this script's own output; the
 # per-check logs live in logs/stage7b/ as named below).
 set -o pipefail
-cd ~/workspace/fpga-accel
+# Portable: run from the repo root regardless of where the script is invoked.
+cd "$(dirname "$0")/.."
 LOG=logs/stage7b/run_stage7b.log
 mkdir -p logs/stage7b
 exec > >(tee "$LOG") 2>&1
