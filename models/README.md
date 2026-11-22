@@ -1,17 +1,21 @@
 # Stage 6 prep — pretrained weights for numerical verification
 
-Pretrained weights for the five models used in model numerical
+Pretrained weights for the seven models used in model numerical
 verification (plan `docs/plan.md` §4, Stage 6 and later): SRCNN, DnCNN,
 RetinexNet Decom-Net (Stage 6), plus YOLOv8n and DNANet (onboarded
-2026-11-21 for the detection / IRSTD target applications). Each model has
+2026-11-21 for the detection / IRSTD target applications), plus
+Qwen3-VL-4B-Instruct and Qwen2.5-Omni-3B (fetched 2026-11-21 for the
+VCU128 LLM decode track — raw weights gitignored, see `models/llm/README.md`). Each model has
 a float reference and a fixed-point (quantized) version in Python (numpy);
 Stage 6 runs the same quantized weights in RTL and compares pixel-by-pixel
 against this golden.
 
-All files are under `models/` (total ~111 MB; the two new models are the
-bulk of it: YOLOv8n ~37 MB, DNANet ~64 MB, raw checkpoints included).
-The raw downloads are committed as-is; the largest single file is
-`dnanet/dnanet.npz` (28 MB), under GitHub's 100 MB limit.
+The five vision models total ~111 MB under `models/` (YOLOv8n ~37 MB,
+DNANet ~64 MB, raw checkpoints included). The vision raw downloads are
+committed as-is; the largest single file is `dnanet/dnanet.npz` (28 MB),
+under GitHub's 100 MB limit. The two LLM models live under
+`models/llm/` — raw weights 19.44 GiB, gitignored, not committed
+(see `models/llm/README.md` for the manifest and SHA256 hashes).
 
 ## Quantization scheme (uniform across all three models)
 

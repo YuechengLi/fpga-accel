@@ -36,7 +36,7 @@ Key design decisions: dense max 11×11, DW 17×17 square kernels / 31×1 and 1×
 
 **Vision** (weights + int16 quantization in `models/`): SRCNN, DnCNN, RetinexNet, YOLOv8n, DNANet.
 
-**LLM** (`models/llm/`, fetching): Qwen3-VL-4B-Instruct (36 layers, hidden 2560, 4.4B, Apache 2.0) and Qwen2.5-Omni-3B (Thinker-Talker, research-only license). **Weights are NOT checked in**: raw weights live in `models/llm/*/raw/` (gitignored, ~14 GB total); the repo holds only the download scripts, per-file SHA256, and READMEs.
+**LLM** (`models/llm/`, fetched 2026-11-21): Qwen3-VL-4B-Instruct (36 layers, hidden 2560, 4.4B, Apache 2.0) and Qwen2.5-Omni-3B (Thinker-Talker, research-only license; BF16 checkpoint 11.17 GiB, ~6B params incl. Talker + encoders). **Weights are NOT checked in**: raw weights live in `models/llm/*/raw/` (gitignored, 19.44 GiB total); the repo holds only the download scripts, per-file SHA256, and READMEs.
 
 ## Directory Structure
 
@@ -52,7 +52,7 @@ fpga-accel/
 ├── rtl/                # SystemVerilog source (parameterized)
 ├── tb/                 # SystemVerilog testbenches + Python goldens + fail-fast run_stage*.sh
 ├── sw/                 # Compiler (Python: capture / fusion / tiling / scheduling / emission, cost model, funcsim) + C driver (sw/driver/) + unit tests (sw/tests/)
-├── models/             # Model weights + quantization (vision: srcnn/dncnn/retinexnet/yolov8n/dnanet; llm: Qwen3-VL-4B / Qwen2.5-Omni-3B, fetching)
+├── models/             # Model weights + quantization (vision: srcnn/dncnn/retinexnet/yolov8n/dnanet; llm: Qwen3-VL-4B / Qwen2.5-Omni-3B, fetched 2026-11-21, weights gitignored)
 ├── sta/                # STA probes (tracked critpath_*.sv; generated .tcl/.ys/netlists untracked)
 ├── scripts/            # (empty, reserved for Tcl flow scripts)
 ├── constraints/        # (empty, reserved for XDC)
