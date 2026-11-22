@@ -24,15 +24,19 @@ fpga-accel/
 ├── Makefile            # One-click reproduction: make sim / synth / impl / bitstream / program
 ├── docs/
 │   ├── plan.md         # Complete implementation plan (v3.2)
-│   └── system_diagram.png
+│   ├── system_diagram.png
+│   └── vcu128-bringup.md  # VCU128 bring-up checklist (shell, XRT, HBM, PE port)
 ├── rtl/                # SystemVerilog source (parameterized)
-├── tb/                 # Testbenches + golden (Python)
-├── scripts/            # Tcl scripts (synth / impl / bitstream / program / debug / common)
-├── constraints/        # XDC (clocks, pins, timing constraints)
+├── tb/                 # SystemVerilog testbenches + Python goldens + fail-fast run_stage*.sh
+├── sw/                 # Compiler (Python: capture / fusion / tiling / scheduling / emission, cost model, funcsim) + C driver (sw/driver/) + unit tests (sw/tests/)
 ├── models/             # Model weights + quantization (vision: srcnn/dncnn/retinexnet/yolov8n/dnanet; llm: Qwen3-VL-4B / Qwen2.5-Omni-3B, pending fetch)
-├── sw/                 # Compiler (Python) + PS drivers + layer-scheduling library (C)
+├── sta/                # STA probes (tracked critpath_*.sv; generated .tcl/.ys/netlists untracked)
+├── scripts/            # (empty, reserved for Tcl flow scripts)
+├── constraints/        # (empty, reserved for XDC)
 └── logs/               # Logs and reports from each run
 ```
+
+Generated outputs (untracked, regenerable, not in the tree above): `out/`, `tb/*.vvp`, `tb/out_*.txt`, `tb/vectors_*.txt`, `sta/*.tcl`, `sta/*_net.v`.
 
 ## Current Status
 
