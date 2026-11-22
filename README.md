@@ -2,7 +2,7 @@
 
 FPGA accelerator for multi-function image processing models — image enhancement / restoration / super-resolution, object detection (YOLO), infrared small target detection (IRSTD), and other CNN models: a unified reconfigurable compute engine that runs complete models.
 
-- **Target board**: iW-RainboW-G35D (XCZU19EG-2, Zynq UltraScale+)
+- **Target boards**: iW-RainboW-G35D (XCZU19EG-2, Zynq UltraScale+) for vision models; VCU128 (XCVU37P-2FSVH2892E, Virtex UltraScale+ HBM) for large-model decode — see below
 - **Implementation language**: SystemVerilog (all new modules in SV; the original Verilog streaming convolution is frozen and kept only as a reference baseline)
 - **Flow**: Xilinx full command line (vivado batch / Tcl scripts, no GUI)
 - **Interfaces**: AXI4-Lite (control/config), AXI4-Stream (pixel stream), AXI4-MM (DDR transfers)
@@ -29,7 +29,8 @@ fpga-accel/
 ├── tb/                 # Testbenches + golden (Python)
 ├── scripts/            # Tcl scripts (synth / impl / bitstream / program / debug / common)
 ├── constraints/        # XDC (clocks, pins, timing constraints)
-├── sw/                 # PS drivers + layer-scheduling library (C)
+├── models/             # Model weights + quantization (vision: srcnn/dncnn/retinexnet/yolov8n/dnanet; llm: Qwen3-VL-4B / Qwen2.5-Omni-3B, pending fetch)
+├── sw/                 # Compiler (Python) + PS drivers + layer-scheduling library (C)
 └── logs/               # Logs and reports from each run
 ```
 
@@ -40,6 +41,7 @@ fpga-accel/
 - **Stage 1 done** (2026-11-19): dense 11x11 + arbitrary padding/stride, PX=1, SystemVerilog (`rtl/conv2d_dense.sv`). Golden 14/14 PASS pixel-exact, framing errors 0; per-stage STA (Nangate45, 300 MHz) Fmax 469 MHz (barrel shifter critical, 2.093 ns); DSP 121, BRAM36 10, LUT ~5,300 (inferred), FF ~8,750. Details + logs in `rtl/README.md` and `logs/stage1/`.
 - **Phases 1–7 (on the VM)**: in progress — module design + individual verification + model numerical verification (Stage 1 done, Stages 2–7 to go).
 - **Phases 8–11 (Pittsburgh, after 11/26)**: board-level synthesis / integration / on-board testing.
+- **VCU128 (VU37P) platform support** (2026-11-21): XCVU37P-2FSVH2892E added as a third device config (`sw/devices.py` vu37p) — 9,024 DSP, 2,852K logic cells, 8 GB HBM2 at 460 GB/s, PCIe Gen4 x8 host link, no ARM PS (host via XDMA/QDMA + XRT). Same 15×128 PE config as the ZU19EG (decode is bandwidth-bound, so the PE count is not scaled up): SRCNN 1080p 33.7 fps @300 MHz at 21.3% of device DSP. Decode roofline: 7B INT8 65.7 tok/s, 13B INT4 70.8 tok/s (both fit one board), 13B INT8 35.4 tok/s (needs 2 boards). Dual-card targets: Qwen3-VL-4B + Qwen2.5-Omni-3B, TP=2 over QSFP28. Not covered yet: VU37P synthesis (desktop/Mac only) and the XDMA/XRT host driver port — see [docs/vcu128-bringup.md](docs/vcu128-bringup.md). Details in `rtl/README.md` and `logs/stage7b/model_vu37p.log`.
 
 ## How to Use / Reproduce
 
