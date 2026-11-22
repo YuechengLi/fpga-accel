@@ -1,13 +1,17 @@
 # Stage 6 prep — pretrained weights for numerical verification
 
-Pretrained weights for the three models used in Stage 6 model numerical
-verification (plan `docs/plan.md` §4, Stage 6): SRCNN, DnCNN, RetinexNet
-Decom-Net. Each model has a float reference and a fixed-point (quantized)
-version in Python (numpy); Stage 6 runs the same quantized weights in RTL
-and compares pixel-by-pixel against this golden.
+Pretrained weights for the five models used in model numerical
+verification (plan `docs/plan.md` §4, Stage 6 and later): SRCNN, DnCNN,
+RetinexNet Decom-Net (Stage 6), plus YOLOv8n and DNANet (onboarded
+2026-11-21 for the detection / IRSTD target applications). Each model has
+a float reference and a fixed-point (quantized) version in Python (numpy);
+Stage 6 runs the same quantized weights in RTL and compares pixel-by-pixel
+against this golden.
 
-All files are under `models/` (total ~11 MB; no single file exceeds 10 MB,
-so the raw downloads are committed as-is).
+All files are under `models/` (total ~111 MB; the two new models are the
+bulk of it: YOLOv8n ~37 MB, DNANet ~64 MB, raw checkpoints included).
+The raw downloads are committed as-is; the largest single file is
+`dnanet/dnanet.npz` (28 MB), under GitHub's 100 MB limit.
 
 ## Quantization scheme (uniform across all three models)
 
@@ -208,12 +212,42 @@ quantization numbers here are for these test images.
   sigmoid, so the recon-logit error (PSNR 26.83 dB) is the number to watch
   before the sigmoid, and R/L PSNR (39.71 / 45.11 dB) after it.
 
+## 4. YOLOv8n — Ultralytics YOLOv8 nano, object detection (COCO)
+
+Full notes in `yolov8n/README.md`. Official ultralytics v8.3.0 checkpoint
+(6,549,796 bytes, SHA256 f59b3d83…); 57 Conv modules, all Conv2d + BN +
+SiLU (39x 3x3, 18x 1x1). Float reference on bus.jpg: 5 detections after
+CPU decode + NMS (4 persons + 1 bus). BN folding verified exact (1e-6).
+Per-layer fixed-vs-float on representative convs: 27–55 dB — worse than
+the image models, because activation ranges reach r_out=7 and BN folding
+amplifies some weights ~35x. Shifts 12–15, all legal. DFL decode + NMS
+stay on CPU; the 57 convs are accelerator candidates. No mAP claimed
+(COCO eval not done); calibration on wider data still open.
+
+## 5. DNANet — Dense Nested Attention Network, infrared small target detection
+
+Full notes in `dnanet/README.md`. DCANet Model Zoo NUAA-SIRST checkpoint
+(19,033,849 bytes, SHA256 fcc9b52c…; epoch 1499, recorded train mean IoU
+0.8489); official model definition vendored (`model_DNANet.py`, MIT).
+154 Conv2d (52x 3x3, 76x 1x1, 26x 7x7 spatial attention), 68 BN.
+Float reference on the repo demo image target1.png: 9 predicted target
+pixels, IoU 0.556 vs the repo's own Pred image (different checkpoint, so
+an exact match is not expected; the target location matches 5/5).
+ImageNet input normalization folded into the first conv (exact in the
+interior, 1px border rim differs — same class of border effect as
+RetinexNet). BN folding verified exact (2.5e-06). Per-layer fixed-vs-float:
+55–57 dB on the main convs; attention/final logits 0.6–0.85 logit units
+max error. Shifts 7–15, all legal. No NUAA-SIRST IoU claimed (no GT mask
+for the demo image); calibration on real SIRST data still open.
+
 ## How to use (Stage 6)
 
 - Re-run a model: `cd models/<name> && python3 run_<name>.py`. It prints
   per-layer and end-to-end float-vs-fixed error and rewrites the converted
   `.npz` + `*_quant.json`. Requires numpy, scipy (DnCNN .mat), torch
-  (RetinexNet .tar), PIL (SRCNN resize).
+  (RetinexNet .tar), PIL (SRCNN resize). YOLOv8n additionally needs the
+  `ultralytics` package; DNANet needs torch + PIL (the model definition
+  is vendored in `dnanet/model_DNANet.py`).
 - Re-extract from the raw download: `python3 extract_<name>.py` (writes the
   `*_float.npz`).
 - RTL config per layer: load `L_W_q` (int16) into the coefficient memory
@@ -246,3 +280,18 @@ quantization numbers here are for these test images.
 | `retinexnet/retinexnet_decom.npz` | RetinexNet float32 + int16 quantized |
 | `retinexnet/retinexnet_decom_quant.json` | RetinexNet per-layer scale/shift |
 | `retinexnet/extract_retinexnet.py`, `retinexnet/run_retinexnet.py` | RetinexNet extract / verify scripts |
+| `yolov8n/raw/yolov8n.pt` | YOLOv8n official checkpoint (6.5 MB) |
+| `yolov8n/yolov8n_float.npz` | YOLOv8n extracted float32 weights + BN params |
+| `yolov8n/yolov8n.npz` | YOLOv8n BN-folded float32 + int16 quantized (57 convs) |
+| `yolov8n/yolov8n_quant.json` | YOLOv8n per-layer scale/shift |
+| `yolov8n/bus.jpg` | YOLOv8n test image (standard ultralytics demo) |
+| `yolov8n/extract_yolov8n.py`, `yolov8n/run_yolov8n.py` | YOLOv8n extract / verify scripts |
+| `yolov8n/README.md` | YOLOv8n notes (detections, BN fold, calibration caveats) |
+| `dnanet/raw/dnanet_nuaa-sirst.pth.tar` | DNANet NUAA-SIRST checkpoint (19 MB) |
+| `dnanet/dnanet_float.npz` | DNANet extracted float32 weights + BN params |
+| `dnanet/dnanet.npz` | DNANet BN-folded float32 + int16 quantized (154 convs) |
+| `dnanet/dnanet_quant.json` | DNANet per-layer scale/shift |
+| `dnanet/target1.png`, `dnanet/target1_Pred.png` | DNANet demo image + repo's prediction |
+| `dnanet/model_DNANet.py`, `dnanet/LICENSE.upstream` | Vendored official model definition (MIT) |
+| `dnanet/extract_dnanet.py`, `dnanet/run_dnanet.py` | DNANet extract / verify scripts |
+| `dnanet/README.md` | DNANet notes (mask check, norm fold, calibration caveats) |
