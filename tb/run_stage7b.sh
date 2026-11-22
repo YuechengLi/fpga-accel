@@ -63,7 +63,10 @@ rc=$?; [ "$rc" -eq 0 ] && pass "L2 golden (4/4 PASS)" || fail "L2 golden (rc=$rc
 rc=$?; [ "$rc" -eq 0 ] && pass "L3 compile" || fail "L3 compile (rc=$rc)"
 (cd tb && rm -f out_tappar.txt && timeout 300 vvp tb_tappar.vvp > out_tappar_log.txt 2>&1)
 rc=$?; [ "$rc" -eq 0 ] && pass "L3 sim" || fail "L3 sim (rc=$rc)"
-n_k5=$(cd tb && python3 golden_tappar.py check 2>&1 | grep -E "case [013] .* PASS" | wc -l)
+# grep -c, not grep | wc -l: BSD wc (macOS) pads the count
+# ("       3") and the string comparison below then fails even
+# when 3/3 cases pass. grep -c prints a bare number on both.
+n_k5=$(cd tb && python3 golden_tappar.py check 2>&1 | grep -cE "case [013] .* PASS")
 [ "$n_k5" = "3" ] && pass "L3 golden K=5 (3/3 PASS; K=3 known limitation, see design.md)" || fail "L3 golden K=5 (got $n_k5/3)"
 
 echo "=== 5. Cycle model (device-driven, ZU19EG + ECP5) ==="
