@@ -5348,7 +5348,7 @@ ABC: Mapping (K=4)  :  lut =     11  edge =      44  lev =    1 (0.02)  levB =  
 ABC: LUT = 11 : 2=0 0.0 %  3=0 0.0 %  4=11 100.0 %  Ave = 4.00
 ABC: + &write -n <abc-temp-dir>/output.aig 
 ABC: + time 
-ABC: elapse: 0.01 seconds, total: 0.01 seconds
+ABC: elapse: 0.02 seconds, total: 0.02 seconds
 
 4.42.17.6. Executing AIGER frontend.
 <suppressed ~1664 debug messages>
@@ -5522,6 +5522,6 @@ Found and reported 0 problems.
      LUT4                           13
      TRELLIS_FF                     11
 
-End of script. Logfile hash: 7b3474d688, CPU: user 14.38s system 0.32s, MEM: 183.38 MB peak
+End of script. Logfile hash: 664f91d6f0, CPU: user 19.52s system 0.65s, MEM: 182.73 MB peak
 Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)
-Time spent: 74% 1x chparam (10 sec), 8% 21x opt_clean (1 sec), ...
+Time spent: 77% 1x chparam (15 sec), 6% 21x opt_clean (1 sec), ...

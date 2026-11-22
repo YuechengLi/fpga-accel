@@ -9,6 +9,6 @@ test_vu37p_config_numbers (test_vcu128.TestVCU128.test_vu37p_config_numbers) ...
 test_zu19eg_ecp5u85_unchanged (test_vcu128.TestVCU128.test_zu19eg_ecp5u85_unchanged) ... ok
 
 ----------------------------------------------------------------------
-Ran 9 tests in 1.218s
+Ran 9 tests in 0.773s
 
 OK

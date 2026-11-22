@@ -1,0 +1,94 @@
+{
+  "frontend": {
+    "max_err": 0,
+    "shape": [
+      16,
+      16,
+      4
+    ]
+  },
+  "conv2d": {
+    "max_err_funcsim": 0,
+    "steps": 1536,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 143.4,
+    "sign_out": 1
+  },
+  "conv2d_1": {
+    "max_err_funcsim": 0,
+    "steps": 2304,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 271.5,
+    "sign_out": 0
+  },
+  "conv2d_2": {
+    "max_err_funcsim": 0,
+    "steps": 2304,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 118.8,
+    "sign_out": 0
+  },
+  "conv2d_3": {
+    "max_err_funcsim": 0,
+    "steps": 2304,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 132.0,
+    "sign_out": 0
+  },
+  "conv2d_4": {
+    "max_err_funcsim": 0,
+    "steps": 2304,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 131.4,
+    "sign_out": 0
+  },
+  "conv2d_5": {
+    "max_err_funcsim": 0,
+    "steps": 2304,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 136.2,
+    "sign_out": 0
+  },
+  "conv2d_6": {
+    "max_err_funcsim": 0,
+    "steps": 288,
+    "shape": [
+      16,
+      16,
+      4
+    ],
+    "wall_s": 17.2,
+    "sign_out": 1
+  },
+  "sigmoid": {
+    "max_err": 1
+  },
+  "final": {
+    "psnr_R": 48.18370241790771,
+    "psnr_L": 54.25465961124789
+  }
+}

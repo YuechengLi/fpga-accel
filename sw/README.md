@@ -212,3 +212,108 @@ structure, steps match the scheduler, no GO/WAIT).
   @100 MHz. MODEL CHECK ALL OK.
 - Run: bash tb/run_stage7b.sh (fail-fast; PE + chain + K^2
   reference re-verification + model + synth_ecp5).
+
+## Stage 7c — integrated end-to-end + post-synthesis simulation
+
+### Streaming emission, padded layers (sw/emit.py emit_pe_program)
+
+emit_pe_program now handles padded layers: a layer may carry
+`pad` ((t, b, l, r), default all zero) and `pad_mode` ("zero" or
+"replicate"). The scheduler assumes a valid conv, so a padded
+layer's input is pre-padded before step generation (DnCNN pad=1
+zero, RetinexNet replicate) and the golden sizing uses the same
+pad, so the two agree by construction; the sizing also honors
+`signed_out` (a signed layer's values feed the next layer's A
+tiles). No-pad layers (SRCNN) are unchanged -- verified by
+sw/tests/test_streaming_pe.py (unchanged counts 384/128/225).
+Tests: sw/tests/test_e2e.py (padded DnCNN program shapes/steps,
+steps match the scheduler on pre-padded inputs).
+
+### Integrated end-to-end (sw/run_e2e.py)
+
+One system flow per model: a real test image streams through the
+frontend RTL (3x3 Gaussian blur, same size), the frontend's RTL
+output feeds the PE array driven by the compiled tile-step
+program, one wave per layer with the RTL output feeding the next
+layer, and the final image is checked against the COMPOSED
+golden (frontend golden -> per-layer funcsim golden) and the
+float reference (float model on the blurred input). Two vvp
+passes per model, not one TB: the tile-steps for layer N+1
+depend on the frontend's RTL output, and the scheduler does
+im2col in software by design. The srcnn_pipe_pe wrapper finally
+has a testbench (tb/tb_e2e.sv: the tb_pe_array sender/collector
+pattern with the wrapper DUT, plus a config-bus readback check
+for N_PE/TM/TN and done_count -- done_count counts completed
+tile-steps, not outputs). Tails are RTL as in Stage 6:
+RetinexNet act.sv PWL sigmoid (budget <= 1 LSB), DnCNN
+residual.sv mode 3. Padding is reproduced by pre-padding the
+layer input in the driver and valid conv in the scheduler; the
+driver cross-checks the padded golden against fixed_forward's
+per-layer golden for every layer (mismatch = driver bug, fail
+fast). Results (ZU19EG, Stage 6 test inputs; e2e PSNR is on the
+blurred input, so it is not comparable to Stage 6's):
+
+- SRCNN 24x24: frontend max|err| = 0; L1/L2/L3 max|err| = 0
+  (384/128/225 steps); final PSNR vs float 42.75 dB.
+- RetinexNet 16x16x4: frontend max|err| = 0; all 7 layers
+  max|err| = 0 (13,344 steps); sigmoid max|err| = 1 (budget);
+  final R PSNR 48.18 dB, L PSNR 54.25 dB.
+- DnCNN 16x16, all 17 layers full 64ch: frontend max|err| = 0;
+  every layer max|err| = 0 (34,976 steps); denoised
+  max|err| = 0, PSNR vs float 53.41 dB. L4-L15 are RTL-run here
+  for the first time (Stage 6 sampled them by shape) -- the
+  Stage 6 gap is closed.
+- Full 1080p RTL sim is infeasible in Icarus; the 1080p claim
+  stays with the cycle model.
+
+The VM is replaced every few tens of minutes, which kills long
+runs mid-model. The driver checkpoints after every passed layer
+(`--resume`): logs/stage7c/ckpt_<model>/ holds one
+layer_<name>.npy + ckpt.json per completed layer (atomic tmp +
+rename; a layer whose .npy fails to load truncates the
+checkpoint there). A re-launch with --resume re-runs the fast
+frontend phase and the compile, then skips the checkpointed
+layers. Tests: sw/tests/test_e2e.py (11 tests: adapter, padded
+emission, padding equivalence, frontend golden, checkpoints).
+
+### Post-synthesis simulation (tb/run_postsynth.sh)
+
+Yosys generic `synth -top` -> write_verilog netlist -> Icarus +
+simcells.v + the unchanged golden TB. Generic synth, not
+synth_ecp5 (ECP5 netlists have TRELLIS/LUT4 cells simcells.v
+does not model). A synthesized netlist has no parameters, so the
+TBs' parameter overrides cannot be applied to it directly
+(Icarus: "parameter `N` not found", verified by probe); the fix
+is a parameter-accepting wrapper (pure port passthrough) named
+like the RTL module around the renamed netlist(s):
+tb/adder_tree_ps_wrap.sv (4 netlists, generate-if),
+tb/frontend_ps_wrap.sv, tb/pe_mac_ps_wrap.sv,
+tb/pe_array_ps_wrap.sv. Netlists are reused across runs when
+the RTL is unchanged (staleness-checked), so a VM replacement
+does not force a re-synth. Results on the VM:
+
+- adder_tree: 4 netlists (N=160/81/64/25; 25,379 / 12,896 /
+  10,026 / 3,955 cells), smoke test PASSED (200 vectors x 4
+  sizes) -- the netlists are functionally identical to the RTL.
+- frontend: generic synth PASSED (193,923 cells). The SIM is
+  Mac Phase 3: the line buffer synthesizes to 92,952 FFs +
+  92,904 muxes (the generic `memory` pass cannot map this
+  multi-port line buffer to $mem_v2; vendor synths map it to
+  BRAM, 12x BRAM36), and Icarus elaboration does not complete
+  on this VM (40+ min, 2.3 GB RSS, memory pressure).
+- pe_mac / pe_array: Mac Phase 3 (netlists OOM on this VM).
+  sw/run_pe_srcnn.py gained --netlist/--simcells for the
+  pe_array chain against a netlist (default RTL path unchanged).
+
+Mac Phase 3 lives in ~/workspace/your_files/run_ecp5_mac.sh
+(generic synth + simcells sim for pe_mac, frontend, pe_array;
+user-run, pending).
+
+### Verification
+
+- Run: bash tb/run_stage7c.sh (fail-fast; Part 1 e2e x3 with
+  --resume, Part 2 post-synth, then regressions Stage 7b +
+  Stage 5 + Stages 1-4). Prints STAGE 7c RESULT: ALL PASS.
+- Design + per-model evidence: logs/stage7c/design.md,
+  logs/stage7c/e2e_<model>.log / e2e_<model>.json,
+  logs/stage7c/run_postsynth.log.

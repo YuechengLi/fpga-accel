@@ -1,0 +1,1669 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2025  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)
+
+-- Running command `read_verilog -sv rtl/adder_tree.sv; chparam -set N 160 adder_tree; synth -top adder_tree; stat; write_verilog logs/stage7c/adder_tree_n160.v' --
+
+1. Executing Verilog-2005 frontend: rtl/adder_tree.sv
+Parsing SystemVerilog input from `rtl/adder_tree.sv' to AST representation.
+Generating RTLIL representation for module `\adder_tree'.
+Warning: Replacing memory \in with list of registers. See rtl/adder_tree.sv:67
+Warning: Replacing memory \s6 with list of registers. See rtl/adder_tree.sv:136
+Warning: Replacing memory \s4 with list of registers. See rtl/adder_tree.sv:135
+Warning: Replacing memory \s2 with list of registers. See rtl/adder_tree.sv:134
+Warning: Replacing memory \l8 with list of registers. See rtl/adder_tree.sv:129
+Warning: Replacing memory \l7 with list of registers. See rtl/adder_tree.sv:129, rtl/adder_tree.sv:123
+Warning: Replacing memory \l6 with list of registers. See rtl/adder_tree.sv:116
+Warning: Replacing memory \l5 with list of registers. See rtl/adder_tree.sv:116, rtl/adder_tree.sv:112
+Warning: Replacing memory \l4 with list of registers. See rtl/adder_tree.sv:105
+Warning: Replacing memory \l3 with list of registers. See rtl/adder_tree.sv:105, rtl/adder_tree.sv:101
+Warning: Replacing memory \l2 with list of registers. See rtl/adder_tree.sv:94
+Warning: Replacing memory \l1 with list of registers. See rtl/adder_tree.sv:94, rtl/adder_tree.sv:90
+Successfully finished Verilog frontend.
+Parameter \N = 160
+
+2. Executing AST frontend in derive mode using pre-parsed AST for module `\adder_tree'.
+Parameter \N = 160
+Generating RTLIL representation for module `$paramod\adder_tree\N=32'00000000000000000000000010100000'.
+Warning: Replacing memory \in with list of registers. See rtl/adder_tree.sv:67
+Warning: Replacing memory \s6 with list of registers. See rtl/adder_tree.sv:136
+Warning: Replacing memory \s4 with list of registers. See rtl/adder_tree.sv:135
+Warning: Replacing memory \s2 with list of registers. See rtl/adder_tree.sv:134
+Warning: Replacing memory \l8 with list of registers. See rtl/adder_tree.sv:127
+Warning: Replacing memory \l7 with list of registers. See rtl/adder_tree.sv:127, rtl/adder_tree.sv:123
+Warning: Replacing memory \l6 with list of registers. See rtl/adder_tree.sv:116
+Warning: Replacing memory \l5 with list of registers. See rtl/adder_tree.sv:116, rtl/adder_tree.sv:112
+Warning: Replacing memory \l4 with list of registers. See rtl/adder_tree.sv:105
+Warning: Replacing memory \l3 with list of registers. See rtl/adder_tree.sv:105, rtl/adder_tree.sv:101
+Warning: Replacing memory \l2 with list of registers. See rtl/adder_tree.sv:94
+Warning: Replacing memory \l1 with list of registers. See rtl/adder_tree.sv:94, rtl/adder_tree.sv:90
+
+3. Executing SYNTH pass.
+
+3.1. Executing HIERARCHY pass (managing design hierarchy).
+
+3.1.1. Analyzing design hierarchy..
+Top module:  \adder_tree
+
+3.1.2. Analyzing design hierarchy..
+Top module:  \adder_tree
+Removed 0 unused modules.
+
+3.2. Executing PROC pass (convert processes to netlists).
+
+3.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 2 empty switches in `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+Found and cleaned up 2 empty switches in `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+Found and cleaned up 2 empty switches in `\adder_tree.$proc$rtl/adder_tree.sv:110$255'.
+Found and cleaned up 2 empty switches in `\adder_tree.$proc$rtl/adder_tree.sv:121$263'.
+Cleaned up 8 empty switches.
+
+3.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 2 switch rules as full_case in process $proc$rtl/adder_tree.sv:132$266 in module adder_tree.
+Removed a total of 0 dead cases.
+
+3.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 328 assignments to connections.
+
+3.2.4. Executing PROC_INIT pass (extract init attributes).
+
+3.2.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+
+3.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+3.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:110$255'.
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:121$263'.
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+     1/56: $6\i[31:0]
+     2/56: $5\i[31:0]
+     3/56: $0\s6[2][30:0]
+     4/56: $0\s4[9][28:0]
+     5/56: $0\s4[8][28:0]
+     6/56: $0\s4[7][28:0]
+     7/56: $0\s4[6][28:0]
+     8/56: $0\s2[39][26:0]
+     9/56: $0\s2[38][26:0]
+    10/56: $0\s2[37][26:0]
+    11/56: $0\s2[36][26:0]
+    12/56: $0\s2[35][26:0]
+    13/56: $0\s2[34][26:0]
+    14/56: $0\s2[33][26:0]
+    15/56: $0\s2[32][26:0]
+    16/56: $0\s2[31][26:0]
+    17/56: $0\s2[30][26:0]
+    18/56: $0\s2[29][26:0]
+    19/56: $0\s2[28][26:0]
+    20/56: $0\s2[27][26:0]
+    21/56: $0\s2[26][26:0]
+    22/56: $0\s2[25][26:0]
+    23/56: $0\s2[24][26:0]
+    24/56: $0\s2[23][26:0]
+    25/56: $0\s2[22][26:0]
+    26/56: $0\s2[21][26:0]
+    27/56: $0\s6[1][30:0]
+    28/56: $0\s6[0][30:0]
+    29/56: $0\s4[5][28:0]
+    30/56: $0\s4[4][28:0]
+    31/56: $0\s4[3][28:0]
+    32/56: $0\s4[2][28:0]
+    33/56: $0\s4[1][28:0]
+    34/56: $0\s4[0][28:0]
+    35/56: $0\s2[20][26:0]
+    36/56: $0\s2[19][26:0]
+    37/56: $0\s2[18][26:0]
+    38/56: $0\s2[17][26:0]
+    39/56: $0\s2[16][26:0]
+    40/56: $0\s2[15][26:0]
+    41/56: $0\s2[14][26:0]
+    42/56: $0\s2[13][26:0]
+    43/56: $0\s2[12][26:0]
+    44/56: $0\s2[11][26:0]
+    45/56: $0\s2[10][26:0]
+    46/56: $0\s2[9][26:0]
+    47/56: $0\s2[8][26:0]
+    48/56: $0\s2[7][26:0]
+    49/56: $0\s2[6][26:0]
+    50/56: $0\s2[5][26:0]
+    51/56: $0\s2[4][26:0]
+    52/56: $0\s2[3][26:0]
+    53/56: $0\s2[2][26:0]
+    54/56: $0\s2[1][26:0]
+    55/56: $0\s2[0][26:0]
+    56/56: $0\out[32:0]
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+
+3.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\adder_tree.\i' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[4]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[5]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[6]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[7]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[8]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[9]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[10]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[11]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[12]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[13]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[14]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[15]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[16]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[17]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[18]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[19]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[20]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[21]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[22]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[23]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[24]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[25]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[26]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[27]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[28]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[29]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[30]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[31]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[32]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[33]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[34]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[35]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[36]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[37]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[38]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[39]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[40]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[4]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[5]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[6]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[7]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[8]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[9]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[10]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[11]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[12]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[13]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[14]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[15]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[16]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[17]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[18]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[19]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[20]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[41]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[42]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[43]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[44]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[45]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[46]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[47]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[48]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[49]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[50]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[51]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[52]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[53]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[54]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[55]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[56]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[57]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[58]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[59]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[60]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[61]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[62]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[63]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[64]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[65]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[66]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[67]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[68]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[69]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[70]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[71]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[72]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[73]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[74]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[75]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[76]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[77]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[78]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[79]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[21]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[22]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[23]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[24]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[25]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[26]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[27]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[28]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[29]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[30]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[31]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[32]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[33]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[34]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[35]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[36]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[37]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[38]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[39]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\i' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[4]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[5]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[6]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[7]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[8]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[9]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[10]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l4[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l4[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l4[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l4[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l4[4]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l4[5]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[11]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[12]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[13]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[14]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[15]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[16]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[17]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[18]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l3[19]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l4[6]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l4[7]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l4[8]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\l4[9]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+No latch inferred for signal `\adder_tree.\i' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$255'.
+No latch inferred for signal `\adder_tree.\l5[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$255'.
+No latch inferred for signal `\adder_tree.\l5[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$255'.
+No latch inferred for signal `\adder_tree.\l5[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$255'.
+No latch inferred for signal `\adder_tree.\l6[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$255'.
+No latch inferred for signal `\adder_tree.\l6[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$255'.
+No latch inferred for signal `\adder_tree.\l5[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$255'.
+No latch inferred for signal `\adder_tree.\l5[4]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$255'.
+No latch inferred for signal `\adder_tree.\l6[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$255'.
+No latch inferred for signal `\adder_tree.\i' from process `\adder_tree.$proc$rtl/adder_tree.sv:121$263'.
+No latch inferred for signal `\adder_tree.\l7[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:121$263'.
+No latch inferred for signal `\adder_tree.\l8[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:121$263'.
+No latch inferred for signal `\adder_tree.\l7[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:121$263'.
+No latch inferred for signal `\adder_tree.\in[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[4]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[5]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[6]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[7]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[8]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[9]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[10]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[11]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[12]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[13]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[14]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[15]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[16]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[17]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[18]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[19]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[20]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[21]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[22]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[23]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[24]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[25]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[26]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[27]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[28]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[29]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[30]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[31]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[32]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[33]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[34]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[35]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[36]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[37]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[38]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[39]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[40]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[41]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[42]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[43]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[44]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[45]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[46]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[47]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[48]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[49]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[50]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[51]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[52]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[53]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[54]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[55]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[56]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[57]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[58]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[59]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[60]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[61]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[62]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[63]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[64]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[65]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[66]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[67]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[68]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[69]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[70]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[71]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[72]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[73]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[74]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[75]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[76]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[77]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[78]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[79]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[80]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[81]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[82]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[83]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[84]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[85]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[86]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[87]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[88]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[89]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[90]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[91]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[92]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[93]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[94]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[95]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[96]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[97]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[98]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[99]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[100]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[101]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[102]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[103]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[104]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[105]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[106]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[107]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[108]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[109]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[110]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[111]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[112]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[113]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[114]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[115]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[116]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[117]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[118]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[119]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[120]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[121]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[122]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[123]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[124]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[125]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[126]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[127]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[128]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[129]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[130]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[131]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[132]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[133]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[134]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[135]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[136]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[137]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[138]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[139]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[140]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[141]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[142]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[143]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[144]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[145]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[146]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[147]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[148]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[149]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[150]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[151]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[152]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[153]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[154]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[155]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[156]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[157]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[158]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+No latch inferred for signal `\adder_tree.\in[159]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+
+3.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\adder_tree.\out' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$439' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\i' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$444' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[0]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$449' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[1]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$454' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[2]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$459' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[3]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$464' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[4]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$469' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[5]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$474' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[6]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$479' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[7]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$484' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[8]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$489' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[9]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$494' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[10]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$499' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[11]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$504' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[12]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$509' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[13]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$514' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[14]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$519' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[15]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$524' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[16]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$529' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[17]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$534' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[18]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$539' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[19]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$544' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[20]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$549' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[0]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$554' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[1]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$559' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[2]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$564' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[3]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$569' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[4]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$574' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[5]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$579' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s6[0]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$584' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s6[1]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$589' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[21]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$594' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[22]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$599' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[23]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$604' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[24]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$609' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[25]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$614' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[26]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$619' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[27]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$624' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[28]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$629' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[29]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$634' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[30]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$639' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[31]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$644' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[32]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$649' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[33]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$654' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[34]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$659' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[35]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$664' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[36]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$669' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[37]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$674' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[38]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$679' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[39]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$684' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[6]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$689' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[7]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$694' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[8]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$699' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[9]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$704' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s6[2]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+  created $adff cell `$procdff$709' with positive edge clock and positive level reset.
+
+3.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:99$224'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:110$255'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:121$263'.
+Found and cleaned up 1 empty switch in `\adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:132$266'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:0$269'.
+Cleaned up 1 empty switch.
+
+3.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+<suppressed ~165 debug messages>
+
+3.3. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 59 unused cells and 711 unused wires.
+<suppressed ~60 debug messages>
+
+3.5. Executing CHECK pass (checking for obvious problems).
+Checking module adder_tree...
+Found and reported 0 problems.
+
+3.6. Executing OPT pass (performing simple optimizations).
+
+3.6.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.6.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~54 debug messages>
+
+3.6.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.6.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.6.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.6.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.6.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.6.9. Finished OPT passes. (There is nothing left to do.)
+
+3.7. Executing FSM pass (extract and optimize FSM).
+
+3.7.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+3.7.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+3.7.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.7.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.7.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.7.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+3.7.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+3.7.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+3.8. Executing OPT pass (performing simple optimizations).
+
+3.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~54 debug messages>
+
+3.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$709 ($adff) from module adder_tree (D = { \l5[4] [29] \l5[4] }, Q = \s6[2]).
+Adding EN signal on $procdff$704 ($adff) from module adder_tree (D = \l4[9], Q = \s4[9]).
+Adding EN signal on $procdff$699 ($adff) from module adder_tree (D = \l4[8], Q = \s4[8]).
+Adding EN signal on $procdff$694 ($adff) from module adder_tree (D = \l4[7], Q = \s4[7]).
+Adding EN signal on $procdff$689 ($adff) from module adder_tree (D = \l4[6], Q = \s4[6]).
+Adding EN signal on $procdff$684 ($adff) from module adder_tree (D = \l2[39], Q = \s2[39]).
+Adding EN signal on $procdff$679 ($adff) from module adder_tree (D = \l2[38], Q = \s2[38]).
+Adding EN signal on $procdff$674 ($adff) from module adder_tree (D = \l2[37], Q = \s2[37]).
+Adding EN signal on $procdff$669 ($adff) from module adder_tree (D = \l2[36], Q = \s2[36]).
+Adding EN signal on $procdff$664 ($adff) from module adder_tree (D = \l2[35], Q = \s2[35]).
+Adding EN signal on $procdff$659 ($adff) from module adder_tree (D = \l2[34], Q = \s2[34]).
+Adding EN signal on $procdff$654 ($adff) from module adder_tree (D = \l2[33], Q = \s2[33]).
+Adding EN signal on $procdff$649 ($adff) from module adder_tree (D = \l2[32], Q = \s2[32]).
+Adding EN signal on $procdff$644 ($adff) from module adder_tree (D = \l2[31], Q = \s2[31]).
+Adding EN signal on $procdff$639 ($adff) from module adder_tree (D = \l2[30], Q = \s2[30]).
+Adding EN signal on $procdff$634 ($adff) from module adder_tree (D = \l2[29], Q = \s2[29]).
+Adding EN signal on $procdff$629 ($adff) from module adder_tree (D = \l2[28], Q = \s2[28]).
+Adding EN signal on $procdff$624 ($adff) from module adder_tree (D = \l2[27], Q = \s2[27]).
+Adding EN signal on $procdff$619 ($adff) from module adder_tree (D = \l2[26], Q = \s2[26]).
+Adding EN signal on $procdff$614 ($adff) from module adder_tree (D = \l2[25], Q = \s2[25]).
+Adding EN signal on $procdff$609 ($adff) from module adder_tree (D = \l2[24], Q = \s2[24]).
+Adding EN signal on $procdff$604 ($adff) from module adder_tree (D = \l2[23], Q = \s2[23]).
+Adding EN signal on $procdff$599 ($adff) from module adder_tree (D = \l2[22], Q = \s2[22]).
+Adding EN signal on $procdff$594 ($adff) from module adder_tree (D = \l2[21], Q = \s2[21]).
+Adding EN signal on $procdff$589 ($adff) from module adder_tree (D = \l6[1], Q = \s6[1]).
+Adding EN signal on $procdff$584 ($adff) from module adder_tree (D = \l6[0], Q = \s6[0]).
+Adding EN signal on $procdff$579 ($adff) from module adder_tree (D = \l4[5], Q = \s4[5]).
+Adding EN signal on $procdff$574 ($adff) from module adder_tree (D = \l4[4], Q = \s4[4]).
+Adding EN signal on $procdff$569 ($adff) from module adder_tree (D = \l4[3], Q = \s4[3]).
+Adding EN signal on $procdff$564 ($adff) from module adder_tree (D = \l4[2], Q = \s4[2]).
+Adding EN signal on $procdff$559 ($adff) from module adder_tree (D = \l4[1], Q = \s4[1]).
+Adding EN signal on $procdff$554 ($adff) from module adder_tree (D = \l4[0], Q = \s4[0]).
+Adding EN signal on $procdff$549 ($adff) from module adder_tree (D = \l2[20], Q = \s2[20]).
+Adding EN signal on $procdff$544 ($adff) from module adder_tree (D = \l2[19], Q = \s2[19]).
+Adding EN signal on $procdff$539 ($adff) from module adder_tree (D = \l2[18], Q = \s2[18]).
+Adding EN signal on $procdff$534 ($adff) from module adder_tree (D = \l2[17], Q = \s2[17]).
+Adding EN signal on $procdff$529 ($adff) from module adder_tree (D = \l2[16], Q = \s2[16]).
+Adding EN signal on $procdff$524 ($adff) from module adder_tree (D = \l2[15], Q = \s2[15]).
+Adding EN signal on $procdff$519 ($adff) from module adder_tree (D = \l2[14], Q = \s2[14]).
+Adding EN signal on $procdff$514 ($adff) from module adder_tree (D = \l2[13], Q = \s2[13]).
+Adding EN signal on $procdff$509 ($adff) from module adder_tree (D = \l2[12], Q = \s2[12]).
+Adding EN signal on $procdff$504 ($adff) from module adder_tree (D = \l2[11], Q = \s2[11]).
+Adding EN signal on $procdff$499 ($adff) from module adder_tree (D = \l2[10], Q = \s2[10]).
+Adding EN signal on $procdff$494 ($adff) from module adder_tree (D = \l2[9], Q = \s2[9]).
+Adding EN signal on $procdff$489 ($adff) from module adder_tree (D = \l2[8], Q = \s2[8]).
+Adding EN signal on $procdff$484 ($adff) from module adder_tree (D = \l2[7], Q = \s2[7]).
+Adding EN signal on $procdff$479 ($adff) from module adder_tree (D = \l2[6], Q = \s2[6]).
+Adding EN signal on $procdff$474 ($adff) from module adder_tree (D = \l2[5], Q = \s2[5]).
+Adding EN signal on $procdff$469 ($adff) from module adder_tree (D = \l2[4], Q = \s2[4]).
+Adding EN signal on $procdff$464 ($adff) from module adder_tree (D = \l2[3], Q = \s2[3]).
+Adding EN signal on $procdff$459 ($adff) from module adder_tree (D = \l2[2], Q = \s2[2]).
+Adding EN signal on $procdff$454 ($adff) from module adder_tree (D = \l2[1], Q = \s2[1]).
+Adding EN signal on $procdff$449 ($adff) from module adder_tree (D = \l2[0], Q = \s2[0]).
+Adding EN signal on $procdff$439 ($adff) from module adder_tree (D = \l8[0], Q = \out).
+
+3.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 54 unused cells and 54 unused wires.
+<suppressed ~55 debug messages>
+
+3.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.8.16. Finished OPT passes. (There is nothing left to do.)
+
+3.9. Executing WREDUCE pass (reducing word size of cells).
+Removed top 1 bits (of 32) from port B of cell adder_tree.$add$rtl/adder_tree.sv:127$265 ($add).
+Removed top 1 bits (of 31) from FF cell adder_tree.$auto$ff.cc:266:slice$710 ($adffe).
+Removed top 1 bits (of 31) from port B of cell adder_tree.$add$rtl/adder_tree.sv:127$265 ($add).
+
+3.10. Executing PEEPOPT pass (run peephole optimizers).
+
+3.11. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.12. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module adder_tree:
+  creating $macc model for $add$rtl/adder_tree.sv:101$225 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$226 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$227 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$228 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$229 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$230 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$231 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$232 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$233 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$234 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$235 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$236 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$237 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$238 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$239 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$240 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$241 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$242 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$243 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$244 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$245 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$246 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$247 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$248 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$249 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$250 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$251 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$252 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$253 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$254 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:112$256 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:112$257 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:112$258 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:112$259 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:112$260 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:116$261 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:116$262 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:123$264 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:127$265 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$104 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$105 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$106 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$107 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$108 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$109 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$110 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$111 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$112 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$113 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$114 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$115 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$116 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$117 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$118 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$119 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$120 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$121 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$122 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$123 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$124 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$125 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$126 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$127 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$128 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$129 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$130 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$131 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$132 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$133 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$134 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$135 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$136 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$137 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$138 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$139 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$140 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$141 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$142 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$143 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$144 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$145 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$146 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$147 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$148 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$149 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$150 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$151 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$152 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$153 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$154 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$155 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$156 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$157 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$158 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$159 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$160 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$161 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$162 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$163 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$164 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$165 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$166 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$167 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$168 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$169 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$170 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$171 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$172 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$173 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$174 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$175 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$176 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$177 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$178 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$179 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$180 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$181 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$182 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$183 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$184 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$185 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$186 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$187 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$188 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$189 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$190 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$191 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$192 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$193 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$194 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$195 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$196 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$197 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$198 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$199 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$200 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$201 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$202 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$203 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$204 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$205 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$206 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$207 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$208 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$209 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$210 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$211 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$212 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$213 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$214 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$215 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$216 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$217 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$218 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$219 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$220 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$221 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$222 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$223 ($add).
+  merging $macc model for $add$rtl/adder_tree.sv:90$182 into $add$rtl/adder_tree.sv:94$223.
+  merging $macc model for $add$rtl/adder_tree.sv:90$183 into $add$rtl/adder_tree.sv:94$223.
+  merging $macc model for $add$rtl/adder_tree.sv:90$180 into $add$rtl/adder_tree.sv:94$222.
+  merging $macc model for $add$rtl/adder_tree.sv:90$181 into $add$rtl/adder_tree.sv:94$222.
+  merging $macc model for $add$rtl/adder_tree.sv:90$178 into $add$rtl/adder_tree.sv:94$221.
+  merging $macc model for $add$rtl/adder_tree.sv:90$179 into $add$rtl/adder_tree.sv:94$221.
+  merging $macc model for $add$rtl/adder_tree.sv:90$176 into $add$rtl/adder_tree.sv:94$220.
+  merging $macc model for $add$rtl/adder_tree.sv:90$177 into $add$rtl/adder_tree.sv:94$220.
+  merging $macc model for $add$rtl/adder_tree.sv:90$174 into $add$rtl/adder_tree.sv:94$219.
+  merging $macc model for $add$rtl/adder_tree.sv:90$175 into $add$rtl/adder_tree.sv:94$219.
+  merging $macc model for $add$rtl/adder_tree.sv:90$172 into $add$rtl/adder_tree.sv:94$218.
+  merging $macc model for $add$rtl/adder_tree.sv:90$173 into $add$rtl/adder_tree.sv:94$218.
+  merging $macc model for $add$rtl/adder_tree.sv:90$170 into $add$rtl/adder_tree.sv:94$217.
+  merging $macc model for $add$rtl/adder_tree.sv:90$171 into $add$rtl/adder_tree.sv:94$217.
+  merging $macc model for $add$rtl/adder_tree.sv:90$168 into $add$rtl/adder_tree.sv:94$216.
+  merging $macc model for $add$rtl/adder_tree.sv:90$169 into $add$rtl/adder_tree.sv:94$216.
+  merging $macc model for $add$rtl/adder_tree.sv:90$166 into $add$rtl/adder_tree.sv:94$215.
+  merging $macc model for $add$rtl/adder_tree.sv:90$167 into $add$rtl/adder_tree.sv:94$215.
+  merging $macc model for $add$rtl/adder_tree.sv:90$164 into $add$rtl/adder_tree.sv:94$214.
+  merging $macc model for $add$rtl/adder_tree.sv:90$165 into $add$rtl/adder_tree.sv:94$214.
+  merging $macc model for $add$rtl/adder_tree.sv:90$162 into $add$rtl/adder_tree.sv:94$213.
+  merging $macc model for $add$rtl/adder_tree.sv:90$163 into $add$rtl/adder_tree.sv:94$213.
+  merging $macc model for $add$rtl/adder_tree.sv:90$160 into $add$rtl/adder_tree.sv:94$212.
+  merging $macc model for $add$rtl/adder_tree.sv:90$161 into $add$rtl/adder_tree.sv:94$212.
+  merging $macc model for $add$rtl/adder_tree.sv:90$158 into $add$rtl/adder_tree.sv:94$211.
+  merging $macc model for $add$rtl/adder_tree.sv:90$159 into $add$rtl/adder_tree.sv:94$211.
+  merging $macc model for $add$rtl/adder_tree.sv:90$156 into $add$rtl/adder_tree.sv:94$210.
+  merging $macc model for $add$rtl/adder_tree.sv:90$157 into $add$rtl/adder_tree.sv:94$210.
+  merging $macc model for $add$rtl/adder_tree.sv:90$154 into $add$rtl/adder_tree.sv:94$209.
+  merging $macc model for $add$rtl/adder_tree.sv:90$155 into $add$rtl/adder_tree.sv:94$209.
+  merging $macc model for $add$rtl/adder_tree.sv:90$152 into $add$rtl/adder_tree.sv:94$208.
+  merging $macc model for $add$rtl/adder_tree.sv:90$153 into $add$rtl/adder_tree.sv:94$208.
+  merging $macc model for $add$rtl/adder_tree.sv:90$150 into $add$rtl/adder_tree.sv:94$207.
+  merging $macc model for $add$rtl/adder_tree.sv:90$151 into $add$rtl/adder_tree.sv:94$207.
+  merging $macc model for $add$rtl/adder_tree.sv:90$148 into $add$rtl/adder_tree.sv:94$206.
+  merging $macc model for $add$rtl/adder_tree.sv:90$149 into $add$rtl/adder_tree.sv:94$206.
+  merging $macc model for $add$rtl/adder_tree.sv:90$146 into $add$rtl/adder_tree.sv:94$205.
+  merging $macc model for $add$rtl/adder_tree.sv:90$147 into $add$rtl/adder_tree.sv:94$205.
+  merging $macc model for $add$rtl/adder_tree.sv:90$144 into $add$rtl/adder_tree.sv:94$204.
+  merging $macc model for $add$rtl/adder_tree.sv:90$145 into $add$rtl/adder_tree.sv:94$204.
+  merging $macc model for $add$rtl/adder_tree.sv:90$142 into $add$rtl/adder_tree.sv:94$203.
+  merging $macc model for $add$rtl/adder_tree.sv:90$143 into $add$rtl/adder_tree.sv:94$203.
+  merging $macc model for $add$rtl/adder_tree.sv:90$140 into $add$rtl/adder_tree.sv:94$202.
+  merging $macc model for $add$rtl/adder_tree.sv:90$141 into $add$rtl/adder_tree.sv:94$202.
+  merging $macc model for $add$rtl/adder_tree.sv:90$138 into $add$rtl/adder_tree.sv:94$201.
+  merging $macc model for $add$rtl/adder_tree.sv:90$139 into $add$rtl/adder_tree.sv:94$201.
+  merging $macc model for $add$rtl/adder_tree.sv:90$136 into $add$rtl/adder_tree.sv:94$200.
+  merging $macc model for $add$rtl/adder_tree.sv:90$137 into $add$rtl/adder_tree.sv:94$200.
+  merging $macc model for $add$rtl/adder_tree.sv:90$134 into $add$rtl/adder_tree.sv:94$199.
+  merging $macc model for $add$rtl/adder_tree.sv:90$135 into $add$rtl/adder_tree.sv:94$199.
+  merging $macc model for $add$rtl/adder_tree.sv:90$132 into $add$rtl/adder_tree.sv:94$198.
+  merging $macc model for $add$rtl/adder_tree.sv:90$133 into $add$rtl/adder_tree.sv:94$198.
+  merging $macc model for $add$rtl/adder_tree.sv:90$130 into $add$rtl/adder_tree.sv:94$197.
+  merging $macc model for $add$rtl/adder_tree.sv:90$131 into $add$rtl/adder_tree.sv:94$197.
+  merging $macc model for $add$rtl/adder_tree.sv:90$128 into $add$rtl/adder_tree.sv:94$196.
+  merging $macc model for $add$rtl/adder_tree.sv:90$129 into $add$rtl/adder_tree.sv:94$196.
+  merging $macc model for $add$rtl/adder_tree.sv:90$126 into $add$rtl/adder_tree.sv:94$195.
+  merging $macc model for $add$rtl/adder_tree.sv:90$127 into $add$rtl/adder_tree.sv:94$195.
+  merging $macc model for $add$rtl/adder_tree.sv:90$124 into $add$rtl/adder_tree.sv:94$194.
+  merging $macc model for $add$rtl/adder_tree.sv:90$125 into $add$rtl/adder_tree.sv:94$194.
+  merging $macc model for $add$rtl/adder_tree.sv:90$122 into $add$rtl/adder_tree.sv:94$193.
+  merging $macc model for $add$rtl/adder_tree.sv:90$123 into $add$rtl/adder_tree.sv:94$193.
+  merging $macc model for $add$rtl/adder_tree.sv:90$120 into $add$rtl/adder_tree.sv:94$192.
+  merging $macc model for $add$rtl/adder_tree.sv:90$121 into $add$rtl/adder_tree.sv:94$192.
+  merging $macc model for $add$rtl/adder_tree.sv:90$118 into $add$rtl/adder_tree.sv:94$191.
+  merging $macc model for $add$rtl/adder_tree.sv:90$119 into $add$rtl/adder_tree.sv:94$191.
+  merging $macc model for $add$rtl/adder_tree.sv:90$116 into $add$rtl/adder_tree.sv:94$190.
+  merging $macc model for $add$rtl/adder_tree.sv:90$117 into $add$rtl/adder_tree.sv:94$190.
+  merging $macc model for $add$rtl/adder_tree.sv:90$114 into $add$rtl/adder_tree.sv:94$189.
+  merging $macc model for $add$rtl/adder_tree.sv:90$115 into $add$rtl/adder_tree.sv:94$189.
+  merging $macc model for $add$rtl/adder_tree.sv:90$112 into $add$rtl/adder_tree.sv:94$188.
+  merging $macc model for $add$rtl/adder_tree.sv:90$113 into $add$rtl/adder_tree.sv:94$188.
+  merging $macc model for $add$rtl/adder_tree.sv:90$110 into $add$rtl/adder_tree.sv:94$187.
+  merging $macc model for $add$rtl/adder_tree.sv:90$111 into $add$rtl/adder_tree.sv:94$187.
+  merging $macc model for $add$rtl/adder_tree.sv:90$108 into $add$rtl/adder_tree.sv:94$186.
+  merging $macc model for $add$rtl/adder_tree.sv:90$109 into $add$rtl/adder_tree.sv:94$186.
+  merging $macc model for $add$rtl/adder_tree.sv:90$106 into $add$rtl/adder_tree.sv:94$185.
+  merging $macc model for $add$rtl/adder_tree.sv:90$107 into $add$rtl/adder_tree.sv:94$185.
+  merging $macc model for $add$rtl/adder_tree.sv:90$104 into $add$rtl/adder_tree.sv:94$184.
+  merging $macc model for $add$rtl/adder_tree.sv:90$105 into $add$rtl/adder_tree.sv:94$184.
+  merging $macc model for $add$rtl/adder_tree.sv:123$264 into $add$rtl/adder_tree.sv:127$265.
+  merging $macc model for $add$rtl/adder_tree.sv:112$258 into $add$rtl/adder_tree.sv:116$262.
+  merging $macc model for $add$rtl/adder_tree.sv:112$259 into $add$rtl/adder_tree.sv:116$262.
+  merging $macc model for $add$rtl/adder_tree.sv:112$256 into $add$rtl/adder_tree.sv:116$261.
+  merging $macc model for $add$rtl/adder_tree.sv:112$257 into $add$rtl/adder_tree.sv:116$261.
+  merging $macc model for $add$rtl/adder_tree.sv:101$243 into $add$rtl/adder_tree.sv:105$254.
+  merging $macc model for $add$rtl/adder_tree.sv:101$244 into $add$rtl/adder_tree.sv:105$254.
+  merging $macc model for $add$rtl/adder_tree.sv:101$241 into $add$rtl/adder_tree.sv:105$253.
+  merging $macc model for $add$rtl/adder_tree.sv:101$242 into $add$rtl/adder_tree.sv:105$253.
+  merging $macc model for $add$rtl/adder_tree.sv:101$239 into $add$rtl/adder_tree.sv:105$252.
+  merging $macc model for $add$rtl/adder_tree.sv:101$240 into $add$rtl/adder_tree.sv:105$252.
+  merging $macc model for $add$rtl/adder_tree.sv:101$237 into $add$rtl/adder_tree.sv:105$251.
+  merging $macc model for $add$rtl/adder_tree.sv:101$238 into $add$rtl/adder_tree.sv:105$251.
+  merging $macc model for $add$rtl/adder_tree.sv:101$235 into $add$rtl/adder_tree.sv:105$250.
+  merging $macc model for $add$rtl/adder_tree.sv:101$236 into $add$rtl/adder_tree.sv:105$250.
+  merging $macc model for $add$rtl/adder_tree.sv:101$233 into $add$rtl/adder_tree.sv:105$249.
+  merging $macc model for $add$rtl/adder_tree.sv:101$234 into $add$rtl/adder_tree.sv:105$249.
+  merging $macc model for $add$rtl/adder_tree.sv:101$231 into $add$rtl/adder_tree.sv:105$248.
+  merging $macc model for $add$rtl/adder_tree.sv:101$232 into $add$rtl/adder_tree.sv:105$248.
+  merging $macc model for $add$rtl/adder_tree.sv:101$229 into $add$rtl/adder_tree.sv:105$247.
+  merging $macc model for $add$rtl/adder_tree.sv:101$230 into $add$rtl/adder_tree.sv:105$247.
+  merging $macc model for $add$rtl/adder_tree.sv:101$227 into $add$rtl/adder_tree.sv:105$246.
+  merging $macc model for $add$rtl/adder_tree.sv:101$228 into $add$rtl/adder_tree.sv:105$246.
+  merging $macc model for $add$rtl/adder_tree.sv:101$225 into $add$rtl/adder_tree.sv:105$245.
+  merging $macc model for $add$rtl/adder_tree.sv:101$226 into $add$rtl/adder_tree.sv:105$245.
+  creating $alu model for $macc $add$rtl/adder_tree.sv:112$260.
+  creating $macc cell for $add$rtl/adder_tree.sv:94$186: $auto$alumacc.cc:365:replace_macc$764
+  creating $macc cell for $add$rtl/adder_tree.sv:94$185: $auto$alumacc.cc:365:replace_macc$765
+  creating $macc cell for $add$rtl/adder_tree.sv:94$188: $auto$alumacc.cc:365:replace_macc$766
+  creating $macc cell for $add$rtl/adder_tree.sv:94$187: $auto$alumacc.cc:365:replace_macc$767
+  creating $macc cell for $add$rtl/adder_tree.sv:94$190: $auto$alumacc.cc:365:replace_macc$768
+  creating $macc cell for $add$rtl/adder_tree.sv:94$189: $auto$alumacc.cc:365:replace_macc$769
+  creating $macc cell for $add$rtl/adder_tree.sv:94$192: $auto$alumacc.cc:365:replace_macc$770
+  creating $macc cell for $add$rtl/adder_tree.sv:94$191: $auto$alumacc.cc:365:replace_macc$771
+  creating $macc cell for $add$rtl/adder_tree.sv:94$194: $auto$alumacc.cc:365:replace_macc$772
+  creating $macc cell for $add$rtl/adder_tree.sv:94$193: $auto$alumacc.cc:365:replace_macc$773
+  creating $macc cell for $add$rtl/adder_tree.sv:94$196: $auto$alumacc.cc:365:replace_macc$774
+  creating $macc cell for $add$rtl/adder_tree.sv:94$195: $auto$alumacc.cc:365:replace_macc$775
+  creating $macc cell for $add$rtl/adder_tree.sv:94$198: $auto$alumacc.cc:365:replace_macc$776
+  creating $macc cell for $add$rtl/adder_tree.sv:94$197: $auto$alumacc.cc:365:replace_macc$777
+  creating $macc cell for $add$rtl/adder_tree.sv:127$265: $auto$alumacc.cc:365:replace_macc$778
+  creating $macc cell for $add$rtl/adder_tree.sv:94$199: $auto$alumacc.cc:365:replace_macc$779
+  creating $macc cell for $add$rtl/adder_tree.sv:116$262: $auto$alumacc.cc:365:replace_macc$780
+  creating $macc cell for $add$rtl/adder_tree.sv:116$261: $auto$alumacc.cc:365:replace_macc$781
+  creating $macc cell for $add$rtl/adder_tree.sv:94$184: $auto$alumacc.cc:365:replace_macc$782
+  creating $macc cell for $add$rtl/adder_tree.sv:94$201: $auto$alumacc.cc:365:replace_macc$783
+  creating $macc cell for $add$rtl/adder_tree.sv:94$200: $auto$alumacc.cc:365:replace_macc$784
+  creating $macc cell for $add$rtl/adder_tree.sv:94$203: $auto$alumacc.cc:365:replace_macc$785
+  creating $macc cell for $add$rtl/adder_tree.sv:94$202: $auto$alumacc.cc:365:replace_macc$786
+  creating $macc cell for $add$rtl/adder_tree.sv:105$254: $auto$alumacc.cc:365:replace_macc$787
+  creating $macc cell for $add$rtl/adder_tree.sv:105$253: $auto$alumacc.cc:365:replace_macc$788
+  creating $macc cell for $add$rtl/adder_tree.sv:105$252: $auto$alumacc.cc:365:replace_macc$789
+  creating $macc cell for $add$rtl/adder_tree.sv:105$251: $auto$alumacc.cc:365:replace_macc$790
+  creating $macc cell for $add$rtl/adder_tree.sv:105$250: $auto$alumacc.cc:365:replace_macc$791
+  creating $macc cell for $add$rtl/adder_tree.sv:105$249: $auto$alumacc.cc:365:replace_macc$792
+  creating $macc cell for $add$rtl/adder_tree.sv:105$248: $auto$alumacc.cc:365:replace_macc$793
+  creating $macc cell for $add$rtl/adder_tree.sv:105$247: $auto$alumacc.cc:365:replace_macc$794
+  creating $macc cell for $add$rtl/adder_tree.sv:105$246: $auto$alumacc.cc:365:replace_macc$795
+  creating $macc cell for $add$rtl/adder_tree.sv:105$245: $auto$alumacc.cc:365:replace_macc$796
+  creating $macc cell for $add$rtl/adder_tree.sv:94$205: $auto$alumacc.cc:365:replace_macc$797
+  creating $macc cell for $add$rtl/adder_tree.sv:94$204: $auto$alumacc.cc:365:replace_macc$798
+  creating $macc cell for $add$rtl/adder_tree.sv:94$207: $auto$alumacc.cc:365:replace_macc$799
+  creating $macc cell for $add$rtl/adder_tree.sv:94$206: $auto$alumacc.cc:365:replace_macc$800
+  creating $macc cell for $add$rtl/adder_tree.sv:94$209: $auto$alumacc.cc:365:replace_macc$801
+  creating $macc cell for $add$rtl/adder_tree.sv:94$208: $auto$alumacc.cc:365:replace_macc$802
+  creating $macc cell for $add$rtl/adder_tree.sv:94$211: $auto$alumacc.cc:365:replace_macc$803
+  creating $macc cell for $add$rtl/adder_tree.sv:94$210: $auto$alumacc.cc:365:replace_macc$804
+  creating $macc cell for $add$rtl/adder_tree.sv:94$213: $auto$alumacc.cc:365:replace_macc$805
+  creating $macc cell for $add$rtl/adder_tree.sv:94$212: $auto$alumacc.cc:365:replace_macc$806
+  creating $macc cell for $add$rtl/adder_tree.sv:94$215: $auto$alumacc.cc:365:replace_macc$807
+  creating $macc cell for $add$rtl/adder_tree.sv:94$214: $auto$alumacc.cc:365:replace_macc$808
+  creating $macc cell for $add$rtl/adder_tree.sv:94$217: $auto$alumacc.cc:365:replace_macc$809
+  creating $macc cell for $add$rtl/adder_tree.sv:94$216: $auto$alumacc.cc:365:replace_macc$810
+  creating $macc cell for $add$rtl/adder_tree.sv:94$219: $auto$alumacc.cc:365:replace_macc$811
+  creating $macc cell for $add$rtl/adder_tree.sv:94$218: $auto$alumacc.cc:365:replace_macc$812
+  creating $macc cell for $add$rtl/adder_tree.sv:94$221: $auto$alumacc.cc:365:replace_macc$813
+  creating $macc cell for $add$rtl/adder_tree.sv:94$220: $auto$alumacc.cc:365:replace_macc$814
+  creating $macc cell for $add$rtl/adder_tree.sv:94$223: $auto$alumacc.cc:365:replace_macc$815
+  creating $macc cell for $add$rtl/adder_tree.sv:94$222: $auto$alumacc.cc:365:replace_macc$816
+  creating $alu cell for $add$rtl/adder_tree.sv:112$260: $auto$alumacc.cc:495:replace_alu$817
+  created 1 $alu and 53 $macc cells.
+
+3.13. Executing SHARE pass (SAT-based resource sharing).
+
+3.14. Executing OPT pass (performing simple optimizations).
+
+3.14.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.14.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.14.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.14.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.14.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.14.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.14.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 105 unused cells and 105 unused wires.
+<suppressed ~210 debug messages>
+
+3.14.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.14.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.14.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.14.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.14.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.14.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.14.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.14.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.14.16. Finished OPT passes. (There is nothing left to do.)
+
+3.15. Executing MEMORY pass.
+
+3.15.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+3.15.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+3.15.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+3.15.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+3.15.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+3.15.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.15.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+3.15.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+3.15.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.15.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+3.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.17. Executing OPT pass (performing simple optimizations).
+
+3.17.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.17.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.17.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.17.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.17.5. Finished fast OPT passes.
+
+3.18. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+3.19. Executing OPT pass (performing simple optimizations).
+
+3.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.19.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.19.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.19.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.19.6. Executing OPT_SHARE pass.
+
+3.19.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.19.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.19.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.19.10. Finished OPT passes. (There is nothing left to do.)
+
+3.20. Executing TECHMAP pass (map to technology primitives).
+
+3.20.1. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/usr/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `\$__div_mod_u'.
+Generating RTLIL representation for module `\$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `\$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_pmux'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Successfully finished Verilog frontend.
+
+3.20.2. Continuing TECHMAP pass.
+Using extmapper maccmap for cells of type $macc_v2.
+  add \in_flat [224:200] (25 bits, signed)
+  add \in_flat [274:250] (25 bits, signed)
+  add \in_flat [249:225] (25 bits, signed)
+  add \in_flat [299:275] (25 bits, signed)
+  add \in_flat [1724:1700] (25 bits, signed)
+  add \in_flat [1774:1750] (25 bits, signed)
+  add \in_flat [1749:1725] (25 bits, signed)
+  add \in_flat [1799:1775] (25 bits, signed)
+  add \in_flat [424:400] (25 bits, signed)
+  add \in_flat [474:450] (25 bits, signed)
+  add \in_flat [449:425] (25 bits, signed)
+  add \in_flat [499:475] (25 bits, signed)
+  add \in_flat [124:100] (25 bits, signed)
+  add \in_flat [174:150] (25 bits, signed)
+  add \in_flat [149:125] (25 bits, signed)
+  add \in_flat [199:175] (25 bits, signed)
+  add \in_flat [624:600] (25 bits, signed)
+  add \in_flat [674:650] (25 bits, signed)
+  add \in_flat [649:625] (25 bits, signed)
+  add \in_flat [699:675] (25 bits, signed)
+  add \in_flat [324:300] (25 bits, signed)
+  add \in_flat [374:350] (25 bits, signed)
+  add \in_flat [349:325] (25 bits, signed)
+  add \in_flat [399:375] (25 bits, signed)
+  add \in_flat [824:800] (25 bits, signed)
+  add \in_flat [874:850] (25 bits, signed)
+  add \in_flat [849:825] (25 bits, signed)
+  add \in_flat [899:875] (25 bits, signed)
+  add \in_flat [524:500] (25 bits, signed)
+  add \in_flat [574:550] (25 bits, signed)
+  add \in_flat [549:525] (25 bits, signed)
+  add \in_flat [599:575] (25 bits, signed)
+  add \in_flat [1024:1000] (25 bits, signed)
+  add \in_flat [1074:1050] (25 bits, signed)
+  add \in_flat [1049:1025] (25 bits, signed)
+  add \in_flat [1099:1075] (25 bits, signed)
+  add \in_flat [724:700] (25 bits, signed)
+  add \in_flat [774:750] (25 bits, signed)
+  add \in_flat [749:725] (25 bits, signed)
+  add \in_flat [799:775] (25 bits, signed)
+  add \in_flat [1224:1200] (25 bits, signed)
+  add \in_flat [1274:1250] (25 bits, signed)
+  add \in_flat [1249:1225] (25 bits, signed)
+  add \in_flat [1299:1275] (25 bits, signed)
+  add \in_flat [924:900] (25 bits, signed)
+  add \in_flat [974:950] (25 bits, signed)
+  add \in_flat [949:925] (25 bits, signed)
+  add \in_flat [999:975] (25 bits, signed)
+  add \in_flat [1424:1400] (25 bits, signed)
+  add \in_flat [1474:1450] (25 bits, signed)
+  add \in_flat [1449:1425] (25 bits, signed)
+  add \in_flat [1499:1475] (25 bits, signed)
+  add \in_flat [1124:1100] (25 bits, signed)
+  add \in_flat [1174:1150] (25 bits, signed)
+  add \in_flat [1149:1125] (25 bits, signed)
+  add \in_flat [1199:1175] (25 bits, signed)
+  add \s6[0] (31 bits, signed)
+  add \s6[2] [29:0] (30 bits, signed)
+  add \s6[1] (31 bits, signed)
+  add \in_flat [1324:1300] (25 bits, signed)
+  add \in_flat [1374:1350] (25 bits, signed)
+  add \in_flat [1349:1325] (25 bits, signed)
+  add \in_flat [1399:1375] (25 bits, signed)
+  add \s4[4] (29 bits, signed)
+  add \s4[6] (29 bits, signed)
+  add \s4[5] (29 bits, signed)
+  add \s4[7] (29 bits, signed)
+  add \in_flat [1924:1900] (25 bits, signed)
+  add \in_flat [1974:1950] (25 bits, signed)
+  add \in_flat [1949:1925] (25 bits, signed)
+  add \in_flat [1999:1975] (25 bits, signed)
+  add \in_flat [1624:1600] (25 bits, signed)
+  add \in_flat [1674:1650] (25 bits, signed)
+  add \in_flat [1649:1625] (25 bits, signed)
+  add \in_flat [1699:1675] (25 bits, signed)
+  add \s2[36] (27 bits, signed)
+  add \s2[38] (27 bits, signed)
+  add \s2[37] (27 bits, signed)
+  add \s2[39] (27 bits, signed)
+  add \in_flat [1824:1800] (25 bits, signed)
+  add \in_flat [1874:1850] (25 bits, signed)
+  add \in_flat [1849:1825] (25 bits, signed)
+  add \in_flat [1899:1875] (25 bits, signed)
+  add \in_flat [2324:2300] (25 bits, signed)
+  add \in_flat [2374:2350] (25 bits, signed)
+  add \in_flat [2349:2325] (25 bits, signed)
+  add \in_flat [2399:2375] (25 bits, signed)
+  add \in_flat [2024:2000] (25 bits, signed)
+  add \in_flat [2074:2050] (25 bits, signed)
+  add \in_flat [2049:2025] (25 bits, signed)
+  add \in_flat [2099:2075] (25 bits, signed)
+  add \in_flat [2524:2500] (25 bits, signed)
+  add \in_flat [2574:2550] (25 bits, signed)
+  add \in_flat [2549:2525] (25 bits, signed)
+  add \in_flat [2599:2575] (25 bits, signed)
+  add \in_flat [2224:2200] (25 bits, signed)
+  add \in_flat [2274:2250] (25 bits, signed)
+  add \in_flat [2249:2225] (25 bits, signed)
+  add \in_flat [2299:2275] (25 bits, signed)
+  add \in_flat [2724:2700] (25 bits, signed)
+  add \in_flat [2774:2750] (25 bits, signed)
+  add \in_flat [2749:2725] (25 bits, signed)
+  add \in_flat [2799:2775] (25 bits, signed)
+  add \in_flat [2424:2400] (25 bits, signed)
+  add \in_flat [2474:2450] (25 bits, signed)
+  add \in_flat [2449:2425] (25 bits, signed)
+  add \in_flat [2499:2475] (25 bits, signed)
+  add \in_flat [2924:2900] (25 bits, signed)
+  add \in_flat [2974:2950] (25 bits, signed)
+  add \in_flat [2949:2925] (25 bits, signed)
+  add \in_flat [2999:2975] (25 bits, signed)
+  add \in_flat [2624:2600] (25 bits, signed)
+  add \in_flat [2674:2650] (25 bits, signed)
+  add \in_flat [2649:2625] (25 bits, signed)
+  add \in_flat [2699:2675] (25 bits, signed)
+  add \in_flat [3124:3100] (25 bits, signed)
+  add \in_flat [3174:3150] (25 bits, signed)
+  add \in_flat [3149:3125] (25 bits, signed)
+  add \in_flat [3199:3175] (25 bits, signed)
+  add \in_flat [2824:2800] (25 bits, signed)
+  add \in_flat [2874:2850] (25 bits, signed)
+  add \in_flat [2849:2825] (25 bits, signed)
+  add \in_flat [2899:2875] (25 bits, signed)
+  add \in_flat [3324:3300] (25 bits, signed)
+  add \in_flat [3374:3350] (25 bits, signed)
+  add \in_flat [3349:3325] (25 bits, signed)
+  add \in_flat [3399:3375] (25 bits, signed)
+  add \in_flat [3024:3000] (25 bits, signed)
+  add \in_flat [3074:3050] (25 bits, signed)
+  add \in_flat [3049:3025] (25 bits, signed)
+  add \in_flat [3099:3075] (25 bits, signed)
+  add \in_flat [3524:3500] (25 bits, signed)
+  add \in_flat [3574:3550] (25 bits, signed)
+  add \in_flat [3549:3525] (25 bits, signed)
+  add \in_flat [3599:3575] (25 bits, signed)
+  add \in_flat [3224:3200] (25 bits, signed)
+  add \in_flat [3274:3250] (25 bits, signed)
+  add \in_flat [3249:3225] (25 bits, signed)
+  add \in_flat [3299:3275] (25 bits, signed)
+  add \in_flat [3724:3700] (25 bits, signed)
+  add \in_flat [3774:3750] (25 bits, signed)
+  add \in_flat [3749:3725] (25 bits, signed)
+  add \in_flat [3799:3775] (25 bits, signed)
+  add \in_flat [3424:3400] (25 bits, signed)
+  add \in_flat [3474:3450] (25 bits, signed)
+  add \in_flat [3449:3425] (25 bits, signed)
+  add \in_flat [3499:3475] (25 bits, signed)
+  add \in_flat [3924:3900] (25 bits, signed)
+  add \in_flat [3974:3950] (25 bits, signed)
+  add \in_flat [3949:3925] (25 bits, signed)
+  add \in_flat [3999:3975] (25 bits, signed)
+  add \in_flat [3624:3600] (25 bits, signed)
+  add \in_flat [3674:3650] (25 bits, signed)
+  add \in_flat [3649:3625] (25 bits, signed)
+  add \in_flat [3699:3675] (25 bits, signed)
+Using template $paramod$2daa1a6dc01b844e80a8c89f178302db24966fe8\_90_alu for cells of type $alu.
+  add \in_flat [3824:3800] (25 bits, signed)
+  add \in_flat [3874:3850] (25 bits, signed)
+  add \in_flat [3849:3825] (25 bits, signed)
+  add \in_flat [3899:3875] (25 bits, signed)
+  add \in_flat [2124:2100] (25 bits, signed)
+  add \in_flat [2174:2150] (25 bits, signed)
+  add \in_flat [2149:2125] (25 bits, signed)
+  add \in_flat [2199:2175] (25 bits, signed)
+  add \s2[0] (27 bits, signed)
+  add \s2[2] (27 bits, signed)
+  add \s2[1] (27 bits, signed)
+  add \s2[3] (27 bits, signed)
+  add \s2[4] (27 bits, signed)
+  add \s2[6] (27 bits, signed)
+  add \s2[5] (27 bits, signed)
+  add \s2[7] (27 bits, signed)
+  add \s2[8] (27 bits, signed)
+  add \s2[10] (27 bits, signed)
+  add \s2[9] (27 bits, signed)
+  add \s2[11] (27 bits, signed)
+  add \s2[12] (27 bits, signed)
+  add \s2[14] (27 bits, signed)
+  add \s2[13] (27 bits, signed)
+  add \s2[15] (27 bits, signed)
+  add \s2[16] (27 bits, signed)
+  add \s2[18] (27 bits, signed)
+  add \s2[17] (27 bits, signed)
+  add \s2[19] (27 bits, signed)
+  add \s2[20] (27 bits, signed)
+  add \s2[22] (27 bits, signed)
+  add \s2[21] (27 bits, signed)
+  add \s2[23] (27 bits, signed)
+  add \s2[24] (27 bits, signed)
+  add \s2[26] (27 bits, signed)
+  add \s2[25] (27 bits, signed)
+  add \s2[27] (27 bits, signed)
+  add \s2[28] (27 bits, signed)
+  add \s2[30] (27 bits, signed)
+  add \s2[29] (27 bits, signed)
+  add \s2[31] (27 bits, signed)
+  add \s2[32] (27 bits, signed)
+  add \s2[34] (27 bits, signed)
+  add \s2[33] (27 bits, signed)
+  add \s2[35] (27 bits, signed)
+  add \in_flat [24:0] (25 bits, signed)
+  add \in_flat [74:50] (25 bits, signed)
+  add \in_flat [49:25] (25 bits, signed)
+  add \in_flat [99:75] (25 bits, signed)
+  add \s4[0] (29 bits, signed)
+  add \s4[2] (29 bits, signed)
+  add \s4[1] (29 bits, signed)
+  add \s4[3] (29 bits, signed)
+  add \in_flat [1524:1500] (25 bits, signed)
+  add \in_flat [1574:1550] (25 bits, signed)
+  add \in_flat [1549:1525] (25 bits, signed)
+  add \in_flat [1599:1575] (25 bits, signed)
+Using extmapper simplemap for cells of type $adffe.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011011 for cells of type $fa.
+Using template $paramod$f02bbbf710bba6238f4bdfa41b3051acfe2064a8\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $xor.
+Using extmapper simplemap for cells of type $and.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011110 for cells of type $lcu.
+Using extmapper simplemap for cells of type $pos.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $not.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011101 for cells of type $fa.
+Using template $paramod$88ebedc0964674c5b2e447c66b33a42fc7e7abe0\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011111 for cells of type $fa.
+Using template $paramod$ebf89ea36a793f0f77858f212141d47c833068ad\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100001 for cells of type $fa.
+Using template $paramod$cc6a978c1b57cdb49efcec348c88d8e28bf1a01f\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $or.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011011 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011101 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011111 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100001 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~8288 debug messages>
+
+3.21. Executing OPT pass (performing simple optimizations).
+
+3.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+<suppressed ~2185 debug messages>
+
+3.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+<suppressed ~2388 debug messages>
+Removed a total of 796 cells.
+
+3.21.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.21.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 1603 unused cells and 2563 unused wires.
+<suppressed ~1604 debug messages>
+
+3.21.5. Finished fast OPT passes.
+
+3.22. Executing ABC pass (technology mapping using ABC).
+
+3.22.1. Extracting gate netlist of module `\adder_tree' to `<abc-temp-dir>/input.blif'..
+Extracted 23606 gates and 29068 wires to a netlist network with 5462 inputs and 1495 outputs.
+
+3.22.1.1. Executing ABC.
+Running ABC command: "<yosys-exe-dir>/yosys-abc" -s -f <abc-temp-dir>/abc.script 2>&1
+ABC: ABC command line: "source <abc-temp-dir>/abc.script".
+ABC: 
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: + strash 
+ABC: + dretime 
+ABC: + map 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+
+3.22.1.2. Re-integrating ABC results.
+ABC RESULTS:               AND cells:       15
+ABC RESULTS:            ANDNOT cells:     8103
+ABC RESULTS:              NAND cells:     1374
+ABC RESULTS:               NOR cells:     1428
+ABC RESULTS:               NOT cells:      278
+ABC RESULTS:                OR cells:     4086
+ABC RESULTS:             ORNOT cells:      346
+ABC RESULTS:              XNOR cells:     4033
+ABC RESULTS:               XOR cells:     4221
+ABC RESULTS:        internal signals:    22111
+ABC RESULTS:           input signals:     5462
+ABC RESULTS:          output signals:     1495
+Removing temp directory.
+
+3.23. Executing OPT pass (performing simple optimizations).
+
+3.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.23.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.23.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 0 unused cells and 12161 unused wires.
+<suppressed ~1 debug messages>
+
+3.23.5. Finished fast OPT passes.
+
+3.24. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `adder_tree'. Setting top module to adder_tree.
+
+3.24.1. Analyzing design hierarchy..
+Top module:  \adder_tree
+
+3.24.2. Analyzing design hierarchy..
+Top module:  \adder_tree
+Removed 0 unused modules.
+
+3.25. Printing statistics.
+
+=== adder_tree ===
+
+   Number of wires:              22664
+   Number of wire bits:          33478
+   Number of public wires:         275
+   Number of public wire bits:   11089
+   Number of ports:                  5
+   Number of port bits:           4036
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:              25379
+     $_ANDNOT_                    8103
+     $_AND_                         15
+     $_DFFE_PN0N_                 1495
+     $_NAND_                      1374
+     $_NOR_                       1428
+     $_NOT_                        278
+     $_ORNOT_                      346
+     $_OR_                        4086
+     $_XNOR_                      4033
+     $_XOR_                       4221
+
+3.26. Executing CHECK pass (checking for obvious problems).
+Checking module adder_tree...
+Found and reported 0 problems.
+
+4. Printing statistics.
+
+=== adder_tree ===
+
+   Number of wires:              22664
+   Number of wire bits:          33478
+   Number of public wires:         275
+   Number of public wire bits:   11089
+   Number of ports:                  5
+   Number of port bits:           4036
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:              25379
+     $_ANDNOT_                    8103
+     $_AND_                         15
+     $_DFFE_PN0N_                 1495
+     $_NAND_                      1374
+     $_NOR_                       1428
+     $_NOT_                        278
+     $_ORNOT_                      346
+     $_OR_                        4086
+     $_XNOR_                      4033
+     $_XOR_                       4221
+
+5. Executing Verilog backend.
+
+5.1. Executing BMUXMAP pass.
+
+5.2. Executing DEMUXMAP pass.
+Dumping module `\adder_tree'.
+
+Warnings: 14 unique messages, 24 total
+End of script. Logfile hash: 743ddb937e, CPU: user 4.03s system 0.12s, MEM: 105.23 MB peak
+Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)
+Time spent: 29% 1x abc (1 sec), 20% 20x opt_clean (1 sec), ...

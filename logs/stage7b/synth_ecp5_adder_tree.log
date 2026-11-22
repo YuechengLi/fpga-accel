@@ -1736,8 +1736,8 @@ ABC: cst =       0  cls =      0  lit =       0  unused =   14238  proof =     0
 ABC: + &if -W 300 -v 
 ABC: K = 7. Memory (bytes): Truth =    0. Cut =   64. Obj =  148. Set =  672. CutMin = no
 ABC: Node =    9348.  Ch =     0.  Total mem =    3.31 MB. Peak cut mem =    0.01 MB.
-ABC: P:  Del = 2398.00.  Ar =    5846.0.  Edge =     9348.  Cut =   156876.  T =     0.01 sec
-ABC: P:  Del = 2398.00.  Ar =    5846.0.  Edge =     9348.  Cut =   156876.  T =     0.04 sec
+ABC: P:  Del = 2398.00.  Ar =    5846.0.  Edge =     9348.  Cut =   156876.  T =     0.02 sec
+ABC: P:  Del = 2398.00.  Ar =    5846.0.  Edge =     9348.  Cut =   156876.  T =     0.02 sec
 ABC: P:  Del = 2398.00.  Ar =    5144.0.  Edge =    10596.  Cut =   202174.  T =     0.02 sec
 ABC: F:  Del = 2398.00.  Ar =    2908.0.  Edge =     8412.  Cut =   111596.  T =     0.01 sec
 ABC: A:  Del = 2398.00.  Ar =    2908.0.  Edge =     8412.  Cut =   124544.  T =     0.01 sec
@@ -1752,7 +1752,7 @@ ABC: Mapping (K=6)  :  lut =   2538  edge =    8412  lev =    2 (0.39)  levB =  
 ABC: LUT = 2538 : 2=170 6.7 %  3=1716 67.6 %  4=390 15.4 %  5=208 8.2 %  6=54 2.1 %  Ave = 3.31
 ABC: + &write -n <abc-temp-dir>/output.aig 
 ABC: + time 
-ABC: elapse: 3.24 seconds, total: 3.24 seconds
+ABC: elapse: 2.71 seconds, total: 2.71 seconds
 
 3.42.17.6. Executing AIGER frontend.
 <suppressed ~9052 debug messages>
@@ -1941,6 +1941,6 @@ Found and reported 0 problems.
      TRELLIS_FF                    828
 
 Warnings: 12 unique messages, 12 total
-End of script. Logfile hash: 7f6cfff1c0, CPU: user 4.29s system 0.21s, MEM: 121.96 MB peak
+End of script. Logfile hash: c47abe3885, CPU: user 5.13s system 0.26s, MEM: 122.05 MB peak
 Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)
-Time spent: 34% 1x abc9_exe (2 sec), 10% 11x techmap (0 sec), ...
+Time spent: 34% 1x abc9_exe (2 sec), 11% 3x clean (0 sec), ...

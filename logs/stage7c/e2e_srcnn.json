@@ -1,0 +1,46 @@
+{
+  "frontend": {
+    "max_err": 0,
+    "shape": [
+      24,
+      24,
+      1
+    ]
+  },
+  "conv2d": {
+    "max_err_funcsim": 0,
+    "steps": 384,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 55.5,
+    "sign_out": 0
+  },
+  "conv2d_1": {
+    "max_err_funcsim": 0,
+    "steps": 128,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 12.7,
+    "sign_out": 0
+  },
+  "conv2d_2": {
+    "max_err_funcsim": 0,
+    "steps": 225,
+    "shape": [
+      12,
+      12,
+      1
+    ],
+    "wall_s": 6.9,
+    "sign_out": 0
+  },
+  "final": {
+    "psnr_float": 42.74980877807292
+  }
+}

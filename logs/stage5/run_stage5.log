@@ -1,17 +1,47 @@
 === Stage 5: unit tests (43) ===
-............................./home/hatch/workspace/fpga-accel/sw/tests/test_emit.py:80: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmp3yscod9w/program.json' mode='r' encoding='utf-8'>
+........................../home/hatch/workspace/fpga-accel/sw/tests/test_e2e.py:266: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpit8w5evg/ckpt.json' mode='w' encoding='utf-8'>
+  open(os.path.join(d, "ckpt.json"), "w").write("{not json")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+../home/hatch/workspace/fpga-accel/sw/tests/test_e2e.py:252: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmplp7qxrvu/ckpt.json' mode='r' encoding='utf-8'>
+  ck = json.load(open(os.path.join(d, "ckpt.json")))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/hatch/workspace/fpga-accel/sw/tests/test_e2e.py:257: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmplp7qxrvu/ckpt.json' mode='w' encoding='utf-8'>
+  json.dump(ck, open(os.path.join(d, "ckpt.json"), "w"))
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.test_ckpt_corrupt_json_is_empty: PASS
+test_ckpt_roundtrip: PASS
+test_ckpt_truncated_at_missing_layer: PASS
+  captured: 34 IR nodes
+  emitted: 48690 instrs, 14899456 B weight blob
+.test_dncnn_program_shapes_and_steps: PASS
+  captured: 34 IR nodes
+  emitted: 48690 instrs, 14899456 B weight blob
+.test_dncnn_steps_match_padded_scheduler: PASS
+  captured: 6 IR nodes
+  emitted: 2018 instrs, 518848 B weight blob
+...test_srcnn_emission_unchanged: PASS
+test_blur_keeps_shape_and_bounds: PASS
+test_constant_image_blur_zero_pads_borders: PASS
+  captured: 34 IR nodes
+  emitted: 48690 instrs, 14899456 B weight blob
+.test_dncnn_adapter_carries_pad: PASS
+  captured: 6 IR nodes
+  emitted: 2018 instrs, 518848 B weight blob
+.test_srcnn_adapter: PASS
+  captured: 34 IR nodes
+  emitted: 48690 instrs, 14899456 B weight blob
+..../home/hatch/workspace/fpga-accel/sw/tests/test_emit.py:80: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmpn9u0x00w/program.json' mode='r' encoding='utf-8'>
   pub = json.load(open(jp))
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-.../home/hatch/workspace/fpga-accel/sw/passes/mlut.py:104: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
-  in12 = int(round((float(x) + 8.0) * 256.0))
-./home/hatch/workspace/fpga-accel/sw/tests/test_funcsim.py:44: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/hatch/workspace/fpga-accel/models/srcnn/srcnn_x3_quant.json' mode='r' encoding='utf-8'>
+..../home/hatch/workspace/fpga-accel/sw/tests/test_funcsim.py:44: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/hatch/workspace/fpga-accel/models/srcnn/srcnn_x3_quant.json' mode='r' encoding='utf-8'>
   q = json.load(open(os.path.join(root, "srcnn_x3_quant.json")))
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
-..........
+............................
 ----------------------------------------------------------------------
-Ran 43 tests in 29.942s
+Ran 72 tests in 87.964s
 
 OK
+test_dncnn_padded_golden_matches_fixed_forward: PASS
 [stage5] unit tests (43): PASS
 === Stage 5: SRCNN demo ===
 SRCNN input (33, 33, 1), range [33,242]

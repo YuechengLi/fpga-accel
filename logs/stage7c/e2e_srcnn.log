@@ -1,0 +1,12 @@
+=== srcnn: integrated end-to-end ===
+  [frontend] frontend: 24x24x1 blur, max|err|=0 vs golden (0.8s)
+  captured: 6 IR nodes
+  emitted: 2018 instrs, 518848 B weight blob
+  compiled program: 3 layers, 737 tile-steps (streaming_pe, zu19eg)
+  resuming from checkpoint: 3 layer(s) already passed (conv2d, conv2d_1, conv2d_2)
+  conv2d: resumed from checkpoint (max|err|=0, 384 steps skipped)
+  conv2d_1: resumed from checkpoint (max|err|=0, 128 steps skipped)
+  conv2d_2: resumed from checkpoint (max|err|=0, 225 steps skipped)
+  FINAL vs float: PSNR=42.75 dB
+E2E SRCNN: ALL PASS
+E2E ALL PASS

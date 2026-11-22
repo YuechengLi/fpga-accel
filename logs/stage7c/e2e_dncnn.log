@@ -1,0 +1,26 @@
+=== dncnn: integrated end-to-end ===
+  [frontend] frontend: 16x16x1 blur, max|err|=0 vs golden (0.4s)
+  captured: 34 IR nodes
+  emitted: 48690 instrs, 14899456 B weight blob
+  compiled program: 17 layers, 34976 tile-steps (streaming_pe, zu19eg)
+  resuming from checkpoint: 17 layer(s) already passed (conv2d, conv2d_1, conv2d_2, conv2d_3, conv2d_4, conv2d_5, conv2d_6, conv2d_7, conv2d_8, conv2d_9, conv2d_10, conv2d_11, conv2d_12, conv2d_13, conv2d_14, conv2d_15, conv2d_16)
+  conv2d: resumed from checkpoint (max|err|=0, 128 steps skipped)
+  conv2d_1: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_2: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_3: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_4: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_5: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_6: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_7: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_8: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_9: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_10: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_11: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_12: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_13: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_14: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_15: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_16: resumed from checkpoint (max|err|=0, 288 steps skipped)
+  denoised: vs funcsim max|err|=0 [PASS], vs float PSNR=53.41 dB
+E2E DNCNN: ALL PASS
+E2E ALL PASS

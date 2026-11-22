@@ -1,7 +1,7 @@
 wrote vectors_dense.txt: 14 cases
 ../rtl/conv2d_dense.sv:208: vvp.tgt sorry: Case unique/unique0 qualities are ignored.
 [compile] rc=0
-[vvp] rc=0 wall=15s
+[vvp] rc=0 wall=19s
 TB dense PX=1: 14 cases
 case 0 (16x16 k=3 shift=0 pad=(0,0,0,0) stride=(1,1) out=14x14): 196 outputs, framing errors=0
 case 1 (16x16 k=3 shift=3 pad=(1,1,1,1) stride=(1,1) out=16x16): 256 outputs, framing errors=0

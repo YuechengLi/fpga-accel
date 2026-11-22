@@ -1,0 +1,776 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2025  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)
+
+-- Running command `read_verilog -sv rtl/adder_tree.sv; chparam -set N 25 adder_tree; synth -top adder_tree; stat; write_verilog logs/stage7c/adder_tree_n25.v' --
+
+1. Executing Verilog-2005 frontend: rtl/adder_tree.sv
+Parsing SystemVerilog input from `rtl/adder_tree.sv' to AST representation.
+Generating RTLIL representation for module `\adder_tree'.
+Warning: Replacing memory \in with list of registers. See rtl/adder_tree.sv:67
+Warning: Replacing memory \s6 with list of registers. See rtl/adder_tree.sv:136
+Warning: Replacing memory \s4 with list of registers. See rtl/adder_tree.sv:135
+Warning: Replacing memory \s2 with list of registers. See rtl/adder_tree.sv:134
+Warning: Replacing memory \l8 with list of registers. See rtl/adder_tree.sv:129
+Warning: Replacing memory \l7 with list of registers. See rtl/adder_tree.sv:129, rtl/adder_tree.sv:123
+Warning: Replacing memory \l6 with list of registers. See rtl/adder_tree.sv:116
+Warning: Replacing memory \l5 with list of registers. See rtl/adder_tree.sv:116, rtl/adder_tree.sv:112
+Warning: Replacing memory \l4 with list of registers. See rtl/adder_tree.sv:105
+Warning: Replacing memory \l3 with list of registers. See rtl/adder_tree.sv:105, rtl/adder_tree.sv:101
+Warning: Replacing memory \l2 with list of registers. See rtl/adder_tree.sv:94
+Warning: Replacing memory \l1 with list of registers. See rtl/adder_tree.sv:94, rtl/adder_tree.sv:90
+Successfully finished Verilog frontend.
+Parameter \N = 25
+
+2. Executing AST frontend in derive mode using pre-parsed AST for module `\adder_tree'.
+Parameter \N = 25
+Generating RTLIL representation for module `$paramod\adder_tree\N=32'00000000000000000000000000011001'.
+Warning: Replacing memory \in with list of registers. See rtl/adder_tree.sv:67
+Warning: Replacing memory \s6 with list of registers. See rtl/adder_tree.sv:136
+Warning: Replacing memory \s4 with list of registers. See rtl/adder_tree.sv:135
+Warning: Replacing memory \s2 with list of registers. See rtl/adder_tree.sv:134
+Warning: Replacing memory \l8 with list of registers. See rtl/adder_tree.sv:129
+Warning: Replacing memory \l7 with list of registers. See rtl/adder_tree.sv:129, rtl/adder_tree.sv:125
+Warning: Replacing memory \l6 with list of registers. See rtl/adder_tree.sv:118
+Warning: Replacing memory \l5 with list of registers. See rtl/adder_tree.sv:118, rtl/adder_tree.sv:112
+Warning: Replacing memory \l4 with list of registers. See rtl/adder_tree.sv:105
+Warning: Replacing memory \l3 with list of registers. See rtl/adder_tree.sv:105, rtl/adder_tree.sv:101
+Warning: Replacing memory \l2 with list of registers. See rtl/adder_tree.sv:94
+Warning: Replacing memory \l1 with list of registers. See rtl/adder_tree.sv:94, rtl/adder_tree.sv:90
+
+3. Executing SYNTH pass.
+
+3.1. Executing HIERARCHY pass (managing design hierarchy).
+
+3.1.1. Analyzing design hierarchy..
+Top module:  \adder_tree
+
+3.1.2. Analyzing design hierarchy..
+Top module:  \adder_tree
+Removed 0 unused modules.
+
+3.2. Executing PROC pass (convert processes to netlists).
+
+3.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 2 empty switches in `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+Found and cleaned up 2 empty switches in `\adder_tree.$proc$rtl/adder_tree.sv:99$122'.
+Found and cleaned up 2 empty switches in `\adder_tree.$proc$rtl/adder_tree.sv:110$128'.
+Found and cleaned up 2 empty switches in `\adder_tree.$proc$rtl/adder_tree.sv:121$130'.
+Cleaned up 8 empty switches.
+
+3.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 2 switch rules as full_case in process $proc$rtl/adder_tree.sv:132$131 in module adder_tree.
+Removed a total of 0 dead cases.
+
+3.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 66 assignments to connections.
+
+3.2.4. Executing PROC_INIT pass (extract init attributes).
+
+3.2.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+
+3.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+3.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:99$122'.
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:110$128'.
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:121$130'.
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+     1/13: $6\i[31:0]
+     2/13: $5\i[31:0]
+     3/13: $0\s6[0][30:0]
+     4/13: $0\s4[1][28:0]
+     5/13: $0\s4[0][28:0]
+     6/13: $0\s2[6][26:0]
+     7/13: $0\s2[5][26:0]
+     8/13: $0\s2[4][26:0]
+     9/13: $0\s2[3][26:0]
+    10/13: $0\s2[2][26:0]
+    11/13: $0\s2[1][26:0]
+    12/13: $0\s2[0][26:0]
+    13/13: $0\out[32:0]
+Creating decoders for process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+
+3.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\adder_tree.\i' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[4]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[5]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[6]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[7]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[8]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[9]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[10]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[11]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l1[12]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[4]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[5]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\l2[6]' from process `\adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+No latch inferred for signal `\adder_tree.\i' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$122'.
+No latch inferred for signal `\adder_tree.\l3[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$122'.
+No latch inferred for signal `\adder_tree.\l3[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$122'.
+No latch inferred for signal `\adder_tree.\l3[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$122'.
+No latch inferred for signal `\adder_tree.\l3[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$122'.
+No latch inferred for signal `\adder_tree.\l4[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$122'.
+No latch inferred for signal `\adder_tree.\l4[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:99$122'.
+No latch inferred for signal `\adder_tree.\i' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$128'.
+No latch inferred for signal `\adder_tree.\l5[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$128'.
+No latch inferred for signal `\adder_tree.\l6[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:110$128'.
+No latch inferred for signal `\adder_tree.\i' from process `\adder_tree.$proc$rtl/adder_tree.sv:121$130'.
+No latch inferred for signal `\adder_tree.\l7[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:121$130'.
+No latch inferred for signal `\adder_tree.\l8[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:121$130'.
+No latch inferred for signal `\adder_tree.\in[0]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[1]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[2]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[3]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[4]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[5]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[6]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[7]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[8]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[9]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[10]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[11]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[12]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[13]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[14]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[15]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[16]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[17]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[18]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[19]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[20]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[21]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[22]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[23]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+No latch inferred for signal `\adder_tree.\in[24]' from process `\adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+
+3.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\adder_tree.\out' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+  created $adff cell `$procdff$175' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\i' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+  created $adff cell `$procdff$180' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[0]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+  created $adff cell `$procdff$185' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[1]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+  created $adff cell `$procdff$190' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[2]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+  created $adff cell `$procdff$195' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[3]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+  created $adff cell `$procdff$200' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[4]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+  created $adff cell `$procdff$205' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[5]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+  created $adff cell `$procdff$210' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s2[6]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+  created $adff cell `$procdff$215' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[0]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+  created $adff cell `$procdff$220' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s4[1]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+  created $adff cell `$procdff$225' with positive edge clock and positive level reset.
+Creating register for signal `\adder_tree.\s6[0]' using process `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+  created $adff cell `$procdff$230' with positive edge clock and positive level reset.
+
+3.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:88$103'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:99$122'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:110$128'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:121$130'.
+Found and cleaned up 1 empty switch in `\adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:132$131'.
+Removing empty process `adder_tree.$proc$rtl/adder_tree.sv:0$134'.
+Cleaned up 1 empty switch.
+
+3.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+<suppressed ~36 debug messages>
+
+3.3. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 16 unused cells and 142 unused wires.
+<suppressed ~17 debug messages>
+
+3.5. Executing CHECK pass (checking for obvious problems).
+Checking module adder_tree...
+Found and reported 0 problems.
+
+3.6. Executing OPT pass (performing simple optimizations).
+
+3.6.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.6.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~11 debug messages>
+
+3.6.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.6.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.6.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.6.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.6.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.6.9. Finished OPT passes. (There is nothing left to do.)
+
+3.7. Executing FSM pass (extract and optimize FSM).
+
+3.7.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+3.7.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+3.7.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.7.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.7.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.7.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+3.7.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+3.7.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+3.8. Executing OPT pass (performing simple optimizations).
+
+3.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~11 debug messages>
+
+3.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$230 ($adff) from module adder_tree (D = { \l5[0] [29] \l5[0] }, Q = \s6[0]).
+Adding EN signal on $procdff$225 ($adff) from module adder_tree (D = \l4[1], Q = \s4[1]).
+Adding EN signal on $procdff$220 ($adff) from module adder_tree (D = \l4[0], Q = \s4[0]).
+Adding EN signal on $procdff$215 ($adff) from module adder_tree (D = { \in_flat [624] \in_flat [624] \in_flat [624:600] }, Q = \s2[6]).
+Adding EN signal on $procdff$210 ($adff) from module adder_tree (D = \l2[5], Q = \s2[5]).
+Adding EN signal on $procdff$205 ($adff) from module adder_tree (D = \l2[4], Q = \s2[4]).
+Adding EN signal on $procdff$200 ($adff) from module adder_tree (D = \l2[3], Q = \s2[3]).
+Adding EN signal on $procdff$195 ($adff) from module adder_tree (D = \l2[2], Q = \s2[2]).
+Adding EN signal on $procdff$190 ($adff) from module adder_tree (D = \l2[1], Q = \s2[1]).
+Adding EN signal on $procdff$185 ($adff) from module adder_tree (D = \l2[0], Q = \s2[0]).
+Adding EN signal on $procdff$175 ($adff) from module adder_tree (D = { \s6[0] [30] \s6[0] [30] \s6[0] }, Q = \out).
+
+3.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 11 unused cells and 11 unused wires.
+<suppressed ~12 debug messages>
+
+3.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.8.16. Finished OPT passes. (There is nothing left to do.)
+
+3.9. Executing WREDUCE pass (reducing word size of cells).
+Removed top 1 bits (of 31) from FF cell adder_tree.$auto$ff.cc:266:slice$231 ($adffe).
+Removed top 2 bits (of 27) from FF cell adder_tree.$auto$ff.cc:266:slice$234 ($adffe).
+Removed top 3 bits (of 33) from FF cell adder_tree.$auto$ff.cc:266:slice$241 ($adffe).
+Removed top 3 bits (of 28) from port B of cell adder_tree.$add$rtl/adder_tree.sv:105$127 ($add).
+
+3.10. Executing PEEPOPT pass (run peephole optimizers).
+
+3.11. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.12. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module adder_tree:
+  creating $macc model for $add$rtl/adder_tree.sv:101$123 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$124 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:101$125 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$126 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:105$127 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:112$129 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$104 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$105 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$106 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$107 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$108 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$109 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$110 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$111 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$112 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$113 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$114 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:90$115 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$116 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$117 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$118 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$119 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$120 ($add).
+  creating $macc model for $add$rtl/adder_tree.sv:94$121 ($add).
+  merging $macc model for $add$rtl/adder_tree.sv:90$114 into $add$rtl/adder_tree.sv:94$121.
+  merging $macc model for $add$rtl/adder_tree.sv:90$115 into $add$rtl/adder_tree.sv:94$121.
+  merging $macc model for $add$rtl/adder_tree.sv:90$112 into $add$rtl/adder_tree.sv:94$120.
+  merging $macc model for $add$rtl/adder_tree.sv:90$113 into $add$rtl/adder_tree.sv:94$120.
+  merging $macc model for $add$rtl/adder_tree.sv:90$110 into $add$rtl/adder_tree.sv:94$119.
+  merging $macc model for $add$rtl/adder_tree.sv:90$111 into $add$rtl/adder_tree.sv:94$119.
+  merging $macc model for $add$rtl/adder_tree.sv:90$108 into $add$rtl/adder_tree.sv:94$118.
+  merging $macc model for $add$rtl/adder_tree.sv:90$109 into $add$rtl/adder_tree.sv:94$118.
+  merging $macc model for $add$rtl/adder_tree.sv:90$106 into $add$rtl/adder_tree.sv:94$117.
+  merging $macc model for $add$rtl/adder_tree.sv:90$107 into $add$rtl/adder_tree.sv:94$117.
+  merging $macc model for $add$rtl/adder_tree.sv:90$104 into $add$rtl/adder_tree.sv:94$116.
+  merging $macc model for $add$rtl/adder_tree.sv:90$105 into $add$rtl/adder_tree.sv:94$116.
+  merging $macc model for $add$rtl/adder_tree.sv:101$125 into $add$rtl/adder_tree.sv:105$127.
+  merging $macc model for $add$rtl/adder_tree.sv:101$123 into $add$rtl/adder_tree.sv:105$126.
+  merging $macc model for $add$rtl/adder_tree.sv:101$124 into $add$rtl/adder_tree.sv:105$126.
+  creating $alu model for $macc $add$rtl/adder_tree.sv:112$129.
+  creating $macc cell for $add$rtl/adder_tree.sv:94$118: $auto$alumacc.cc:365:replace_macc$242
+  creating $macc cell for $add$rtl/adder_tree.sv:94$117: $auto$alumacc.cc:365:replace_macc$243
+  creating $macc cell for $add$rtl/adder_tree.sv:94$116: $auto$alumacc.cc:365:replace_macc$244
+  creating $macc cell for $add$rtl/adder_tree.sv:105$127: $auto$alumacc.cc:365:replace_macc$245
+  creating $macc cell for $add$rtl/adder_tree.sv:105$126: $auto$alumacc.cc:365:replace_macc$246
+  creating $macc cell for $add$rtl/adder_tree.sv:94$119: $auto$alumacc.cc:365:replace_macc$247
+  creating $macc cell for $add$rtl/adder_tree.sv:94$121: $auto$alumacc.cc:365:replace_macc$248
+  creating $macc cell for $add$rtl/adder_tree.sv:94$120: $auto$alumacc.cc:365:replace_macc$249
+  creating $alu cell for $add$rtl/adder_tree.sv:112$129: $auto$alumacc.cc:495:replace_alu$250
+  created 1 $alu and 8 $macc cells.
+
+3.13. Executing SHARE pass (SAT-based resource sharing).
+
+3.14. Executing OPT pass (performing simple optimizations).
+
+3.14.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.14.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.14.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.14.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.14.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.14.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.14.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 15 unused cells and 15 unused wires.
+<suppressed ~30 debug messages>
+
+3.14.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.14.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.14.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.14.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.14.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.14.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.14.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.14.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.14.16. Finished OPT passes. (There is nothing left to do.)
+
+3.15. Executing MEMORY pass.
+
+3.15.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+3.15.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+3.15.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+3.15.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+3.15.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+3.15.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.15.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+3.15.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+3.15.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.15.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+3.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.17. Executing OPT pass (performing simple optimizations).
+
+3.17.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.17.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.17.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.17.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.17.5. Finished fast OPT passes.
+
+3.18. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+3.19. Executing OPT pass (performing simple optimizations).
+
+3.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.19.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \adder_tree..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.19.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \adder_tree.
+Performed a total of 0 changes.
+
+3.19.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.19.6. Executing OPT_SHARE pass.
+
+3.19.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.19.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+
+3.19.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.19.10. Finished OPT passes. (There is nothing left to do.)
+
+3.20. Executing TECHMAP pass (map to technology primitives).
+
+3.20.1. Executing Verilog-2005 frontend: /usr/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/usr/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `\$__div_mod_u'.
+Generating RTLIL representation for module `\$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `\$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_pmux'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Successfully finished Verilog frontend.
+
+3.20.2. Continuing TECHMAP pass.
+Using extmapper simplemap for cells of type $adffe.
+Using extmapper maccmap for cells of type $macc_v2.
+  add \in_flat [224:200] (25 bits, signed)
+  add \in_flat [274:250] (25 bits, signed)
+  add \in_flat [249:225] (25 bits, signed)
+  add \in_flat [299:275] (25 bits, signed)
+  add \s2[4] (27 bits, signed)
+  add \s2[6] [24:0] (25 bits, signed)
+  add \s2[5] (27 bits, signed)
+  add \in_flat [24:0] (25 bits, signed)
+  add \in_flat [74:50] (25 bits, signed)
+  add \in_flat [49:25] (25 bits, signed)
+  add \in_flat [99:75] (25 bits, signed)
+  add \in_flat [124:100] (25 bits, signed)
+  add \in_flat [174:150] (25 bits, signed)
+  add \in_flat [149:125] (25 bits, signed)
+  add \in_flat [199:175] (25 bits, signed)
+  add \in_flat [524:500] (25 bits, signed)
+  add \in_flat [574:550] (25 bits, signed)
+  add \in_flat [549:525] (25 bits, signed)
+  add \in_flat [599:575] (25 bits, signed)
+Using template $paramod$2daa1a6dc01b844e80a8c89f178302db24966fe8\_90_alu for cells of type $alu.
+  add \in_flat [424:400] (25 bits, signed)
+  add \in_flat [474:450] (25 bits, signed)
+  add \in_flat [449:425] (25 bits, signed)
+  add \in_flat [499:475] (25 bits, signed)
+  add \in_flat [324:300] (25 bits, signed)
+  add \in_flat [374:350] (25 bits, signed)
+  add \in_flat [349:325] (25 bits, signed)
+  add \in_flat [399:375] (25 bits, signed)
+  add \s2[0] (27 bits, signed)
+  add \s2[2] (27 bits, signed)
+  add \s2[1] (27 bits, signed)
+  add \s2[3] (27 bits, signed)
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011011 for cells of type $fa.
+Using template $paramod$f02bbbf710bba6238f4bdfa41b3051acfe2064a8\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011101 for cells of type $fa.
+Using template $paramod$88ebedc0964674c5b2e447c66b33a42fc7e7abe0\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $xor.
+Using extmapper simplemap for cells of type $and.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011110 for cells of type $lcu.
+Using extmapper simplemap for cells of type $pos.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $or.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011011 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011101 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~1779 debug messages>
+
+3.21. Executing OPT pass (performing simple optimizations).
+
+3.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+<suppressed ~355 debug messages>
+
+3.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+<suppressed ~363 debug messages>
+Removed a total of 121 cells.
+
+3.21.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.21.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 268 unused cells and 403 unused wires.
+<suppressed ~269 debug messages>
+
+3.21.5. Finished fast OPT passes.
+
+3.22. Executing ABC pass (technology mapping using ABC).
+
+3.22.1. Extracting gate netlist of module `\adder_tree' to `<abc-temp-dir>/input.blif'..
+Extracted 3604 gates and 4449 wires to a netlist network with 845 inputs and 250 outputs.
+
+3.22.1.1. Executing ABC.
+Running ABC command: "<yosys-exe-dir>/yosys-abc" -s -f <abc-temp-dir>/abc.script 2>&1
+ABC: ABC command line: "source <abc-temp-dir>/abc.script".
+ABC: 
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: + strash 
+ABC: + dretime 
+ABC: + map 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+
+3.22.1.2. Re-integrating ABC results.
+ABC RESULTS:               AND cells:       15
+ABC RESULTS:            ANDNOT cells:     1204
+ABC RESULTS:              NAND cells:      219
+ABC RESULTS:               NOR cells:      262
+ABC RESULTS:               NOT cells:       46
+ABC RESULTS:                OR cells:      607
+ABC RESULTS:             ORNOT cells:       55
+ABC RESULTS:              XNOR cells:      600
+ABC RESULTS:               XOR cells:      642
+ABC RESULTS:        internal signals:     3354
+ABC RESULTS:           input signals:      845
+ABC RESULTS:          output signals:      250
+Removing temp directory.
+
+3.23. Executing OPT pass (performing simple optimizations).
+
+3.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module adder_tree.
+
+3.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\adder_tree'.
+Removed a total of 0 cells.
+
+3.23.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.23.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \adder_tree..
+Removed 0 unused cells and 1952 unused wires.
+<suppressed ~1 debug messages>
+
+3.23.5. Finished fast OPT passes.
+
+3.24. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `adder_tree'. Setting top module to adder_tree.
+
+3.24.1. Analyzing design hierarchy..
+Top module:  \adder_tree
+
+3.24.2. Analyzing design hierarchy..
+Top module:  \adder_tree
+Removed 0 unused modules.
+
+3.25. Printing statistics.
+
+=== adder_tree ===
+
+   Number of wires:               3456
+   Number of wire bits:           5423
+   Number of public wires:          56
+   Number of public wire bits:    2023
+   Number of ports:                  5
+   Number of port bits:            661
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               3955
+     $_ANDNOT_                    1204
+     $_AND_                         15
+     $_DFFE_PN0N_                  305
+     $_NAND_                       219
+     $_NOR_                        262
+     $_NOT_                         46
+     $_ORNOT_                       55
+     $_OR_                         607
+     $_XNOR_                       600
+     $_XOR_                        642
+
+3.26. Executing CHECK pass (checking for obvious problems).
+Checking module adder_tree...
+Found and reported 0 problems.
+
+4. Printing statistics.
+
+=== adder_tree ===
+
+   Number of wires:               3456
+   Number of wire bits:           5423
+   Number of public wires:          56
+   Number of public wire bits:    2023
+   Number of ports:                  5
+   Number of port bits:            661
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               3955
+     $_ANDNOT_                    1204
+     $_AND_                         15
+     $_DFFE_PN0N_                  305
+     $_NAND_                       219
+     $_NOR_                        262
+     $_NOT_                         46
+     $_ORNOT_                       55
+     $_OR_                         607
+     $_XNOR_                       600
+     $_XOR_                        642
+
+5. Executing Verilog backend.
+
+5.1. Executing BMUXMAP pass.
+
+5.2. Executing DEMUXMAP pass.
+Dumping module `\adder_tree'.
+
+Warnings: 15 unique messages, 24 total
+End of script. Logfile hash: 9d36bd603e, CPU: user 0.65s system 0.02s, MEM: 30.64 MB peak
+Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)
+Time spent: 30% 1x abc (0 sec), 15% 18x opt_clean (0 sec), ...

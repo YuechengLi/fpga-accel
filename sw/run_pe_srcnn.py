@@ -10,7 +10,14 @@ layer (the Stage 6 pattern). For each layer:
 At the end, compare the final L3 output to the golden final output
 (max|err| = 0) and compute PSNR vs the float reference (~43.5 dB).
 
-Usage: python3 sw/run_pe_srcnn.py
+Usage: python3 sw/run_pe_srcnn.py [--netlist <pe_array netlist>]
+  --netlist: post-synthesis mode (Stage 7c, Mac Phase 3) -- compile
+    the synthesized pe_array netlist (tb/pe_array_ps_wrap.sv +
+    the netlist + Yosys simcells.v) instead of the RTL, and run
+    the same chain + golden check against it. Without it, the
+    RTL is used (the Stage 7b path, unchanged).
+  --simcells: path to Yosys simcells.v (netlist mode only);
+    auto-detected when omitted.
 """
 import os
 import subprocess
@@ -27,13 +34,44 @@ from stage6 import build_srcnn_input
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TB = os.path.join(REPO, "tb")
 
+# Post-synthesis mode (set by main() from --netlist/--simcells).
+NETLIST = None
+SIMCELLS = None
+
+
+def find_simcells():
+    """Locate Yosys simcells.v (VM: /usr/share/yosys; Mac Homebrew:
+    /opt/homebrew or /usr/local). Returns None if not found."""
+    for p in (SIMCELLS,
+              "/usr/share/yosys/simcells.v",
+              "/opt/homebrew/share/yosys/simcells.v",
+              "/usr/local/share/yosys/simcells.v"):
+        if p and os.path.exists(p):
+            return p
+    return None
+
 
 def run_tb():
-    """Compile + run tb_pe_array (in tb/). Returns (rc, log)."""
+    """Compile + run tb_pe_array (in tb/). Returns (rc, log).
+    Netlist mode compiles the parameter-accepting wrapper +
+    the synthesized netlist + simcells.v instead of the RTL;
+    the TB and the golden check are unchanged."""
+    if NETLIST:
+        simcells = find_simcells()
+        if simcells is None:
+            return 1, ("NETLIST MODE: simcells.v not found "
+                       "(pass --simcells, or brew install yosys)")
+        netlist = NETLIST if os.path.isabs(NETLIST) \
+            else os.path.join(REPO, NETLIST)
+        if not os.path.exists(netlist):
+            return 1, f"NETLIST MODE: netlist not found: {netlist}"
+        files = ["pe_array_ps_wrap.sv", netlist, simcells,
+                 "tb_pe_array.sv"]
+    else:
+        files = ["../rtl/pe_array.sv", "../rtl/pe_mac.sv",
+                 "../rtl/pe_emit.sv", "tb_pe_array.sv"]
     comp = subprocess.run(
-        ["iverilog", "-g2012", "-o", "tb_pe_array.vvp",
-         "../rtl/pe_array.sv", "../rtl/pe_mac.sv", "../rtl/pe_emit.sv",
-         "tb_pe_array.sv"],
+        ["iverilog", "-g2012", "-o", "tb_pe_array.vvp"] + files,
         cwd=TB, capture_output=True, text=True)
     if comp.returncode != 0:
         return comp.returncode, "COMPILE FAILED:\n" + comp.stdout + comp.stderr
@@ -63,6 +101,20 @@ def psnr(a, b):
 
 
 def main():
+    global NETLIST, SIMCELLS
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--netlist", default=None,
+                    help="synthesized pe_array netlist (repo-relative "
+                    "or absolute); post-synthesis mode, see module "
+                    "docstring")
+    ap.add_argument("--simcells", default=None,
+                    help="path to Yosys simcells.v (netlist mode only)")
+    args = ap.parse_args()
+    NETLIST = args.netlist
+    SIMCELLS = args.simcells
+    if NETLIST:
+        print(f"NETLIST MODE: pe_array netlist {NETLIST}")
     from devices import get as get_device
     dev = get_device("zu19eg")
     layers, _ = load_srcnn()

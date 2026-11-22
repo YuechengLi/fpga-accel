@@ -762,7 +762,14 @@ def emit_pe_program(layers, inp, device_name="zu19eg"):
 
     ``layers``: list of layer dicts (K, C_out, mode_dot, sign_in,
     sign_out, shift, act, slope, W_q, b_q) as returned by
-    sched_pe.load_srcnn(). ``inp``: the model's input feature map
+    sched_pe.load_srcnn(). A layer may also carry ``pad`` (a
+    (t, b, l, r) tuple, default all zero) and ``pad_mode``
+    ("zero" or "replicate", default "zero"): the scheduler
+    assumes a valid conv, so a padded layer's input is
+    pre-padded before step generation (DnCNN pad=1 zero,
+    RetinexNet replicate) and the golden sizing uses the same
+    pad. No-pad layers (SRCNN) are unchanged.
+    ``inp``: the model's input feature map
     (HxWxC_in uint8). ``device_name``: a device in sw/devices.py.
     Returns (program_dict, steps_by_layer) where program_dict is
     {"mode": "streaming_pe", "device": device_name, "layers": [...]}
@@ -774,15 +781,24 @@ def emit_pe_program(layers, inp, device_name="zu19eg"):
     """
     import sched_pe
     from devices import get as get_device
+    from funcsim import conv2d_fixed_rhu
+    from models.common import pad2d
     dev = get_device(device_name)
     program = {"mode": "streaming_pe", "device": device_name, "layers": []}
     steps_by_layer = []
     cur = inp
     for L in layers:
-        steps, shape = sched_pe.gen_layer_steps(L, cur, L["W_q"],
+        pad = tuple(L.get("pad", (0, 0, 0, 0)))
+        pad_mode = L.get("pad_mode", "zero")
+        # Pre-pad for step generation (the scheduler is valid-conv
+        # only); the golden sizing below uses the same pad, so the
+        # two agree by construction.
+        cur_in = pad2d(cur, pad, pad_mode) if any(pad) else cur
+        steps, shape = sched_pe.gen_layer_steps(L, cur_in, L["W_q"],
                                                 L["b_q"], dev)
         program["layers"].append({
             "name": L["name"], "K": L["K"], "C_out": L["C_out"],
+            "pad": list(pad), "pad_mode": pad_mode,
             # Effective mode from the emitted steps, not the layer's
             # request: gen_layer_steps forces outer mode when TN<8
             # (dot requires TN=8 in the RTL), so the program must not
@@ -794,6 +810,9 @@ def emit_pe_program(layers, inp, device_name="zu19eg"):
         # The next layer's input is this layer's golden output (the
         # driver replaces it with the RTL output wave-by-wave; here
         # the golden is used only to size the next layer's steps).
-        from funcsim import conv2d_fixed_rhu
-        cur = conv2d_fixed_rhu(cur, L["W_q"], L["b_q"], L["shift"])
+        # signed_out matters for the VALUES (a signed layer's output
+        # feeds the next layer's A tiles), not just the shape.
+        cur = conv2d_fixed_rhu(cur, L["W_q"], L["b_q"], L["shift"],
+                               pad=pad, pad_mode=pad_mode,
+                               signed_out=bool(L.get("sign_out", 0)))
     return program, steps_by_layer

@@ -1,0 +1,28 @@
+=== 1. adder_tree post-synth (4 netlists, N=160/81/64/25) ===
+[SKIP] adder_tree synth N=160 (netlist exists, RTL unchanged)
+[PASS] adder_tree synth N=160 (reused netlist)
+[PASS] adder_tree netlist rename N=160 (reused netlist)
+[SKIP] adder_tree synth N=81 (netlist exists, RTL unchanged)
+[PASS] adder_tree synth N=81 (reused netlist)
+[PASS] adder_tree netlist rename N=81 (reused netlist)
+[SKIP] adder_tree synth N=64 (netlist exists, RTL unchanged)
+[PASS] adder_tree synth N=64 (reused netlist)
+[PASS] adder_tree netlist rename N=64 (reused netlist)
+[SKIP] adder_tree synth N=25 (netlist exists, RTL unchanged)
+[PASS] adder_tree synth N=25 (reused netlist)
+[PASS] adder_tree netlist rename N=25 (reused netlist)
+[PASS] adder_tree post-synth compile
+[PASS] adder_tree post-synth smoke (200 vectors x 4 sizes)
+=== 2. frontend post-synth (generic netlist, MAX_W=3840) ===
+[SKIP] frontend synth (netlist exists, RTL unchanged)
+[PASS] frontend synth (generic) (reused netlist)
+[PASS] frontend netlist rename (reused netlist)
+[PASS] frontend vectors gen (16 cases)
+[SKIP] frontend post-synth sim -- Mac Phase 3 (Icarus elaboration does not complete on this VM; see design.md)
+[SKIP] frontend post-synth golden -- Mac Phase 3
+=== 3. pe_mac / pe_array post-synth (Mac Phase 3) ===
+[SKIP] pe_mac post-synth -- Mac Phase 3 (netlist OOMs on this VM)
+[SKIP] pe_array post-synth -- Mac Phase 3 (netlist OOMs on this VM)
+
+=== POSTSYNTH RESULT: ALL PASS ===
+PASS=13 FAIL=0

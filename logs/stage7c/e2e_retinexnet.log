@@ -1,0 +1,18 @@
+=== retinexnet: integrated end-to-end ===
+  [frontend] frontend: 16x16x3 blur, max|err|=0 vs golden (0.4s)
+  captured: 21 IR nodes
+  emitted: 16697 instrs, 5080064 B weight blob
+  compiled program: 7 layers, 13344 tile-steps (streaming_pe, zu19eg)
+  resuming from checkpoint: 7 layer(s) already passed (conv2d, conv2d_1, conv2d_2, conv2d_3, conv2d_4, conv2d_5, conv2d_6)
+  conv2d: resumed from checkpoint (max|err|=0, 1536 steps skipped)
+  conv2d_1: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_2: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_3: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_4: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_5: resumed from checkpoint (max|err|=0, 2304 steps skipped)
+  conv2d_6: resumed from checkpoint (max|err|=0, 288 steps skipped)
+  sigmoid (act PWL (mode 2, 32 seg), r_in=3 r_out=0): vs funcsim(zero-pad) max|err|=1.00 (budget <=1) [OK]
+  sigmoid: RTL vs funcsim max|err|=1.0 [PASS] (PWL budget <= 1)
+  FINAL vs float: R PSNR=48.18 dB, L PSNR=54.25 dB
+E2E RETINEXNET: ALL PASS
+E2E ALL PASS

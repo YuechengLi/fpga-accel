@@ -1,0 +1,2 @@
+ADDER TREE SMOKE TEST PASSED (200 vectors x 4 sizes)
+tb/tb_adder_tree.sv:106: $finish called at 2036000 (1ps)

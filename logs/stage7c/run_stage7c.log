@@ -1,0 +1,20 @@
+=== Part 1: integrated end-to-end ===
+[PASS] e2e srcnn (integrated, frontend -> PE chain)
+      [frontend] frontend: 24x24x1 blur, max|err|=0 vs golden (0.8s)
+      FINAL vs float: PSNR=42.75 dB
+[PASS] e2e retinexnet (integrated, frontend -> PE chain)
+      [frontend] frontend: 16x16x3 blur, max|err|=0 vs golden (0.4s)
+      sigmoid: RTL vs funcsim max|err|=1.0 [PASS] (PWL budget <= 1)
+      FINAL vs float: R PSNR=48.18 dB, L PSNR=54.25 dB
+[PASS] e2e dncnn (integrated, frontend -> PE chain)
+      [frontend] frontend: 16x16x1 blur, max|err|=0 vs golden (0.4s)
+      denoised: vs funcsim max|err|=0 [PASS], vs float PSNR=53.41 dB
+=== Part 2: post-synthesis simulation ===
+[PASS] post-synth (adder_tree + frontend netlists)
+=== Regressions ===
+[PASS] regression Stage 7b
+[PASS] regression Stage 5
+[PASS] regression Stages 1-4
+
+=== STAGE 7c RESULT: ALL PASS ===
+PASS=7 FAIL=0
