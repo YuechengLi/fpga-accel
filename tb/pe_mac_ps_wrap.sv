@@ -13,7 +13,7 @@
 // (it would silently use the wrong netlist).
 //
 // Usage (Mac Phase 3, see run_ecp5_mac.sh):
-//   yosys -p "read_verilog -sv rtl/pe_mac.sv rtl/adder_tree.sv;
+//   yosys -p "read_verilog -sv rtl/common/pe_mac.sv rtl/common/adder_tree.sv;
 //     chparam -set TM 16 -set TN 8 pe_mac; synth -top pe_mac;
 //     write_verilog logs/stage7c/pe_mac_net.v"
 //   sed the module name to pe_mac_net, then

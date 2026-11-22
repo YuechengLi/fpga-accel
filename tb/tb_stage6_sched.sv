@@ -17,11 +17,11 @@
 // Stage 6 model layers) is verified separately by tb_stage6_mc.sv
 // and tb_stage6_dma.sv.
 //
-// Vector file: tb/vectors_stage6_sched.txt (sw/gen_stage6_sched.py).
+// Vector file: tb/vectors_stage6_sched.txt (sw/vision/gen_stage6_sched.py).
 // Run:
-//   iverilog -g2012 -o tb_s6sched.vvp ../rtl/weight_dma.sv \
-//       ../rtl/layer_scheduler.sv ../rtl/unified_engine.sv \
-//       ../rtl/conv2d_dense.sv ../rtl/conv2d_dw.sv tb_stage6_sched.sv \
+//   iverilog -g2012 -o tb_s6sched.vvp ../rtl/common/weight_dma.sv \
+//       ../rtl/common/layer_scheduler.sv ../rtl/common/unified_engine.sv \
+//       ../rtl/vision/conv2d_dense.sv ../rtl/vision/conv2d_dw.sv tb_stage6_sched.sv \
 //       && vvp tb_s6sched.vvp
 `default_nettype none
 `timescale 1ns/1ps

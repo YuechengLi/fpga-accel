@@ -29,7 +29,7 @@ FAIL=0
 MODEL_ARG="${1:-all}"
 
 echo "=== Stage 6: model numerical verification (model=$MODEL_ARG) ==="
-python3 ../sw/stage6.py --model "$MODEL_ARG" --outdir "$LOGDIR" \
+python3 ../sw/vision/stage6.py --model "$MODEL_ARG" --outdir "$LOGDIR" \
     2>&1 | tee "$LOGDIR/stage6_run.log"
 rc=${PIPESTATUS[0]}
 if [ $rc -ne 0 ]; then

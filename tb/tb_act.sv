@@ -6,7 +6,7 @@
 // testbench sets in_sof on the first value, in_eol on every value, and
 // in_last on the last value, and checks the same on the output.
 // Run:
-//   iverilog -g2012 -o tb_act.vvp ../rtl/act.sv tb_act.sv && vvp tb_act.vvp
+//   iverilog -g2012 -o tb_act.vvp ../rtl/vision/act.sv tb_act.sv && vvp tb_act.vvp
 `timescale 1ns/1ps
 
 module tb_act;

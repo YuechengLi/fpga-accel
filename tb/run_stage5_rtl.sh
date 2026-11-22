@@ -21,7 +21,7 @@ fi
 
 python3 golden_dma.py | tee "$LOGDIR/vectors_dma.log"
 
-if ! "$IVERILOG" -g2012 -o tb_dma.vvp ../rtl/weight_dma.sv tb_weight_dma.sv \
+if ! "$IVERILOG" -g2012 -o tb_dma.vvp ../rtl/common/weight_dma.sv tb_weight_dma.sv \
     > "$LOGDIR/compile_dma.log" 2>&1; then
     echo "COMPILE FAILED (weight_dma)"; cat "$LOGDIR/compile_dma.log"
     exit 1

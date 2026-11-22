@@ -4,7 +4,7 @@
 // writes one output pixel per line to out_dw.txt, checks out_sof /
 // out_eol / out_last framing against the golden output size.
 // Run:
-//   iverilog -g2012 -o tb_dw.vvp ../rtl/conv2d_dw.sv tb_conv2d_dw.sv && vvp tb_dw.vvp
+//   iverilog -g2012 -o tb_dw.vvp ../rtl/vision/conv2d_dw.sv tb_conv2d_dw.sv && vvp tb_dw.vvp
 `timescale 1ns/1ps
 
 module tb_conv2d_dw;

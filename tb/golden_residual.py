@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Golden model + vector generation + result check for residual (Stage 3).
 
-Modes (match rtl/residual.sv):
+Modes (match rtl/vision/residual.sv):
   0 = add (a + b, saturating to [0, 255])
   1 = sub (a - b, saturating to [0, 255]; b unsigned)
   2 = bypass (a)

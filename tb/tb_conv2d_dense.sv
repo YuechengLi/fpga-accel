@@ -5,7 +5,7 @@
 // out_sof / out_eol / out_last framing against the golden output size.
 // PX=1 (Stage 1 target).
 // Run:
-//   iverilog -g2012 -o tb_dense.vvp ../rtl/conv2d_dense.sv tb_conv2d_dense.sv && vvp tb_dense.vvp
+//   iverilog -g2012 -o tb_dense.vvp ../rtl/vision/conv2d_dense.sv tb_conv2d_dense.sv && vvp tb_dense.vvp
 `timescale 1ns/1ps
 
 module tb_conv2d_dense;

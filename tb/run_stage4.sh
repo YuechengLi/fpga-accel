@@ -66,15 +66,15 @@ python3 golden_unified.py gen     | tee "$LOGDIR/vectors_unified.log"   || FAIL=
 python3 golden_sched.py gen       | tee "$LOGDIR/vectors_sched.log"     || FAIL=1
 
 # ---------------- the Stage 4 modules ----------------
-run_mod layernorm golden_layernorm.py ../rtl/layernorm.sv tb_layernorm.sv
-run_mod upsample golden_upsample.py ../rtl/upsample.sv tb_upsample.sv
-run_mod concat golden_concat.py ../rtl/concat.sv tb_concat.sv
-run_mod simplegate golden_simplegate.py ../rtl/simplegate.sv tb_simplegate.sv
-run_mod dw golden_dw.py ../rtl/conv2d_dw.sv tb_conv2d_dw.sv
-run_mod mc golden_mc.py ../rtl/conv2d_mc.sv tb_conv2d_mc.sv
-run_mod act golden_act.py ../rtl/act.sv tb_act.sv
-run_mod unified golden_unified.py ../rtl/unified_engine.sv ../rtl/conv2d_dense.sv ../rtl/conv2d_dw.sv tb_unified_engine.sv
-run_mod sched golden_sched.py ../rtl/layer_scheduler.sv ../rtl/unified_engine.sv ../rtl/conv2d_dense.sv ../rtl/conv2d_dw.sv tb_layer_scheduler.sv
+run_mod layernorm golden_layernorm.py ../rtl/vision/layernorm.sv tb_layernorm.sv
+run_mod upsample golden_upsample.py ../rtl/vision/upsample.sv tb_upsample.sv
+run_mod concat golden_concat.py ../rtl/vision/concat.sv tb_concat.sv
+run_mod simplegate golden_simplegate.py ../rtl/vision/simplegate.sv tb_simplegate.sv
+run_mod dw golden_dw.py ../rtl/vision/conv2d_dw.sv tb_conv2d_dw.sv
+run_mod mc golden_mc.py ../rtl/vision/conv2d_mc.sv tb_conv2d_mc.sv
+run_mod act golden_act.py ../rtl/vision/act.sv tb_act.sv
+run_mod unified golden_unified.py ../rtl/common/unified_engine.sv ../rtl/vision/conv2d_dense.sv ../rtl/vision/conv2d_dw.sv tb_unified_engine.sv
+run_mod sched golden_sched.py ../rtl/common/layer_scheduler.sv ../rtl/common/unified_engine.sv ../rtl/vision/conv2d_dense.sv ../rtl/vision/conv2d_dw.sv tb_layer_scheduler.sv
 
 # ---------------- regressions ----------------
 echo "=== Stage 1 regression (14 cases, dense now with sign + fused act) ==="
@@ -85,8 +85,8 @@ grep -q "GOLDEN CHECK PASSED" "$LOGDIR/regress_stage1.log" || FAIL=1
 echo "=== Stage 3 regressions (pool 8, residual 7; mc + act already run above) ==="
 python3 golden_pool.py gen | tee "$LOGDIR/vectors_pool.log" || FAIL=1
 python3 golden_residual.py gen | tee "$LOGDIR/vectors_residual.log" || FAIL=1
-run_mod pool golden_pool.py ../rtl/pool.sv tb_pool.sv
-run_mod residual golden_residual.py ../rtl/residual.sv tb_residual.sv
+run_mod pool golden_pool.py ../rtl/vision/pool.sv tb_pool.sv
+run_mod residual golden_residual.py ../rtl/vision/residual.sv tb_residual.sv
 
 echo "=== STAGE 4 RESULT: $([ $FAIL -eq 0 ] && echo ALL PASS || echo FAILED) ==="
 exit $FAIL

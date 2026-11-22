@@ -10,17 +10,17 @@
 // the renamed netlist (pe_array_net, synthesized with N_PE=4 /
 // TM=16 / TN=8 / TK_MAX=32 / N_MERGE=5, the TB's config). It
 // adds no logic. The TB -- and the chain driver
-// (sw/run_pe_srcnn.py --netlist) -- are compiled unchanged.
+// (sw/vision/run_pe_srcnn.py --netlist) -- are compiled unchanged.
 // A different parameter set fails fast (it would silently use
 // the wrong netlist).
 //
 // Usage (Mac Phase 3, see run_ecp5_mac.sh):
-//   yosys -p "read_verilog -sv rtl/pe_array.sv rtl/pe_mac.sv
-//     rtl/pe_emit.sv rtl/adder_tree.sv; chparam -set N_PE 4
+//   yosys -p "read_verilog -sv rtl/common/pe_array.sv rtl/common/pe_mac.sv
+//     rtl/common/pe_emit.sv rtl/common/adder_tree.sv; chparam -set N_PE 4
 //     -set TM 16 -set TN 8 pe_array; synth -top pe_array;
 //     write_verilog logs/stage7c/pe_array_net.v"
 //   sed the module name to pe_array_net, then
-//   python3 sw/run_pe_srcnn.py --netlist logs/stage7c/pe_array_net.v
+//   python3 sw/vision/run_pe_srcnn.py --netlist logs/stage7c/pe_array_net.v
 `timescale 1ns/1ps
 
 module pe_array #(

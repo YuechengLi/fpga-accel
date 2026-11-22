@@ -11,9 +11,9 @@ It does NOT chain K-chunks and does NOT apply the output stage --
 K-chunk partials for one (M-tile, N-chunk) may run on different PEs,
 and the pe_array's merge unit sums them and applies the output stage
 (pe_emit) to the final merged sum. The output stage is verified at the
-pe_array level (sw/run_pe_srcnn.py), not here.
+pe_array level (sw/vision/run_pe_srcnn.py), not here.
 
-Layout (matches rtl/pe_mac.sv, k-major, contiguous per k):
+Layout (matches rtl/common/pe_mac.sv, k-major, contiguous per k):
   a_flat: A[m][k] at byte (k*TM + m).
   b_flat: B[k][n] at int16 (k*TN + n).
   bias_flat: bias[n] at int32 n.

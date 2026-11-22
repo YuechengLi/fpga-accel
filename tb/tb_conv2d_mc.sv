@@ -5,7 +5,7 @@
 // Random in_valid gaps + random out_ready stalls. Checks out_sof /
 // out_eol / out_last framing against the golden output size.
 // Run:
-//   iverilog -g2012 -o tb_mc.vvp ../rtl/conv2d_mc.sv tb_conv2d_mc.sv && vvp tb_mc.vvp
+//   iverilog -g2012 -o tb_mc.vvp ../rtl/vision/conv2d_mc.sv tb_conv2d_mc.sv && vvp tb_mc.vvp
 `timescale 1ns/1ps
 
 module tb_conv2d_mc;

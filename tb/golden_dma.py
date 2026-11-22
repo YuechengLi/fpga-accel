@@ -2,21 +2,21 @@
 """Golden for the weight DMA (tb/tb_weight_dma.sv).
 
 Generates the expected config-bus writes (addr, data) for a DMA
-transfer and the expected cycle count (sw/dram.py weight_dma_cycles).
+transfer and the expected cycle count (sw/common/dram.py weight_dma_cycles).
 
 The coefficient at index i is coeff[i] = (i * 37 + 11) & 0xFFFF
 (a deterministic pseudo-random pattern, not a trivial increment).
 The destination address for coefficient i is:
   lane = i // taps, tap = i % taps  (taps=0: lane 0, tap = i)
   addr = dst_base + lane * stride + tap
-The expected cycle count is weight_dma_cycles(ncoeff) from sw/dram.py.
+The expected cycle count is weight_dma_cycles(ncoeff) from sw/common/dram.py.
 """
 import math
 import os
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                "..", "sw"))
+                                "..", "sw", "common"))
 from dram import weight_dma_cycles  # noqa: E402
 
 

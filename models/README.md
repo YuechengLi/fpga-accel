@@ -10,9 +10,9 @@ a float reference and a fixed-point (quantized) version in Python (numpy);
 Stage 6 runs the same quantized weights in RTL and compares pixel-by-pixel
 against this golden.
 
-The five vision models total ~111 MB under `models/` (YOLOv8n ~37 MB,
+The five vision models total ~111 MB under `models/vision/` (YOLOv8n ~37 MB,
 DNANet ~64 MB, raw checkpoints included). The vision raw downloads are
-committed as-is; the largest single file is `dnanet/dnanet.npz` (28 MB),
+committed as-is; the largest single file is `vision/dnanet/dnanet.npz` (28 MB),
 under GitHub's 100 MB limit. The two LLM models live under
 `models/llm/` — raw weights 19.44 GiB, gitignored, not committed
 (see `models/llm/README.md` for the manifest and SHA256 hashes).
@@ -246,12 +246,12 @@ for the demo image); calibration on real SIRST data still open.
 
 ## How to use (Stage 6)
 
-- Re-run a model: `cd models/<name> && python3 run_<name>.py`. It prints
+- Re-run a model: `cd models/vision/<name> && python3 run_<name>.py`. It prints
   per-layer and end-to-end float-vs-fixed error and rewrites the converted
   `.npz` + `*_quant.json`. Requires numpy, scipy (DnCNN .mat), torch
   (RetinexNet .tar), PIL (SRCNN resize). YOLOv8n additionally needs the
   `ultralytics` package; DNANet needs torch + PIL (the model definition
-  is vendored in `dnanet/model_DNANet.py`).
+  is vendored in `vision/dnanet/model_DNANet.py`).
 - Re-extract from the raw download: `python3 extract_<name>.py` (writes the
   `*_float.npz`).
 - RTL config per layer: load `L_W_q` (int16) into the coefficient memory

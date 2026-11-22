@@ -19,7 +19,7 @@
 //     a subset verifies the layer shape; the full chain (all channels)
 //     is run for SRCNN. The subset is stated in the Stage 6 report.
 //   * C_OUT up to 64 (coeff_v enlarged from the Stage 3 TB's 32).
-// Reads vectors_stage6_mc.txt (written by sw/stage6.py):
+// Reads vectors_stage6_mc.txt (written by sw/vision/stage6.py):
 //   ncases
 //   per case:
 //     k shift w h pt pb pl pr sx sy cin cout ow oh sgn_in sgn_out
@@ -31,7 +31,7 @@
 // Writes out_stage6_mc.txt: one output pixel per line, raster order,
 // output-channel-major for the channels run (o_start..o_end-1).
 // Run:
-//   iverilog -g2012 -o tb_s6mc.vvp ../rtl/conv2d_mc.sv tb_stage6_mc.sv && vvp tb_s6mc.vvp
+//   iverilog -g2012 -o tb_s6mc.vvp ../rtl/vision/conv2d_mc.sv tb_stage6_mc.sv && vvp tb_s6mc.vvp
 `timescale 1ns/1ps
 
 module tb_stage6_mc;

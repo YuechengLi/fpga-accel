@@ -1,7 +1,7 @@
 #!/bin/bash
 # tb/run_stage7c.sh -- Stage 7c verification runner (fail-fast).
 #
-# Part 1: integrated end-to-end (sw/run_e2e.py, one model at a time:
+# Part 1: integrated end-to-end (sw/vision/run_e2e.py, one model at a time:
 # SRCNN, RetinexNet, DnCNN). Part 2: post-synthesis simulation
 # (tb/run_postsynth.sh). Then regressions (tb/run_stage7b.sh +
 # sw/run_stage5.sh + sw/run_regressions.sh).
@@ -30,7 +30,7 @@ fail() { echo "[FAIL] $1"; FAIL=$((FAIL + 1)); }
 echo "=== Part 1: integrated end-to-end ==="
 for MODEL in srcnn retinexnet dncnn; do
     UPPER=$(echo "$MODEL" | tr '[:lower:]' '[:upper:]')
-    python3 sw/run_e2e.py --model "$MODEL" --resume --outdir "$LOGDIR" \
+    python3 sw/vision/run_e2e.py --model "$MODEL" --resume --outdir "$LOGDIR" \
         > "$LOGDIR/e2e_${MODEL}.log" 2>&1
     rc=$?
     if [ "$rc" -eq 0 ] && grep -q "E2E ${UPPER}: ALL PASS" "$LOGDIR/e2e_${MODEL}.log"; then

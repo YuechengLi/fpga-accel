@@ -1,5 +1,5 @@
 // tb_pe_array.sv -- testbench for pe_array (Stage 7b).
-// Reads one layer's tile-steps (written by sw/sched_pe.py
+// Reads one layer's tile-steps (written by sw/common/sched_pe.py
 // write_layer_vectors), streams them through the pe_array, and collects
 // the per-(M-tile, N-chunk) outputs. Writes the outputs to
 // out_pe_array.txt as blocks: "mtile nchunk" then TM*TN bytes (one per

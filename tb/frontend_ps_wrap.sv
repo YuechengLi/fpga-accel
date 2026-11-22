@@ -18,7 +18,7 @@
 // be silently wrong, so the wrapper fails fast if MAX_W != 3840.)
 //
 // Usage (see tb/run_postsynth.sh):
-//   yosys -p "read_verilog -sv rtl/frontend.sv; synth -top frontend;
+//   yosys -p "read_verilog -sv rtl/vision/frontend.sv; synth -top frontend;
 //     write_verilog ...", sed the module name to frontend_net, then
 //   iverilog -g2012 -o tb_fe_ps.vvp tb/frontend_ps_wrap.sv \
 //     frontend_net.v /usr/share/yosys/simcells.v tb/tb_frontend.sv

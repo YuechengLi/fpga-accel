@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Golden model + vector generation + result check for pool (Stage 3).
 
-Modes (match rtl/pool.sv):
+Modes (match rtl/vision/pool.sv):
   0 = MAX 2x2 (stride 2, zero-pad to even W/H on the fly;
       output ceil(W/2) x ceil(H/2))
   1 = AVG 2x2 (sum of the 4 window positions, padding = 0, then >> 2;

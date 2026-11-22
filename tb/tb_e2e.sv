@@ -5,7 +5,7 @@
 // file), with the DUT swapped from the bare pe_array to the
 // srcnn_pipe_pe wrapper -- the Stage 7b top, which had no
 // testbench until now. The vectors file is written by
-// sw/sched_pe.py::write_layer_vectors (header: nsteps TM TN
+// sw/common/sched_pe.py::write_layer_vectors (header: nsteps TM TN
 // TK_MAX / h_out w_out c_out n_out; per step: 12 header ints,
 // TN 32-bit biases, tk*TM int8 A values, tk*TN int16 B values).
 //
@@ -15,8 +15,8 @@
 // any readback is wrong. This is the only place the config bus
 // is verified end-to-end.
 //
-// Usage: iverilog -g2012 -o tb_e2e.vvp ../rtl/srcnn_pipe_pe.sv
-//   ../rtl/pe_array.sv ../rtl/pe_mac.sv ../rtl/pe_emit.sv tb_e2e.sv
+// Usage: iverilog -g2012 -o tb_e2e.vvp ../rtl/vision/srcnn_pipe_pe.sv
+//   ../rtl/common/pe_array.sv ../rtl/common/pe_mac.sv ../rtl/common/pe_emit.sv tb_e2e.sv
 //   && vvp tb_e2e.vvp   (cwd = tb/)
 `timescale 1ns/1ps
 

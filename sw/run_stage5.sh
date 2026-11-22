@@ -1,12 +1,12 @@
 #!/bin/bash
 # sw/run_stage5.sh -- Stage 5 master runner.
 # Runs, in order, and fails (non-zero exit) if ANY step fails:
-#   1. Per-pass unit tests (sw/tests/, stdlib unittest)
+#   1. Per-pass unit tests (sw/vision/tests/, stdlib unittest)
 #   2. SRCNN demo (compile -> functional simulator -> rhu golden)
 #   3. RetinexNet demo (compile -> functional simulator -> float)
-#   4. C driver host test (sw/driver/, gcc)
+#   4. C driver host test (sw/common/driver/, gcc)
 #   5. RTL weight-DMA verification (tb/run_stage5_rtl.sh)
-#   6. Cost-model / DRAM / roofline report (sw/stage5_report.py)
+#   6. Cost-model / DRAM / roofline report (sw/vision/stage5_report.py)
 # Usage: bash sw/run_stage5.sh   (from the repo root, or anywhere)
 # Logs go to logs/stage5/.
 set -u
@@ -31,23 +31,23 @@ step() {
 
 export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}"
 
-step "unit tests (43)" \
-    python3 -m unittest discover -s sw/tests
+step "unit tests (72)" \
+    python3 -m unittest discover -s sw/vision/tests
 
 step "SRCNN demo" \
-    python3 sw/demo_srcnn.py --outdir out/srcnn
+    python3 sw/vision/demo_srcnn.py --outdir out/srcnn
 
 step "RetinexNet demo" \
-    python3 sw/demo_retinexnet.py --outdir out/retinexnet
+    python3 sw/vision/demo_retinexnet.py --outdir out/retinexnet
 
 step "C driver host test" \
-    make -C sw/driver test
+    make -C sw/common/driver test
 
 step "RTL weight DMA" \
     bash tb/run_stage5_rtl.sh
 
 step "cost / DRAM / roofline report" \
-    python3 sw/stage5_report.py
+    python3 sw/vision/stage5_report.py
 
 echo "=== STAGE 5 RESULT: $([ $FAIL -eq 0 ] && echo ALL PASS || echo FAILED) ==="
 exit $FAIL

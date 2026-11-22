@@ -4,7 +4,7 @@
 // W*H output with random out_ready stalls, and checks out_sof / out_eol /
 // out_last framing.
 // Run:
-//   iverilog -g2012 -o tb_sg.vvp ../rtl/simplegate.sv tb_simplegate.sv && vvp tb_sg.vvp
+//   iverilog -g2012 -o tb_sg.vvp ../rtl/vision/simplegate.sv tb_simplegate.sv && vvp tb_sg.vvp
 `timescale 1ns/1ps
 
 module tb_simplegate;

@@ -1,6 +1,6 @@
 # Stage 1 — Dense 11x11 convolution + arbitrary padding/stride
 
-SystemVerilog streaming dense convolution (`rtl/conv2d_dense.sv`), PX=1.
+SystemVerilog streaming dense convolution (`rtl/vision/conv2d_dense.sv`), PX=1.
 Kernel 1/3/5/7/9/11 (121 multipliers/lane), arbitrary per-side padding
 (pad_t/pad_b/pad_l/pad_r, each 0..K, zero fill), arbitrary per-axis stride
 (stride_x/stride_y, each 1..K, decimate), 32-bit accumulator, shift +
@@ -12,7 +12,7 @@ Reset defaults: ksize=3, shift=8, W=640, H=480, pads 0, stride 1,
 
 | File | What |
 |---|---|
-| `rtl/conv2d_dense.sv` | DUT + `conv2d_dense_pkg` + BRAM line buffer |
+| `rtl/vision/conv2d_dense.sv` | DUT + `conv2d_dense_pkg` + BRAM line buffer |
 | `tb/golden_dense.py` | Python golden model, vector gen, result check |
 | `tb/tb_conv2d_dense.sv` | SystemVerilog testbench (random gaps + backpressure) |
 | `tb/run_stage1.sh` | Golden run script (logs to `logs/stage1/`) |
@@ -101,7 +101,7 @@ clock); PX=1 covers 1080p60/1080p120/1440p60/4K30 at stride 1.
 
 # Stage 2 — Depthwise (DW) convolution: 17x17 square + 31 strips + dilated
 
-SystemVerilog streaming DW convolution (`rtl/conv2d_dw.sv`), PX=1,
+SystemVerilog streaming DW convolution (`rtl/vision/conv2d_dw.sv`), PX=1,
 single channel. Modes (config 0x0A): DW-SQUARE (stored kernel
 1/3/5/7/9/11/13/15/17), DW-STRIP-H (31x1, length 1/3/5/7/9/11/13/17/21/31),
 DW-STRIP-V (1x31, same lengths), DW-DILATED (stored kernel 3/5/7/9,
@@ -124,7 +124,7 @@ H=480, pads 0, stride 1, 3x3 identity (centre tap 256 at coeff index 18).
 
 | File | What |
 |---|---|
-| `rtl/conv2d_dw.sv` | DUT + BRAM line buffer (33x33 window, 289-mult MAC) |
+| `rtl/vision/conv2d_dw.sv` | DUT + BRAM line buffer (33x33 window, 289-mult MAC) |
 | `tb/golden_dw.py` | Python golden model, vector gen, result check |
 | `tb/tb_conv2d_dw.sv` | SystemVerilog testbench (random gaps + backpressure) |
 | `tb/run_stage2.sh` | Golden run script (logs to `logs/stage2/`) |
@@ -248,9 +248,9 @@ multi-channel DW (Stage 3) reuses this datapath per channel tile.
 
 # Stage 3 — Multi-channel tiling + 1x1 + residual + pooling + activation
 
-SystemVerilog streaming multi-channel convolution (`rtl/conv2d_mc.sv`),
-plus pooling (`rtl/pool.sv`), elementwise residual (`rtl/residual.sv`),
-and activations (`rtl/act.sv`). Same AXI4-Stream-style pixel interface,
+SystemVerilog streaming multi-channel convolution (`rtl/vision/conv2d_mc.sv`),
+plus pooling (`rtl/vision/pool.sv`), elementwise residual (`rtl/vision/residual.sv`),
+and activations (`rtl/vision/act.sv`). Same AXI4-Stream-style pixel interface,
 config bus, stall behavior, and framing conventions as Stages 1-2.
 
 ## conv2d_mc — multi-channel tiling (C_PAR=4)
@@ -310,10 +310,10 @@ signed feature maps (Stage 4 follow-up).
 
 | File | What |
 |---|---|
-| `rtl/conv2d_mc.sv` | Multi-channel tiling datapath + tile buffer + BRAM line buffers |
-| `rtl/pool.sv` | Max/avg 2x2 pooling + global average pooling (GAP) |
-| `rtl/residual.sv` | Two-stream elementwise add/sub/bypass with saturation |
-| `rtl/act.sv` | ReLU, Leaky/PReLU, PWL sigmoid/tanh/GELU/SiLU |
+| `rtl/vision/conv2d_mc.sv` | Multi-channel tiling datapath + tile buffer + BRAM line buffers |
+| `rtl/vision/pool.sv` | Max/avg 2x2 pooling + global average pooling (GAP) |
+| `rtl/vision/residual.sv` | Two-stream elementwise add/sub/bypass with saturation |
+| `rtl/vision/act.sv` | ReLU, Leaky/PReLU, PWL sigmoid/tanh/GELU/SiLU |
 | `tb/golden_mc.py` | Python golden model, vector gen, result check (12 cases) |
 | `tb/tb_conv2d_mc.sv` | SystemVerilog testbench (random gaps + backpressure) |
 | `tb/golden_pool.py` / `tb_pool.sv` | Pool golden + testbench (8 cases) |
@@ -450,7 +450,7 @@ A K=3-only build would need 4x9 = 36 DSPs.
 
 ## Notes
 
-- Bug found and fixed during verification (in `rtl/conv2d_mc.sv`,
+- Bug found and fixed during verification (in `rtl/vision/conv2d_mc.sv`,
   the tile-buffer BRAM read): the read `tb_pix <= tb_mem[tb_raddr]`
   was NOT gated by `stall`, while its valid flag `pos_real_d1` was.
   During an output stall, `tb_raddr` is frozen, but the ungated read
@@ -469,7 +469,7 @@ A K=3-only build would need 4x9 = 36 DSPs.
   `tb_pix` was the only ungated one.
 - Signed-mode rounding: the RTL uses round-half-up shift (add
   2^(shift-1), then arithmetic shift), matching Stages 1-2. The
-  Stage 6 golden (`models/common.py`) uses floor shift (no rounding);
+  Stage 6 golden (`models/vision/common.py`) uses floor shift (no rounding);
   the <=1 LSB difference is expected and must be noted in the Stage 6
   comparison, not "fixed" by changing the RTL.
 - The DW module (`conv2d_dw.sv`, Stage 2) is unsigned-only. If it is
@@ -500,7 +500,7 @@ A K=3-only build would need 4x9 = 36 DSPs.
 
 ### New operators
 
-**LayerNorm (`rtl/layernorm.sv`).** Normalizes one frame (W x H pixels =
+**LayerNorm (`rtl/vision/layernorm.sv`).** Normalizes one frame (W x H pixels =
 one "layer" of activations): mean = sum(x)/N, var = sum(x^2)/N - mean^2,
 y = (x - mean) * inv_std * gamma + beta, inv_std = 1/sqrt(var + eps).
 W and H must be powers of two so N is a power of two and the divisions
@@ -524,7 +524,7 @@ below). Throughput stays 1 pixel/cycle; latency is +1 cycle. Config
 0x06 gamma_q (Q1.15), 0x07 beta, 0x100+i inv_std LUT entry i (0..255).
 Golden 6/6 PASS, framing 0.
 
-**Upsample (`rtl/upsample.sv`).** Scale factor 2, three modes, one
+**Upsample (`rtl/vision/upsample.sv`).** Scale factor 2, three modes, one
 shared structure: load an input row into buffer(s), emit two output
 rows; input paused (in_ready low) while emitting. Line buffers are
 register arrays sized by MAX_W (default 64); the scheduler tiles the
@@ -541,7 +541,7 @@ input is W x H positions x 4 channels in (H,W,C) order; output 2W x
 out[2r+1,2c+1]=ch3). Config: 0x00 mode, 0x01 W, 0x02 H. Golden 10/10
 PASS, framing 0.
 
-**Concat (`rtl/concat.sv`).** Two input streams A and B (same W/H), one
+**Concat (`rtl/vision/concat.sv`).** Two input streams A and B (same W/H), one
 output. Mode 0 sequential: out = A frame followed by B frame, channel
 order (C,H,W). Mode 1 interleave: out = A and B interleaved per pixel
 (H,W,C order). Small FIFOs (depth 4 each) align A/B (independent
@@ -551,7 +551,7 @@ until A is fully output (sequential) or its pair is ready (interleave);
 backpressure on B is correct, not a deadlock. Config: 0x00 mode, 0x01
 W, 0x02 H. Golden 6/6 PASS, framing 0.
 
-**SimpleGate (`rtl/simplegate.sv`).** Elementwise multiply (NAFNet).
+**SimpleGate (`rtl/vision/simplegate.sv`).** Elementwise multiply (NAFNet).
 Input is a single stream of 2*W*H pixels: first W*H = half A, next
 W*H = half B. Output W*H pixels: out[i] = (A[i] * B[i]) >> shift,
 saturated. First half buffered on-chip (up to 4096 entries; the
@@ -564,7 +564,7 @@ Golden 6/6 PASS, framing 0.
 
 ### Signed DW
 
-`rtl/conv2d_dw.sv` was unsigned-only (Stage 2). Stage 4 adds the same
+`rtl/vision/conv2d_dw.sv` was unsigned-only (Stage 2). Stage 4 adds the same
 signed intermediate support Stage 3 added to conv2d_mc: config 0x0F
 (bit0 signed in, bit1 signed out), sign-extend MAC, saturate to
 [-128,127] when signed out (emitted as a two's-complement byte).
@@ -638,7 +638,7 @@ conv2d_dense also gained the Stage 4 signed + fused-act additions
 dense path has them; Stage 1 regression still 14/14 PASS (defaults
 off, backward compatible).
 
-### Unified reconfigurable engine (`rtl/unified_engine.sv`)
+### Unified reconfigurable engine (`rtl/common/unified_engine.sv`)
 
 One engine, five modes, one-click switch via config 0x0C (mode):
 0=dense (conv2d_dense, K=1/3/5/7/9/11), 1=DW-square, 2=DW-strip-H,
@@ -673,7 +673,7 @@ expected layer-switch behaviour). Verified by the golden: cases 2 and
 Golden 7/7 PASS (dense -> DW-sq -> dense -> DW-sq -> FC+ReLU ->
 DW-strip-H -> DW-dilated, no reset between frames), framing 0.
 
-### Layer scheduler (`rtl/layer_scheduler.sv`)
+### Layer scheduler (`rtl/common/layer_scheduler.sv`)
 
 Steps through a layer configuration sequence: for each layer it
 programs the layer's config (mode, K, pad, stride, shift, sign,
@@ -862,7 +862,7 @@ structure, LUT/FF inferred)
 
 ---
 
-# Stage 5 — AXI-MM weight-streaming DMA (`rtl/weight_dma.sv`)
+# Stage 5 — AXI-MM weight-streaming DMA (`rtl/common/weight_dma.sv`)
 
 Stage 4 loaded weights via the config bus (2 cycles/coeff,
 PS-written), which is too slow for frequent time-multiplexed
@@ -870,7 +870,7 @@ switching. Stage 5 adds the AXI-MM weight-streaming path: the DMA
 streams int16 coefficients from DRAM into the ping-pong weight banks
 (scheduler, contiguous addressing) or directly into the engine's
 coefficient registers (conv2d_mc, strided addressing), autonomously
-(the PS only programs the registers; the C driver in `sw/driver/`
+(the PS only programs the registers; the C driver in `sw/common/driver/`
 does that).
 
 ## Interface
@@ -893,7 +893,7 @@ does that).
   128 (lane l at 0x100+l*128+k); for a scheduler bank the stride is
   1.
 
-## Cycle model (must match `sw/dram.py weight_dma_cycles`)
+## Cycle model (must match `sw/common/dram.py weight_dma_cycles`)
 
 `cycles = ncoeff + n_bursts*4 + 12`, where n_bursts =
 ceil(ncoeff/64) (4 coeffs/beat x 16 beats), 4 = AR overhead per
@@ -927,8 +927,8 @@ coefficient. `STAGE 5 RTL RESULT: ALL PASS`.
 
 - The DMA is RTL. Board-level AXI integration (SmartConnect, the
   DRAM controller, the PS driver handshake, VDMA frame streaming)
-  is Stages 8-11 (Pittsburgh). The Python model (`sw/dram.py`) and
-  the C driver (`sw/driver/`) are the Stage 5 software side.
+  is Stages 8-11 (Pittsburgh). The Python model (`sw/common/dram.py`) and
+  the C driver (`sw/common/driver/`) are the Stage 5 software side.
 - Icarus notes: `fork/join_none/join_any` and `disable fork` are
   NOT supported (replaced with a bounded `for` wait loop); adjacent
   string literals are NOT concatenated in `$display` (single-line
@@ -943,16 +943,16 @@ coefficient. `STAGE 5 RTL RESULT: ALL PASS`.
 
 ## Method
 
-Each model is compiled by the Stage 5 compiler (`sw/`), and each conv
-layer is driven through `rtl/conv2d_mc.sv` (C_PAR=4, per-output-channel
+Each model is compiled by the Stage 5 compiler (`sw/common/`), and each conv
+layer is driven through `rtl/vision/conv2d_mc.sv` (C_PAR=4, per-output-channel
 bias, signed intermediates) with weights loaded via the AXI-MM weight
-DMA (`rtl/weight_dma.sv`). Layers run in waves: wave 1 = layers whose
+DMA (`rtl/common/weight_dma.sv`). Layers run in waves: wave 1 = layers whose
 input is known (the test image or a functional-simulator output), wave
 2 = layers fed by a wave-1 RTL output, so the chain is real. The DnCNN
-denoised step goes through `rtl/residual.sv` mode 3 (sub with B
-sign-extended). The RetinexNet sigmoid goes through `rtl/act.sv` PWL
-mode 2 with the compiler's 32-segment table. Driver: `sw/stage6.py`
-(plus `sw/stage6_float_layers.py` for the per-layer vs-float numbers);
+denoised step goes through `rtl/vision/residual.sv` mode 3 (sub with B
+sign-extended). The RetinexNet sigmoid goes through `rtl/vision/act.sv` PWL
+mode 2 with the compiler's 32-segment table. Driver: `sw/vision/stage6.py`
+(plus `sw/vision/stage6_float_layers.py` for the per-layer vs-float numbers);
 testbench `tb/tb_stage6_mc.sv` (no random in_valid gaps / out_ready
 stalls -- backpressure was verified in Stage 3, Stage 6 is numerical
 verification, so speed matters; framing is still checked);
@@ -1043,15 +1043,15 @@ corrupt the final sum as long as the final sum is within [-2^31, 2^31).
 
 - **conv2d_mc had no bias register (real gap).** The functional
   simulator always added the per-output-channel bias (acc = ... +
-  b_q[o]), and `models/common.py` conv2d_fixed also adds b_q, but
-  `rtl/conv2d_mc.sv` had no bias register and `sw/emit.py` emitted no
+  b_q[o]), and `models/vision/common.py` conv2d_fixed also adds b_q, but
+  `rtl/vision/conv2d_mc.sv` had no bias register and `sw/common/emit.py` emitted no
   bias writes. The bias is NOT negligible: DnCNN L2 b_q range up to
   ~+/-10.6M (shift 15 -> up to ~+/-325 LSBs contribution); SRCNN L3
   b_q = 105236 (shift 13 -> ~12.8 LSBs). Without the fix every layer
   would fail by the bias offset. Fix: config 0x12 (bias lo) / 0x13
   (bias hi), signed 32-bit bias_r, reset 0; acc_wr_val = (cur_t==0) ?
   (tile_partial + bias_r) : (acc_rd + tile_partial) -- bias added once
-  per output pixel, on the first C_in tile. `sw/emit.py` `_emit_mc_layer`
+  per output pixel, on the first C_in tile. `sw/common/emit.py` `_emit_mc_layer`
   now emits two W instructions per output channel (lo then hi) before
   the first tile's DMA for that channel. Default bias 0, so the Stage 3
   TB (which never writes 0x12/0x13) is unaffected. Verified with a bias
@@ -1077,7 +1077,7 @@ corrupt the final sum as long as the final sum is within [-2^31, 2^31).
   The Stage 5 standalone DMA test never caught this because it verified
   the DMA against its own documented addressing, not against what the
   MC needs; the Stage 4 scheduler TB already used the 121 grid, so the
-  scheduler path was correct. Fix (no RTL change): `sw/emit.py` now
+  scheduler path was correct. Fix (no RTL change): `sw/common/emit.py` now
   stores the FULL 121-entry grid per lane in the blob, and the DMA is
   programmed with taps=121 (MC path ncoeff = (t1-t0)*121; scheduler path
   ncoeff=121, taps=121). Blob sizes grew (SRCNN 16064 B -> 518848 B;
@@ -1093,13 +1093,13 @@ corrupt the final sum as long as the final sum is within [-2^31, 2^31).
   uint16_t, truncating the source byte offset to 16 bits. The old blob
   (16064 B) fit in 64 KB so it was harmless; the new grid blob (SRCNN
   518 KB) exceeds 64 KB. Fix: widened the DMA register interface to
-  32-bit (`sw/driver/driver.h`, `driver.c`, `mock_mmio.h`,
+  32-bit (`sw/common/driver/driver.h`, `driver.c`, `mock_mmio.h`,
   `mock_mmio.c`). The RTL's reg_src is 32-bit, so the hardware was fine.
 - **Sigmoid act table is PWL, not MLUT.** The RetinexNet sigmoid's
   compiler table has impl="pwl" (32-segment PWL, Q1.15 y0/dslope), not
   the MLUT (H1/H2/base/sel/fine) that `run_act_sigmoid` first assumed
   (KeyError 'H1'). Fixed by dispatching on the table's `impl` in
-  `sw/stage6.py`: PWL uses `act.sv` mode 2 with the 32-segment table
+  `sw/vision/stage6.py`: PWL uses `act.sv` mode 2 with the 32-segment table
   (input Q5.11, output Q1.15), MLUT uses mode 6. The input scale comes
   from the act op's r_in (RetinexNet recon r_out=3, so the sigmoid
   r_in=3 -- x = a / 31.875, not a / 255).
@@ -1129,7 +1129,7 @@ corrupt the final sum as long as the final sum is within [-2^31, 2^31).
   `~/tools-dl/`. The run scripts already check for iverilog and point
   at `~/tools-dl/iverilog_13.0-2_amd64.deb` when it is missing.
 
-# Stage 7 — Front-end video preprocessing module (`rtl/frontend.sv`)
+# Stage 7 — Front-end video preprocessing module (`rtl/vision/frontend.sv`)
 
 The whole-model I/O front-end: it sits at the video input (HDMI/SDI IN)
 and output, ahead of the unified engine, and does downsampling + small-kernel
@@ -1254,7 +1254,7 @@ exposed the fragility.)
 Proactive fix (RTL, no behaviour change in normal operation): the line
 buffer pointer wrap uses `>=` (`if (ptr >= wrap - 1)`) instead of `==`,
 matching the Stage 2 fix for pointer drift when the padded width shrinks
-across frames. Applied to `line_buffer_bram_fe` in `rtl/frontend.sv`.
+across frames. Applied to `line_buffer_bram_fe` in `rtl/vision/frontend.sv`.
 
 ## Regressions re-run with Stage 7
 
@@ -1276,11 +1276,11 @@ do useful work. Measured MFU, single engine, 300 MHz, 1080p: SRCNN
 0.66% of device peak, DnCNN 1.80%. Per-K structural cap: K=1 0.2%,
 K=3 1.8%, K=5 5.1%, K=9 16.5%, K=11 24.6% of device peak. The K^2
 shape IS the MFU ceiling; per-layer sizing of the same shape cannot
-fix it. The K^2 engines (rtl/conv2d_outpar.sv, rtl/conv1x1_cp.sv,
-rtl/conv2d_tappar.sv, rtl/srcnn_pipe.sv) are kept as reference /
+fix it. The K^2 engines (rtl/vision/conv2d_outpar.sv, rtl/vision/conv1x1_cp.sv,
+rtl/vision/conv2d_tappar.sv, rtl/vision/srcnn_pipe.sv) are kept as reference /
 golden-comparison baselines; they are not the Stage 7b deliverable.
-The raster cycle model (sw/stage7b_model.py) is likewise superseded
-by sw/stage7b_model_pe.py. The design, sizing derivation, and device
+The raster cycle model (sw/vision/stage7b_model.py) is likewise superseded
+by sw/vision/stage7b_model_pe.py. The design, sizing derivation, and device
 configs are in logs/stage7b/design.md.
 
 ### Design
@@ -1310,7 +1310,7 @@ layers (0% waste on C_out=8 vs 50%).
 
 Configurable for different FPGAs (parameters, not constants): the
 RTL takes N_PE / TM / TN / TK_MAX; the scheduler takes a device
-config (sw/devices.py). XCZU19EG-2 (iW-RainboW-G35D): 15x128, 300 MHz,
+config (sw/common/devices.py). XCZU19EG-2 (iW-RainboW-G35D): 15x128, 300 MHz,
 1080p30 target. LFE5U-85F (Lattice ECP5, low-power): 2x64, 100 MHz,
 small resolutions (640x480 -> 4.0 fps, 320x240 -> 16.5 fps), the
 FULL SRCNN pipeline at small scale (same compiler flow, same
@@ -1327,16 +1327,16 @@ BRAM/multipliers inferred); see the synth_ecp5 checks below.
 
 ### Files
 
-- rtl/pe_mac.sv -- one PE (TM/TN/TK_MAX parameters, outer + dot modes).
-- rtl/pe_emit.sv -- output stage (round-half-up shift, ReLU/Leaky, saturate).
-- rtl/pe_array.sv -- N_PE PEs + dispatcher (round-robin) + merge unit
+- rtl/common/pe_mac.sv -- one PE (TM/TN/TK_MAX parameters, outer + dot modes).
+- rtl/common/pe_emit.sv -- output stage (round-half-up shift, ReLU/Leaky, saturate).
+- rtl/common/pe_array.sv -- N_PE PEs + dispatcher (round-robin) + merge unit
   (associative table, count-based completion) + output emit.
-- rtl/srcnn_pipe_pe.sv -- top wrapper (config bus + tile-step program port).
-- sw/sched_pe.py -- scheduling pass (tile-step generation per layer/device).
-- sw/devices.py -- device configs (zu19eg, ecp5u85, vu37p).
-- sw/emit.py emit_pe_program -- compiler streaming emission (PE assignments).
+- rtl/vision/srcnn_pipe_pe.sv -- top wrapper (config bus + tile-step program port).
+- sw/common/sched_pe.py -- scheduling pass (tile-step generation per layer/device).
+- sw/common/devices.py -- device configs (zu19eg, ecp5u85, vu37p).
+- sw/common/emit.py emit_pe_program -- compiler streaming emission (PE assignments).
 - tb/golden_pe.py + tb/tb_pe_mac.sv -- PE golden + TB.
-- tb/tb_pe_array.sv + sw/run_pe_srcnn.py -- SRCNN chain driver (one wave
+- tb/tb_pe_array.sv + sw/vision/run_pe_srcnn.py -- SRCNN chain driver (one wave
   per layer, RTL output feeding the next layer).
 - tb/run_stage7b.sh -- Stage 7b verification runner (fail-fast).
 
@@ -1352,14 +1352,14 @@ exactly). Cycle counts match the model (outer = tk cycles,
 dot = tn*(tk/8) cycles; the L3-like dot case with tn=1, tk=32 takes
 4 cycles). Dot mode requires TN=8 in the RTL: the reduction tree
 sums 8 products per row and each (n,g) step processes 8 taps, so
-at TN<8 the scheduler forces outer mode (sw/sched_pe.py guard,
-sw/tests/test_sched_pe.py) -- the TN=4 path was never RTL-simmed
+at TN<8 the scheduler forces outer mode (sw/common/sched_pe.py guard,
+sw/vision/tests/test_sched_pe.py) -- the TN=4 path was never RTL-simmed
 in dot mode and is wrong there (half the K-dim dropped, adjacent
 rows mixed, last row reading prod out of bounds).
 
 #### PE-array SRCNN chain (24x24, one wave per layer) -- ALL PASS
 
-`sw/run_pe_srcnn.py` (log `logs/stage7b/pe_srcnn_chain.log`): L1
+`sw/vision/run_pe_srcnn.py` (log `logs/stage7b/pe_srcnn_chain.log`): L1
 (384 steps, 128 outputs), L2 (128 steps, 64 outputs), L3 (225 steps,
 9 outputs) vs funcsim max|err| = 0 for every layer; final vs funcsim
 max|err| = 0, vs float PSNR = 43.38 dB (expect ~43.5 dB; Stage 6
@@ -1367,7 +1367,7 @@ reported 43.51 dB for the same chain through conv2d_mc).
 
 #### Cycle model (device-driven) -- MODEL CHECK ALL OK
 
-`sw/stage7b_model_pe.py` (log `logs/stage7b/model_pe.log`): ZU19EG
+`sw/vision/stage7b_model_pe.py` (log `logs/stage7b/model_pe.log`): ZU19EG
 1080p: 15x128 -> 33.7 fps @300 MHz, 40.5 @360, 45.0 @400 (MFU 96.3%);
 7x256 -> 31.5 @300; 30x64 -> 26.0 @300 (TN=4 forces L3 to outer
 mode; dot requires TN=8 in the RTL). ECP5 640x480 -> 4.0 fps,
@@ -1381,7 +1381,7 @@ config, so the same 33.7 fps @300 MHz, 40.5 @360, 45.0 @400 (MFU
 bytes/cycle at 300 MHz vs 1,920 MACs/cycle, so the PE count is NOT
 scaled up; 7B INT8 65.7 tok/s, 13B INT4 70.8 tok/s (both fit one
 board), 13B INT8 35.4 tok/s (needs 2 boards). Covered by
-`sw/tests/test_vcu128.py` (9 tests) in `tb/run_stage7b.sh` §7.
+`sw/vision/tests/test_vcu128.py` (9 tests) in `tb/run_stage7b.sh` §7.
 NOT covered: VU37P synthesis (OOMs on the 6 GB VM -- desktop/Mac
 only), the XDMA/XRT host driver port (docs/vcu128-bringup.md), and
 any RTL change (none -- the PE config is identical to the ZU19EG's).
@@ -1521,7 +1521,7 @@ Yosys-synthesized netlist (STA today only checks timing, never
 functional correctness of the netlist). The design, per-model
 numbers, and evidence are in logs/stage7c/design.md.
 
-### Integrated end-to-end (sw/run_e2e.py, tb/tb_e2e.sv)
+### Integrated end-to-end (sw/vision/run_e2e.py, tb/tb_e2e.sv)
 
 A real test image streams through the frontend RTL (3x3 Gaussian
 blur, same size), the frontend's RTL output feeds the PE array
@@ -1557,25 +1557,25 @@ tb/adder_tree_ps_wrap.sv (4 netlists, generate-if),
 tb/frontend_ps_wrap.sv, tb/pe_mac_ps_wrap.sv,
 tb/pe_array_ps_wrap.sv. Netlists are reused across runs when
 the RTL is unchanged (staleness-checked), so a VM replacement
-does not force a re-synth. sw/run_pe_srcnn.py gained
+does not force a re-synth. sw/vision/run_pe_srcnn.py gained
 --netlist/--simcells for the pe_array chain against a netlist
 (the default RTL path is unchanged).
 
 ### Measured results (freshly run, traceable to `logs/stage7c/`)
 
-`sw/run_e2e.py --model srcnn` (log `logs/stage7c/e2e_srcnn.log`,
+`sw/vision/run_e2e.py --model srcnn` (log `logs/stage7c/e2e_srcnn.log`,
 `e2e_srcnn.json`): frontend 24x24 blur max|err| = 0; L1/L2/L3
 max|err| = 0 (384/128/225 steps); final PSNR vs float 42.75 dB
 (blurred input; Stage 6's 43.51 dB was unblurred -- not
 comparable).
 
-`sw/run_e2e.py --model retinexnet` (log
+`sw/vision/run_e2e.py --model retinexnet` (log
 `logs/stage7c/e2e_retinexnet.log`): frontend 16x16x3 blur
 max|err| = 0; all 7 layers max|err| = 0 (13,344 steps);
 sigmoid RTL vs funcsim max|err| = 1 (within the PWL budget);
 final R PSNR 48.18 dB, L PSNR 54.25 dB.
 
-`sw/run_e2e.py --model dncnn` (log `logs/stage7c/e2e_dncnn.log`):
+`sw/vision/run_e2e.py --model dncnn` (log `logs/stage7c/e2e_dncnn.log`):
 frontend 16x16x1 blur max|err| = 0; all 17 layers max|err| = 0
 (34,976 steps); denoised vs funcsim max|err| = 0, vs float
 PSNR 53.41 dB. L4-L15 are RTL-run here for the first time

@@ -66,10 +66,10 @@ def make_cases():
              for _ in range(C_OUT)]
     bias = [int(v) for v in rng.integers(-200000, 200000, size=C_OUT)]
     add(15, coeff, bias, rand_vecs(8, 32), act=1)
-    # 1: SRCNN L2 real weights (models/srcnn/srcnn_x3.npz), shift 15, ReLU.
+    # 1: SRCNN L2 real weights (models/vision/srcnn/srcnn_x3.npz), shift 15, ReLU.
     #    L2_W_q is (1,1,64,32); L2_b_q is (32,).
     npz = np.load(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                               "..", "models", "srcnn", "srcnn_x3.npz"))
+                               "..", "models", "vision", "srcnn", "srcnn_x3.npz"))
     wq = npz["L2_W_q"][0, 0, :, :]          # (64, 32)
     bq = npz["L2_b_q"]                       # (32,)
     coeff = [[int(wq[c, o]) for c in range(P_IN)] for o in range(C_OUT)]

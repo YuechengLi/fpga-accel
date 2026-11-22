@@ -18,7 +18,7 @@
 // $display + $finish (fail fast, never a silent wrong netlist).
 //
 // Usage (see tb/run_postsynth.sh):
-//   yosys -p "read_verilog -sv rtl/adder_tree.sv; chparam -set N 160
+//   yosys -p "read_verilog -sv rtl/common/adder_tree.sv; chparam -set N 160
 //     adder_tree; synth -top adder_tree; write_verilog ..."
 //   (once per N), sed the module names, then
 //   iverilog -g2012 -o tb_tree_ps.vvp tb/adder_tree_ps_wrap.sv \

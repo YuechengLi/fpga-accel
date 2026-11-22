@@ -58,8 +58,8 @@ venv/
 
 # C build products (rebuilt by make)
 *.o
-sw/driver/test_driver
+sw/common/driver/test_driver
 
-# Stage 7c generated netlists + e2e checkpoints (reproduced by tb/run_postsynth.sh / sw/run_e2e.py)
+# Stage 7c generated netlists + e2e checkpoints (reproduced by tb/run_postsynth.sh / sw/vision/run_e2e.py)
 logs/stage7c/*.v
 logs/stage7c/ckpt_*/

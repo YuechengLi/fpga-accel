@@ -4,7 +4,7 @@
 // collects the concatenated output with random out_ready stalls, and
 // checks out_sof / out_eol / out_last framing.
 // Run:
-//   iverilog -g2012 -o tb_concat.vvp ../rtl/concat.sv tb_concat.sv && vvp tb_concat.vvp
+//   iverilog -g2012 -o tb_concat.vvp ../rtl/vision/concat.sv tb_concat.sv && vvp tb_concat.vvp
 `timescale 1ns/1ps
 
 module tb_concat;

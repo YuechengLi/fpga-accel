@@ -8,8 +8,8 @@
 // checks out_group / out_sof / out_eol / out_last framing, and measures
 // cycles/frame from GO to the last output (for the cycle-model cross-check).
 // Run:
-//   iverilog -g2012 -o tb_outpar.vvp ../rtl/conv2d_outpar.sv \
-//       ../rtl/adder_tree.sv ../rtl/conv2d_mc.sv tb_conv2d_outpar.sv \
+//   iverilog -g2012 -o tb_outpar.vvp ../rtl/vision/conv2d_outpar.sv \
+//       ../rtl/common/adder_tree.sv ../rtl/vision/conv2d_mc.sv tb_conv2d_outpar.sv \
 //       && vvp tb_outpar.vvp
 `timescale 1ns/1ps
 

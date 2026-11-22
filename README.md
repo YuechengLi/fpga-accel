@@ -34,7 +34,7 @@ Key design decisions: dense max 11×11, DW 17×17 square kernels / 31×1 and 1×
 
 ## Models
 
-**Vision** (weights + int16 quantization in `models/`): SRCNN, DnCNN, RetinexNet, YOLOv8n, DNANet.
+**Vision** (weights + int16 quantization in `models/vision/`): SRCNN, DnCNN, RetinexNet, YOLOv8n, DNANet.
 
 **LLM** (`models/llm/`, fetched 2026-11-21): Qwen3-VL-4B-Instruct (36 layers, hidden 2560, 4.4B, Apache 2.0) and Qwen2.5-Omni-3B (Thinker-Talker, research-only license; BF16 checkpoint 11.17 GiB, ~6B params incl. Talker + encoders). **Weights are NOT checked in**: raw weights live in `models/llm/*/raw/` (gitignored, 19.44 GiB total); the repo holds only the download scripts, per-file SHA256, and READMEs.
 
@@ -50,9 +50,17 @@ fpga-accel/
 │   ├── system_diagram.png
 │   └── vcu128-bringup.md  # VCU128 bring-up checklist (shell, XRT, HBM, PE port)
 ├── rtl/                # SystemVerilog source (parameterized)
+│   ├── common/         # Shared core: PE array, AXI, DMA, scheduler (both tracks' regressions)
+│   ├── vision/         # CNN datapath + operators
+│   └── llm/            # (empty stub — attention, KV, RoPE, future work)
 ├── tb/                 # SystemVerilog testbenches + Python goldens + fail-fast run_stage*.sh
-├── sw/                 # Compiler (Python: capture / fusion / tiling / scheduling / emission, cost model, funcsim) + C driver (sw/driver/) + unit tests (sw/tests/)
-├── models/             # Model weights + quantization (vision: srcnn/dncnn/retinexnet/yolov8n/dnanet; llm: Qwen3-VL-4B / Qwen2.5-Omni-3B, fetched 2026-11-21, weights gitignored)
+├── sw/                 # Python compiler + C driver; runners (run_stage5.sh, run_regressions.sh) stay here
+│   ├── common/         # Compiler core: capture / fusion / tiling / scheduling / emission, cost model, passes/, driver/
+│   ├── vision/         # funcsim, demos, Stage 6/7b models, e2e drivers, tests/
+│   └── llm/            # (empty stub — decode model, KV, attention scheduling, future work)
+├── models/             # Model weights + quantization
+│   ├── vision/         # srcnn/dncnn/retinexnet/yolov8n/dnanet
+│   └── llm/            # Qwen3-VL-4B / Qwen2.5-Omni-3B, fetched 2026-11-21, weights gitignored
 ├── sta/                # STA probes (tracked critpath_*.sv; generated .tcl/.ys/netlists untracked)
 ├── scripts/            # (empty, reserved for Tcl flow scripts)
 ├── constraints/        # (empty, reserved for XDC)
@@ -61,13 +69,13 @@ fpga-accel/
 
 Generated outputs (untracked, regenerable, not in the tree above): `out/`, `tb/*.vvp`, `tb/out_*.txt`, `tb/vectors_*.txt`, `sta/*.tcl`, `sta/*_net.v`.
 
-> **Target layout (migration lands after Stage 7c)**: `rtl/` splits into `rtl/common/` (PE array, AXI, DMA — changes here must pass both tracks' regressions) + `rtl/vision/` (line buffers, pixel frontend) + `rtl/llm/` (attention, KV management, RoPE); `models/` splits into `models/vision/` + `models/llm/`; `sw/` splits the same way. One repo, separate folders — the split is at the memory subsystem and data path only.
+> **Restructured 2026-11-21 night** (after Stage 7c passed): `rtl/`, `sw/`, `models/` split into `common/` / `vision/` / `llm/` as shown above. One repo, separate folders — the split is at the memory subsystem and data path only.
 
 ## Current Status
 
 - **Stages 1–7 done** (2026-11-19/20): dense / DW / multi-channel / operators / compiler / model numerical verification / frontend. Golden pixel-exact, STA all MET.
 - **Stage 7b done** (2026-11-20): generic PE array, 128 mults/PE × 15 PEs = 1920 DSPs (97.6%); SRCNN 1080p 33.7 fps @300 MHz, MFU 96.3%; STA dot-path Fmax ~393 MHz. Details + logs in `rtl/README.md` and `logs/stage7b/`.
-- **Stage 7c in progress**: integrated end-to-end simulation first, then post-synthesis simulation (frontend → PE array → driver, real image in → image out; Yosys netlist re-run against golden).
+- **Stage 7c done** (2026-11-21 night): integrated end-to-end simulation (frontend → PE array → driver, real image in → image out) + post-synthesis simulation (Yosys netlist re-run against golden), ALL PASS (7 PASS / 0 FAIL).
 - **VCU128 platform support done** (2026-11-21): `vu37p` device config + HBM roofline + 9 new tests, `tb/run_stage7b.sh` §7. Details in `rtl/README.md` and `logs/stage7b/model_vu37p.log`.
 - **Phases 8–11 (Pittsburgh, after 11/26)**: board-level synthesis / integration / on-board testing.
 

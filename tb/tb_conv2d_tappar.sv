@@ -8,8 +8,8 @@
 // out_last framing, and measures cycles from GO to the last output
 // (for the cycle-model cross-check: 5 cycles/output position).
 // Run:
-//   iverilog -g2012 -o tb_tappar.vvp ../rtl/conv2d_tappar.sv \
-//       ../rtl/adder_tree.sv ../rtl/conv2d_mc.sv tb_conv2d_tappar.sv \
+//   iverilog -g2012 -o tb_tappar.vvp ../rtl/vision/conv2d_tappar.sv \
+//       ../rtl/common/adder_tree.sv ../rtl/vision/conv2d_mc.sv tb_conv2d_tappar.sv \
 //       && vvp tb_tappar.vvp
 `timescale 1ns/1ps
 

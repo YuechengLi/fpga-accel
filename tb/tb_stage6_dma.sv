@@ -18,7 +18,7 @@
 // path already proves the MC is correct when the coefficients are at
 // the grid positions).
 //
-// Vector file: tb/vectors_stage6_dma.txt (sw/gen_stage6_dma.py).
+// Vector file: tb/vectors_stage6_dma.txt (sw/vision/gen_stage6_dma.py).
 //   # K=.. shift=.. w=.. h=.. pt=.. pb=.. pl=.. pr=.. sx=.. sy=..
 //   #   cin=.. cout=.. ow=.. oh=.. sgn_in=.. sgn_out=..
 //   #   fuse_act=.. act_slope=.. bias=..
@@ -29,8 +29,8 @@
 //   # nout=..
 //   E <val>                (expected output pixels, raster order)
 // Run:
-//   iverilog -g2012 -o tb_s6dma.vvp ../rtl/weight_dma.sv \
-//       ../rtl/conv2d_mc.sv tb_stage6_dma.sv && vvp tb_s6dma.vvp
+//   iverilog -g2012 -o tb_s6dma.vvp ../rtl/common/weight_dma.sv \
+//       ../rtl/vision/conv2d_mc.sv tb_stage6_dma.sv && vvp tb_s6dma.vvp
 `default_nettype none
 `timescale 1ns/1ps
 

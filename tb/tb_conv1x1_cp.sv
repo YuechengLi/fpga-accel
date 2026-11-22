@@ -9,7 +9,7 @@
 // cycles/position from the first accepted input vector to the last
 // output group (for the cycle-model cross-check: 5 cycles/position).
 // Run:
-//   iverilog -g2012 -o tb_cp.vvp ../rtl/conv1x1_cp.sv ../rtl/adder_tree.sv \
+//   iverilog -g2012 -o tb_cp.vvp ../rtl/vision/conv1x1_cp.sv ../rtl/common/adder_tree.sv \
 //       tb_conv1x1_cp.sv && vvp tb_cp.vvp
 `timescale 1ns/1ps
 

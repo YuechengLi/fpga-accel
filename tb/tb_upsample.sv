@@ -3,7 +3,7 @@
 // input with random gaps, collects the 2W x 2H output with random
 // out_ready stalls, and checks out_sof / out_eol / out_last framing.
 // Run:
-//   iverilog -g2012 -o tb_up.vvp ../rtl/upsample.sv tb_upsample.sv && vvp tb_up.vvp
+//   iverilog -g2012 -o tb_up.vvp ../rtl/vision/upsample.sv tb_upsample.sv && vvp tb_up.vvp
 `timescale 1ns/1ps
 
 module tb_upsample;

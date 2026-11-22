@@ -50,14 +50,14 @@ for N in 160 81 64 25; do
     # Reuse a netlist from an earlier (killed) run when it exists
     # and the RTL is unchanged -- the VM is replaced every few
     # tens of minutes, and re-synthesizing is pure re-work.
-    if [ -f "$NET" ] && [ "$NET" -nt rtl/adder_tree.sv ] \
+    if [ -f "$NET" ] && [ "$NET" -nt rtl/common/adder_tree.sv ] \
             && grep -q "^module adder_tree_n${N}(" "$NET"; then
         echo "[SKIP] adder_tree synth N=$N (netlist exists, RTL unchanged)"
         pass "adder_tree synth N=$N (reused netlist)"
         pass "adder_tree netlist rename N=$N (reused netlist)"
         continue
     fi
-    timeout 600 yosys -p "read_verilog -sv rtl/adder_tree.sv; chparam -set N $N adder_tree; synth -top adder_tree; stat; write_verilog $LOGDIR/adder_tree_n${N}.v" \
+    timeout 600 yosys -p "read_verilog -sv rtl/common/adder_tree.sv; chparam -set N $N adder_tree; synth -top adder_tree; stat; write_verilog $LOGDIR/adder_tree_n${N}.v" \
         > "$LOGDIR/synth_adder_tree_n${N}.log" 2>&1
     rc=$?
     if [ "$rc" -eq 0 ]; then pass "adder_tree synth N=$N"; else fail "adder_tree synth N=$N (rc=$rc)"; fi
@@ -87,13 +87,13 @@ fi
 
 echo "=== 2. frontend post-synth (generic netlist, MAX_W=3840) ==="
 if [ -f "$LOGDIR/frontend_net.v" ] \
-        && [ "$LOGDIR/frontend_net.v" -nt rtl/frontend.sv ] \
+        && [ "$LOGDIR/frontend_net.v" -nt rtl/vision/frontend.sv ] \
         && grep -q "^module frontend_net(" "$LOGDIR/frontend_net.v"; then
     echo "[SKIP] frontend synth (netlist exists, RTL unchanged)"
     pass "frontend synth (generic) (reused netlist)"
     pass "frontend netlist rename (reused netlist)"
 else
-    timeout 1800 yosys -p "read_verilog -sv rtl/frontend.sv; synth -top frontend; stat; write_verilog $LOGDIR/frontend_net.v" \
+    timeout 1800 yosys -p "read_verilog -sv rtl/vision/frontend.sv; synth -top frontend; stat; write_verilog $LOGDIR/frontend_net.v" \
         > "$LOGDIR/synth_frontend.log" 2>&1
     rc=$?
     if [ "$rc" -eq 0 ]; then pass "frontend synth (generic)"; else fail "frontend synth (rc=$rc)"; fi

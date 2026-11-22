@@ -1,4 +1,4 @@
-// tb_weight_dma.sv -- testbench for rtl/weight_dma.sv.
+// tb_weight_dma.sv -- testbench for rtl/common/weight_dma.sv.
 //
 // Verifies:
 //   1. Data correctness: every coefficient lands at the right
@@ -8,7 +8,7 @@
 //   2. Backpressure: the config-bus sink randomly asserts wfull;
 //      the transfer must still be correct (just slower).
 //   3. Cycle count: the measured cycles (start pulse -> done) vs
-//      sw/dram.py weight_dma_cycles (printed in the vector file as
+//      sw/common/dram.py weight_dma_cycles (printed in the vector file as
 //      expected_cycles). Reported, with a tolerance of +/-20 cycles
 //      (the model's 12-cycle latency is a budget, not a cycle-exact
 //      prediction; the drain rate -- 1 coeff/cycle -- is what is
@@ -19,7 +19,7 @@
 // back-to-back beats. The AXI-Lite master programs the DMA
 // registers with blocking writes.
 //
-// Usage: iverilog -g2012 -o tb_dma.vvp ../rtl/weight_dma.sv
+// Usage: iverilog -g2012 -o tb_dma.vvp ../rtl/common/weight_dma.sv
 //        tb_weight_dma.sv && vvp tb_dma.vvp [vectors_dma_X.txt]
 // The vector file is read with $fscanf; the case is selected by
 // the file (default vectors_dma_A.txt).

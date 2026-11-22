@@ -3,7 +3,7 @@
 // image with random in_valid gaps, collects the pooled output with random
 // out_ready stalls, and checks out_sof / out_eol / out_last framing.
 // Run:
-//   iverilog -g2012 -o tb_pool.vvp ../rtl/pool.sv tb_pool.sv && vvp tb_pool.vvp
+//   iverilog -g2012 -o tb_pool.vvp ../rtl/vision/pool.sv tb_pool.sv && vvp tb_pool.vvp
 `timescale 1ns/1ps
 
 module tb_pool;

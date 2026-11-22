@@ -26,7 +26,7 @@ python3 golden_dense.py gen | tee "$LOGDIR/gen.log"
 # reported tee's exit code (0), not iverilog's -- a failed compile
 # looked like rc=0. With pipefail the pipeline's status is iverilog's,
 # and the if/! form reports it explicitly.
-if ! "$IVERILOG" -g2012 -o tb_dense.vvp ../rtl/conv2d_dense.sv tb_conv2d_dense.sv \
+if ! "$IVERILOG" -g2012 -o tb_dense.vvp ../rtl/vision/conv2d_dense.sv tb_conv2d_dense.sv \
     2>&1 | tee "$LOGDIR/compile.log"; then
     echo "[compile] FAILED (iverilog)" >&2
     exit 1

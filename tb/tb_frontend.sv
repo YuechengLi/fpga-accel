@@ -8,7 +8,7 @@
 // the first-output latency (cycles from first input accept to first
 // output valid).
 // Run:
-//   iverilog -g2012 -o tb_fe.vvp ../rtl/frontend.sv tb_frontend.sv && vvp tb_fe.vvp
+//   iverilog -g2012 -o tb_fe.vvp ../rtl/vision/frontend.sv tb_frontend.sv && vvp tb_fe.vvp
 `timescale 1ns/1ps
 
 module tb_frontend;

@@ -109,10 +109,10 @@ def make_cases():
     # 3: K=3, 16x16, shift 8, Sobel X, pad 1, stride 2, Leaky (slope 0.5)
     add(16, 16, 3, 8, [grid([-1, 0, 1, -2, 0, 2, -1, 0, 1], 3)] * 16,
         [0] * 16, act=2, slope=32768, pt=1, pb=1, pl=1, pr=1, sx=2, sy=2)
-    # 4: SRCNN L1 real weights (models/srcnn/srcnn_x3.npz), 16x16, shift 15,
+    # 4: SRCNN L1 real weights (models/vision/srcnn/srcnn_x3.npz), 16x16, shift 15,
     #    ReLU, unsigned in/out. L1_W_q is (9,9,1,64); tap = r*9+c.
     npz = np.load(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                               "..", "models", "srcnn", "srcnn_x3.npz"))
+                               "..", "models", "vision", "srcnn", "srcnn_x3.npz"))
     wq = npz["L1_W_q"][:, :, 0, :]          # (9,9,64)
     bq = npz["L1_b_q"]                       # (64,)
     coeff = []

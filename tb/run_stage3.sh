@@ -55,10 +55,10 @@ python3 golden_residual.py gen | tee "$LOGDIR/vectors_residual.log" || FAIL=1
 python3 golden_act.py gen      | tee "$LOGDIR/vectors_act.log"      || FAIL=1
 
 # ---------------- the four Stage 3 modules ----------------
-run_mod mc       ../rtl/conv2d_mc.sv tb_conv2d_mc.sv tb_mc.vvp  golden_mc.py
-run_mod pool     ../rtl/pool.sv      tb_pool.sv       tb_pool.vvp golden_pool.py
-run_mod residual ../rtl/residual.sv  tb_residual.sv   tb_res.vvp  golden_residual.py
-run_mod act      ../rtl/act.sv       tb_act.sv        tb_act.vvp  golden_act.py
+run_mod mc       ../rtl/vision/conv2d_mc.sv tb_conv2d_mc.sv tb_mc.vvp  golden_mc.py
+run_mod pool     ../rtl/vision/pool.sv      tb_pool.sv       tb_pool.vvp golden_pool.py
+run_mod residual ../rtl/vision/residual.sv  tb_residual.sv   tb_res.vvp  golden_residual.py
+run_mod act      ../rtl/vision/act.sv       tb_act.sv        tb_act.vvp  golden_act.py
 
 # ---------------- regressions ----------------
 echo "=== Stage 1 regression (14 cases) ==="

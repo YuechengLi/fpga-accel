@@ -4,7 +4,7 @@
 // collects the elementwise output with random out_ready stalls, and
 // checks out_sof / out_eol / out_last framing.
 // Run:
-//   iverilog -g2012 -o tb_res.vvp ../rtl/residual.sv tb_residual.sv && vvp tb_res.vvp
+//   iverilog -g2012 -o tb_res.vvp ../rtl/vision/residual.sv tb_residual.sv && vvp tb_res.vvp
 `timescale 1ns/1ps
 
 module tb_residual;

@@ -17,7 +17,7 @@ for spec in "3.333 300" "2.778 360" "2.500 400"; do
   set -- $spec
   period="$1"; mhz="$2"; tag="pe_${period}"
   cat > "synth_${tag}.ys" <<YS
-read_verilog -sv ../rtl/pe_mac.sv
+read_verilog -sv ../rtl/common/pe_mac.sv
 hierarchy -top pe_mac
 synth -top pe_mac
 dfflibmap -liberty $LIB

@@ -82,7 +82,7 @@ not fit one board. 2 boards = 16 GB HBM, fits 13B INT8. 3 boards = 24 GB,
 
 ## Phase 3 — PE array port (ZU19EG → VU37P) + HBM adapter
 
-- [ ] **New device config** in `sw/devices.py`: `vu37p` — 9,024 DSP,
+- [ ] **New device config** in `sw/common/devices.py`: `vu37p` — 9,024 DSP,
       2,852K logic cells, HBM instead of DDR. Re-derive the PE sizing from
       the decode goal (see note below); do not copy the ZU19EG config.
 - [ ] **Retarget synthesis:** `synth_xilinx` for part XCVU37P-2FSVH2892E.
@@ -98,12 +98,12 @@ not fit one board. 2 boards = 16 GB HBM, fits 13B INT8. 3 boards = 24 GB,
         AXI3.
       - HBM ports live in SLR0; watch SLR-crossing timing for the PE array.
 - [ ] **Host control replaces the Zynq PS flow (biggest engineering
-      delta).** VCU128 has no ARM PS. The C driver (`sw/driver`) currently
+      delta).** VCU128 has no ARM PS. The C driver (`sw/common/driver`) currently
       talks to the PS via AXI-Lite; on VCU128 the PE array's AXI-Lite
       config port maps to a PCIe BAR through the XDMA shell, and host code
       uses XRT (`xrt::ip` register read/write) instead of `/dev/mem`-style
       access. Port the driver to XRT host code; keep the register map
-      identical so `sw/emit.py` programs are unchanged.
+      identical so `sw/common/emit.py` programs are unchanged.
 - [ ] **First run:** SRCNN chain on HBM, output vs `funcsim` max|err| = 0
       (same bar as Stage 6/7b). Then a weights-load + HBM readback test.
 - [ ] **Pass criterion:** SRCNN chain bit-exact through the HBM path;

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Golden model + vector generation + result check for act (Stage 3).
 
-Modes (match rtl/act.sv):
+Modes (match rtl/vision/act.sv):
   0 = ReLU:      max(0, x)                     (signed 32-bit in/out)
   1 = Leaky:     x if x>=0 else (x * slope_fp) >> 16
                  slope_fp is a 16-bit fixed-point slope (Q0.16)

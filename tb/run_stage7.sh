@@ -28,7 +28,7 @@ FAIL=0
 
 echo "=== Stage 7: frontend golden ==="
 python3 golden_frontend.py gen | tee "$LOGDIR/gen.log" || FAIL=1
-if ! "$IVERILOG" -g2012 -o tb_fe.vvp ../rtl/frontend.sv tb_frontend.sv \
+if ! "$IVERILOG" -g2012 -o tb_fe.vvp ../rtl/vision/frontend.sv tb_frontend.sv \
     2>&1 | tee "$LOGDIR/compile.log"; then
     echo "[compile] FAILED (iverilog)" >&2
     exit 1
