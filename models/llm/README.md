@@ -1,19 +1,35 @@
-# LLM models (download only)
+# LLM models (verified + registered)
 
 Large multimodal models for the VCU128 track (see `docs/vcu128-bringup.md`).
 Fetched 2026-11-21 (PST) from Hugging Face with `bash models/llm/fetch_llm.sh`
 (run from the repo root; re-runnable, curl resumes with `-C -`).
 
-**Status: DOWNLOAD ONLY.** The raw weights below have been hash-verified
-against the Hugging Face Hub (all LFS SHA256 match; all other files match
-their Hub sizes), but they have NOT been loaded, quantized, or registered
-in the repo. Verification + quantization + registration is a separate step
-that needs explicit approval (same pattern as the YOLOv8n / DNANet
-onboarding in `models/`).
+**Status: VERIFIED + REGISTERED 2026-11-22.** Both models were
+architecture-checked against their configs, quantized to the repo
+int16 scheme, and single-layer forward-checked (see the per-model
+READMEs). The load was covered by the user's explicit approval, same
+pattern as the YOLOv8n / DNANet onboarding in `models/`.
 
 **Raw weights are NEVER committed:** `models/.gitignore` ignores
-`llm/*/raw/`. Only the READMEs, the fetch script, and the SHA256 manifests
-in this directory are tracked.
+`llm/*/raw/`. Quantized weights are also never committed
+(`llm/*/quantized/`). Only the READMEs, `quant.json` files, scripts,
+and the SHA256 manifests in this directory are tracked.
+
+Shared code: `llm_common.py` — a dependency-free safetensors reader
+(struct + json + numpy memmap; no `safetensors` / `transformers`
+package on this VM) plus the repo-scheme int16 quantizer and the
+single-layer forward check. Quantization streams tensor-by-tensor
+in 2M-element chunks and never loads a full checkpoint (VM memory
+~6 GB).
+
+Quantization scheme (same as `models/vision/common.py`): per tensor
+`e = floor(log2(32767 / max|W|))` clamped [0, 15],
+`W_q = round(W * 2**e)`. LLM differences: no activation calibration
+(no forward on real data), so no `r_in` / `r_out` and no RTL shift;
+every tensor is quantized on its own scale, recorded in
+`<model>/quant.json`. The [0, 15] clamp binds for most weight
+tensors (max|W| typically 0.2–0.7); at e=15 the max weight error is
+half an LSB (1.53e-05). Zero tensors clipped in either model.
 
 ## Qwen3-VL-4B-Instruct
 
@@ -21,7 +37,11 @@ in this directory are tracked.
 - License: Apache 2.0
 - Architecture: 36-layer text decoder (hidden 2560, SwiGLU 9728, 4.4B
   params) + 24-layer ViT (hidden 1024, DeepStack); 256k context.
+  Measured total 4,437,815,808 params, 713 tensors, all BF16.
 - Raw dir: `models/llm/qwen3-vl-4b/raw/` — total 8.28 GiB (8,887,292,732 bytes)
+- Quantized: `quantized/` 8.27 GiB int16 + `quant.json` (tracked).
+  Weight SNR median ~75 dB per type; layer-0 forward relative RMS
+  error 1.93e-04. Full notes in `qwen3-vl-4b/README.md`.
 
 ## Qwen2.5-Omni-3B
 
@@ -30,7 +50,13 @@ in this directory are tracked.
   non-commercial use; a separate license is needed for commercial use)
 - Architecture: Thinker-Talker (3B dense Thinker + Talker speech decoder +
   vision / audio encoders); text, image, audio, video in; text + speech out.
+  Measured total 5,537,120,672 params (5.54B — the "3B" counts only
+  the Thinker text backbone), 2544 tensors (1735 BF16 + 809 F32
+  token2wav).
 - Raw dir: `models/llm/qwen2.5-omni-3b/raw/` — total 11.17 GiB (11,989,103,936 bytes)
+- Quantized: `quantized/` 10.31 GiB int16 + `quant.json` (tracked).
+  Weight SNR median ~75–76 dB per type; thinker layer-0 forward
+  relative RMS error 5.34e-04. Full notes in `qwen2.5-omni-3b/README.md`.
 
 ## File manifest (SHA256)
 

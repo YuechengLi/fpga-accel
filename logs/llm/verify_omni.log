@@ -1,0 +1,7 @@
+(1) inventory: 2544 tensors, PASS
+(2) spot-check: 13 tensors, dequant max|err| matches quant.json, worst 3.05e-05  PASS
+(2b) chunked check thinker.lm_head.weight: max|err| 1.53e-05 (recorded 1.53e-05)  PASS
+(2b) chunked check thinker.model.embed_tokens.weight: max|err| 1.53e-05 (recorded 1.53e-05)  PASS
+(3) layer-0 forward: max|err|=0.00163 rms_err=0.000229 rel_rms=0.000534 (output rms 0.429)  PASS
+ALL CHECKS DONE
+OMNI_EXIT=0

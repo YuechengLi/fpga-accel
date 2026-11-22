@@ -1,0 +1,4 @@
+  shard model-00001-of-00002.safetensors: 231 tensors -> /home/hatch/workspace/fpga-accel/models/llm/qwen3-vl-4b/quantized/model-00001-of-00002.safetensors
+  500/713 tensors, 106s
+  shard model-00002-of-00002.safetensors: 482 tensors -> /home/hatch/workspace/fpga-accel/models/llm/qwen3-vl-4b/quantized/model-00002-of-00002.safetensors
+  done: 713 tensors, 8.27 GiB int16, 112s

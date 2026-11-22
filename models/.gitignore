@@ -1,3 +1,6 @@
 # Raw LLM weights are never committed (GitHub 100 MB file limit + repo bloat).
 # Only READMEs / manifests under models/llm/ are tracked.
 llm/*/raw/
+# Quantized LLM weights are also never committed (same reason: ~19 GiB).
+# Only quant.json / READMEs / scripts under models/llm/ are tracked.
+llm/*/quantized/

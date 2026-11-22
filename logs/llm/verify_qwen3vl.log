@@ -1,0 +1,6 @@
+(1) inventory: 713 tensors, PASS
+(2) spot-check: 12 tensors, dequant max|err| matches quant.json, worst 0.000244  PASS
+(2b) chunked check embed_tokens: max|err| 1.53e-05 (recorded 1.53e-05)  PASS
+(3) layer-0 forward: max|err|=0.000442 rms_err=5.68e-05 rel_rms=0.000193 (output rms 0.294)  PASS
+ALL CHECKS DONE
+QWEN3VL_EXIT=0

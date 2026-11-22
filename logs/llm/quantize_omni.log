@@ -1,0 +1,9 @@
+  500/2544 tensors, 30s
+  1000/2544 tensors, 59s
+  shard model-00001-of-00003.safetensors: 1148 tensors -> /home/hatch/workspace/fpga-accel/models/llm/qwen2.5-omni-3b/quantized/model-00001-of-00003.safetensors
+  1500/2544 tensors, 96s
+  shard model-00002-of-00003.safetensors: 521 tensors -> /home/hatch/workspace/fpga-accel/models/llm/qwen2.5-omni-3b/quantized/model-00002-of-00003.safetensors
+  2000/2544 tensors, 127s
+  2500/2544 tensors, 150s
+  shard model-00003-of-00003.safetensors: 875 tensors -> /home/hatch/workspace/fpga-accel/models/llm/qwen2.5-omni-3b/quantized/model-00003-of-00003.safetensors
+  done: 2544 tensors, 10.31 GiB int16, 151s

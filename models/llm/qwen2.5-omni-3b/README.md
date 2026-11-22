@@ -1,4 +1,4 @@
-# Qwen2.5-Omni-3B (raw weights, download only)
+# Qwen2.5-Omni-3B — verified + registered (int16 quantized)
 
 > **LICENSE: RESEARCH ONLY.** This model is released under the Qwen
 > Research License Agreement for **non-commercial use only**. Commercial
@@ -8,13 +8,119 @@
 - Source: https://huggingface.co/Qwen/Qwen2.5-Omni-3B
 - Fetched: 2026-11-21 (PST), via `bash models/llm/fetch_llm.sh` (repo root)
 - Raw dir: `models/llm/qwen2.5-omni-3b/raw/` — total 11.17 GiB (11,989,103,936 bytes)
-- Architecture: Thinker-Talker (3B dense Thinker + Talker speech decoder +
-  vision / audio encoders); text, image, audio, video in; text + speech out.
-- Note: the full checkpoint is ~11.2 GiB BF16 (the "3B" counts the Thinker;
-  Talker + encoders add the rest).
-- Status: DOWNLOAD ONLY — hash-verified against the Hub (all 5 LFS files
-  match their LFS SHA256), not loaded / quantized / registered.
-  Raw weights are gitignored (`models/.gitignore`: `llm/*/raw/`).
+- Status: **VERIFIED + REGISTERED 2026-11-22** — architecture checked
+  against `config.json`, all 2544 tensors quantized to the repo int16
+  scheme, single-layer forward checked. Raw weights are gitignored
+  (`models/.gitignore`: `llm/*/raw/`); quantized weights are also
+  gitignored (`llm/*/quantized/`). Only this README, `quant.json`,
+  and the scripts are tracked.
+
+## Architecture (verified from the checkpoint, not just config.json)
+
+- Thinker (text): 36 layers (0–35 present), hidden 2048, SwiGLU
+  intermediate 11008, 16 Q heads / 2 KV heads, head_dim 128, vocab
+  151936, `tie_word_embeddings: false` — `thinker.lm_head`
+  [151936, 2048] IS present. RoPE theta 1,000,000, mRoPE section
+  [16, 24, 24]. Per-layer shapes (layer 0): q_proj [2048, 2048],
+  k/v_proj [256, 2048], o_proj [2048, 2048], gate/up [11008, 2048],
+  down [2048, 11008].
+- Thinker vision encoder: 32 blocks, hidden 1280, intermediate
+  3420, 16 heads, separate q/k/v projections (not fused QKV),
+  patch 14, out_hidden 2048, spatial_merge 2, full-attention blocks
+  at [7, 15, 23, 31].
+- Thinker audio encoder (Whisper-based): 32 layers, d_model 1280,
+  20 heads, ffn 5120, 128 mel bins, output dim 2048.
+- Talker: 24 layers (0–23 present), hidden 896, intermediate 4864,
+  14 Q heads / 2 KV heads, head_dim 64, vocab 8448,
+  embedding_size 2048 (`talker.model.embed_tokens` [8448, 2048]),
+  no `lm_head` (output goes through `talker.codec_head` instead),
+  `thinker_to_talker_proj` bridges Thinker hidden states to Talker.
+- token2wav: DiT depth 22, dim 1024, 16 heads + BigVGAN
+  (upsample rates [5, 3, 2, 2, 2, 2], mel_dim 80). All 809
+  token2wav tensors are **F32** in the checkpoint (the only F32
+  tensors in this model; everything else is BF16).
+- Total: **5,537,120,672 params** (5.54B), 2544 tensors: thinker
+  1442 / 4,703,464,448, talker 293 / 384,604,928, token2wav 809 /
+  449,051,296. The "3B" counts only the Thinker text backbone;
+  Talker + encoders + token2wav make the checkpoint ~5.5B params
+  (the earlier ~6B estimate was close; the measured total is 5.54B).
+
+## Quantization (repo scheme, `models/llm/llm_common.py`)
+
+Per tensor `e = floor(log2(32767 / max|W|))` clamped [0, 15],
+`W_q = round(W * 2**e)`, int16, `float = W_q * 2**(-e)`. Same formula
+as `models/vision/common.py` `quantize_layer`, with the LLM
+differences: no activation calibration exists (no forward on real
+data), so there is no `r_in` / `r_out` and no RTL shift — every
+tensor (weight, bias, norm, embedding, codec head, DiT/BigVGAN) is
+quantized on its own per-tensor scale, recorded in `quant.json`.
+The F32 token2wav tensors go through the same scheme (F32 -> int16).
+Biases are quantized as standalone tensors (not folded with an
+activation scale).
+
+- Output: `quantized/` — same shard layout and tensor names as raw,
+  dtype I16, plus `model.safetensors.index.json`; 10.31 GiB int16
+  (2544 tensors, 151 s; the F32 token2wav part shrinks 4 -> 2 bytes
+  per param). `quant.json` (this dir, tracked) holds the per-tensor
+  `e` / `scale` / `max_abs` / `max_err` / `rms_err` / `snr_db` /
+  `clipped`.
+- The [0, 15] clamp binds for most weight tensors (2044/2544 at
+  e=15): `max|W|` is typically 0.2–0.7, so the unclamped e would
+  exceed 15. At e=15 the LSB is 2^-15 and the max weight error is
+  half an LSB (1.53e-05). Zero tensors clipped.
+- Per-type error (SNR of dequantized vs float; median / min):
+  thinker text q/k/v/o 75.9 / 70.6 dB, mlp 76.3 / 60.2 dB, norms
+  121.9 / 97.7 dB, embed/lm_head 75.2 dB, vision 81.1 / 63.8 dB,
+  audio 75.5 / 50.9 dB, talker layers 75.4 / 50.3 dB, talker
+  embed/codec 80.4 / 61.4 dB, DiT 82.9 / 53.7 dB, BigVGAN 93.2 /
+  54.6 dB. The low minima (~50 dB) are small tensors with a few
+  large outliers (most values quantize finely; the outlier sets the
+  scale) — the same heavy-tail effect seen in the YOLOv8n BN fold.
+
+## Verification (`run_omni.py`, log `logs/llm/verify_omni.log`)
+
+1. Inventory: 2544 tensors, names/shapes match raw, all dtype I16 — PASS.
+2. Spot-check: 13 tensors of every type (thinker q/k/o, gate/down,
+   norms; talker q/down; audio fc1; vision q; DiT ff; BigVGAN
+   conv) — dequant max|err| reproduces `quant.json`, worst
+   3.05e-05 — PASS. The two huge tensors (`thinker.lm_head`,
+   `thinker.model.embed_tokens`, 311M params each) checked chunked
+   (first 2M elements), max|err| 1.53e-05 — PASS.
+3. Single-layer forward: thinker text layer 0, 4 fixed token ids
+   [151644, 872, 1234, 4567], float (raw) vs dequantized int16 —
+   max|err| 1.63e-03, rms_err 2.29e-04, relative RMS 5.34e-04
+   (output RMS 0.429) — PASS. RoPE in this check is standard RoPE
+   (theta 1e6), not the model's mRoPE; the identical transform is
+   applied in both passes, so the number measures
+   weight-quantization error only. No full-model forward, no
+   benchmark, no accuracy claim.
+
+## Files
+
+- `raw/` (gitignored): the three safetensors shards + configs (see
+  manifest below). Note `spk_dict.pt` (259,544 bytes) is a PyTorch
+  speaker-dictionary file, NOT loaded in this verification.
+- `quantized/` (gitignored): int16 shards + index.
+- `quant.json` (tracked): per-tensor scales + error stats.
+- `extract_omni.py`: quantize raw -> quantized (streaming, ~2.5 min).
+- `run_omni.py`: inventory + spot-check + layer-0 forward check.
+- `README.md`: this file.
+
+## Limits / open items
+
+- Weight-only quantization; no activation calibration, no
+  per-channel scales. End-to-end quality (speech/text) is NOT
+  measured — that needs a real eval harness, not done.
+- The Talker + token2wav path (speech synthesis) is quantized but
+  never run — the layer-0 check covers the thinker text decoder
+  only. Audio-encoder and vision-encoder layers are quantized and
+  spot-checked, not forward-checked.
+- The compiler graph capture for this model (Thinker-Talker split,
+  cross-modal routing) is not done; the quantized weights are the
+  input to that work, not the result.
+- Dual-card TP=2 decode targets (~300 tok/s roofline) were computed
+  for the Thinker backbone class, not re-derived for this full
+  checkpoint.
 
 ## File manifest (SHA256)
 

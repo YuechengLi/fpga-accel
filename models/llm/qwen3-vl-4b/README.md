@@ -1,14 +1,99 @@
-# Qwen3-VL-4B-Instruct (raw weights, download only)
+# Qwen3-VL-4B-Instruct — verified + registered (int16 quantized)
 
 - Source: https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct
 - License: Apache 2.0
 - Fetched: 2026-11-21 (PST), via `bash models/llm/fetch_llm.sh` (repo root)
 - Raw dir: `models/llm/qwen3-vl-4b/raw/` — total 8.28 GiB (8,887,292,732 bytes)
-- Architecture: 36-layer text decoder (hidden 2560, SwiGLU 9728, 4.4B
-  params) + 24-layer ViT (hidden 1024, DeepStack); 256k context.
-- Status: DOWNLOAD ONLY — hash-verified against the Hub (both safetensors
-  shards match their LFS SHA256), not loaded / quantized / registered.
-  Raw weights are gitignored (`models/.gitignore`: `llm/*/raw/`).
+- Status: **VERIFIED + REGISTERED 2026-11-22** — architecture checked
+  against `config.json`, all 713 tensors quantized to the repo int16
+  scheme, single-layer forward checked. Raw weights are gitignored
+  (`models/.gitignore`: `llm/*/raw/`); quantized weights are also
+  gitignored (`llm/*/quantized/`). Only this README, `quant.json`,
+  and the scripts are tracked.
+
+## Architecture (verified from the checkpoint, not just config.json)
+
+- Text decoder: 36 layers (0–35 present), hidden 2560, SwiGLU
+  intermediate 9728, 32 Q heads / 8 KV heads, head_dim 128,
+  vocab 151936, `tie_word_embeddings: true` (no separate `lm_head`
+  tensor — the embedding is reused), RoPE theta 5,000,000, mRoPE
+  section [24, 20, 20], 256k context.
+- ViT: 24 blocks, hidden 1024, intermediate 4096, 16 heads, fused
+  QKV (`attn.qkv`, [3072, 1024]), patch embed [1024, 3, 2, 16, 16]
+  (temporal patch 2, 16x16 spatial), DeepStack visual indexes
+  [5, 11, 17] (ViT layers whose outputs are injected), merger
+  `linear_fc1` [4096, 4096] -> `linear_fc2` [2560, 4096].
+- Total: **4,437,815,808 params** (4.44B), all BF16, 713 tensors:
+  language_model 398 tensors / 4,022,468,096 params, visual 315
+  tensors / 415,347,712 params.
+- Per-layer shapes (layer 0, representative): q_proj [4096, 2560],
+  k/v_proj [1024, 2560], o_proj [2560, 4096], gate/up_proj
+  [9728, 2560], down_proj [2560, 9728]. LM layers carry no biases;
+  ViT blocks do (qkv/proj/mlp/norm biases).
+
+## Quantization (repo scheme, `models/llm/llm_common.py`)
+
+Per tensor `e = floor(log2(32767 / max|W|))` clamped [0, 15],
+`W_q = round(W * 2**e)`, int16, `float = W_q * 2**(-e)`. Same formula
+as `models/vision/common.py` `quantize_layer`, with the LLM
+differences: no activation calibration exists (no forward on real
+data), so there is no `r_in` / `r_out` and no RTL shift — every
+tensor (weight, bias, norm, embedding) is quantized on its own
+per-tensor scale, recorded in `quant.json`. Biases are quantized as
+standalone tensors (not folded with an activation scale).
+
+- Output: `quantized/` — same shard layout and tensor names as raw,
+  dtype I16, plus `model.safetensors.index.json`; 8.27 GiB int16
+  (713 tensors, 112 s). `quant.json` (this dir, tracked) holds the
+  per-tensor `e` / `scale` / `max_abs` / `max_err` / `rms_err` /
+  `snr_db` / `clipped`.
+- The [0, 15] clamp binds for most weight tensors (378/713 at e=15):
+  `max|W|` is typically 0.2–0.7, so the unclamped e would exceed 15.
+  At e=15 the LSB is 2^-15 and the max weight error is half an LSB
+  (1.53e-05). Zero tensors clipped.
+- Per-type error (SNR of dequantized vs float; median / min):
+  LM q_proj 75.0 / 74.3 dB, k/v 75.1 / 72.1 dB, o 75.0 / 74.0 dB,
+  gate/up/down 75.5 / 65.9 dB, LM norms 124.8 / 93.4 dB, embed
+  74.8 dB, ViT qkv/proj 74.0 / 68.9 dB, ViT mlp/merger 75.1 /
+  58.5 dB, ViT norms/bias 91.0 / 69.8 dB.
+
+## Verification (`run_qwen3vl.py`, log `logs/llm/verify_qwen3vl.log`)
+
+1. Inventory: 713 tensors, names/shapes match raw, all dtype I16 — PASS.
+2. Spot-check: 12 tensors of every type (LM q/k/o, gate/down,
+   norms, ViT qkv/mlp/merger) — dequant max|err| reproduces
+   `quant.json`, worst 2.44e-04 — PASS. Embedding (389M params)
+   checked chunked (first 2M elements), max|err| 1.53e-05 — PASS.
+3. Single-layer forward: LM layer 0, 4 fixed token ids
+   [151643, 872, 1234, 4567], float (raw) vs dequantized int16 —
+   max|err| 4.42e-04, rms_err 5.68e-05, relative RMS 1.93e-04
+   (output RMS 0.294) — PASS. RoPE in this check is standard RoPE
+   (theta 5e6), not the model's interleaved mRoPE; the identical
+   transform is applied in both passes, so the number measures
+   weight-quantization error only. No full-model forward, no
+   benchmark, no accuracy claim.
+
+## Files
+
+- `raw/` (gitignored): the two safetensors shards + configs (see
+  manifest below).
+- `quantized/` (gitignored): int16 shards + index.
+- `quant.json` (tracked): per-tensor scales + error stats.
+- `extract_qwen3vl.py`: quantize raw -> quantized (streaming, ~2 min).
+- `run_qwen3vl.py`: inventory + spot-check + layer-0 forward check.
+- `README.md`: this file.
+
+## Limits / open items
+
+- Weight-only quantization; no activation calibration, no
+  per-channel scales. End-to-end quality (caption/VQA) is NOT
+  measured — that needs a real eval harness, not done.
+- The compiler graph capture for this model (attention, DeepStack
+  injection, ViT merger) is not done; the quantized weights are the
+  input to that work, not the result.
+- Decode roofline for the VCU128 track (single board, 7B INT8
+  65.7 tok/s class) was computed for generic 7B/13B models, not
+  re-derived for this 4.4B multimodal model.
 
 ## File manifest (SHA256)
 
