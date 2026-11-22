@@ -30,13 +30,19 @@ mults/PE was only an assumed number). Derivation:
   for every size (dispatching every fine tile-step would exceed
   1/cycle for the small PEs; see the dispatch rows below).
 
-Devices come from sw/devices.py (XCZU19EG-2 and Lattice LFE5U-85F).
-The ZU19EG is evaluated at 64/128/256 mults per PE; the Lattice
-part at 640x480 and 320x240 (1080p is NOT its target).
+Devices come from sw/devices.py (XCZU19EG-2, Lattice LFE5U-85F, and
+XCVU37P-2FSVH2892E on the VCU128). The ZU19EG is evaluated at
+64/128/256 mults per PE; the Lattice part at 640x480 and 320x240
+(1080p is NOT its target). The VCU128 uses the SAME 15x128 PE
+config as the ZU19EG (decode is bandwidth-bound: HBM at 460 GB/s
+delivers ~1,533 weight bytes/cycle at 300 MHz, so ~1,500 MACs/cycle
+saturate it and 1,920 MACs already exceed that -- the PE count is
+NOT scaled up for the VU37P); its SRCNN fps at 1080p therefore
+equals the ZU19EG's, at 21.3% of the VU37P's 9,024 DSPs.
 
 Usage: python3 stage7b_model_pe.py [--device NAME]
-Exit code 0 iff the ZU19EG chosen configuration predicts >= 30 fps
-at 300 MHz.
+Exit code 0 iff the ZU19EG chosen configuration AND the VCU128
+1080p configuration both predict >= 30 fps at 300 MHz.
 """
 import argparse
 import math
@@ -61,6 +67,25 @@ B_FILE_MAX = 512
 SWITCH_CYCLES = 150      # per frame tile (3 layer switches x 50)
 BUBBLE = 0.01            # dispatch bubbles
 GMACS_PER_FRAME_1080P = 16.4534
+HBM_GBS = 460.0          # VCU128 HBM2 (sw/devices.py vu37p, UG949)
+
+
+def decode_roofline(mem_gbs, bytes_per_token):
+    """Memory-bound decode roofline: tok/s = bandwidth / bytes/token.
+
+    Decode reads each weight once per token and does ~1 MAC per
+    weight byte, so the memory bandwidth is the ceiling regardless
+    of PE count. 7B INT8: 460 GB/s / 7 GB = 65.7 tok/s. 13B INT4:
+    6.5 GB -> 70.8 tok/s (fits one board); 13B INT8: 13 GB ->
+    35.4 tok/s (needs 2 boards, 16 GB HBM).
+    """
+    return mem_gbs * 1e9 / bytes_per_token
+
+
+def hbm_bytes_per_cycle(mem_gbs, fclk_mhz):
+    """Weight bytes/cycle the memory delivers at a clock: HBM at
+    460 GB/s is ~1,533 B/cycle at 300 MHz."""
+    return mem_gbs * 1e9 / (fclk_mhz * 1e6)
 
 
 def required_throughput():
@@ -230,6 +255,7 @@ def main():
           "vs 30 buffer slices / scoreboard entries).")
     # --- Per-device targets ---
     ok = size_results[128] >= 30.0
+    vu_fps = None
     for name in DEVICES:
         if args.device and name != args.device:
             continue
@@ -237,7 +263,29 @@ def main():
         for (fw, fh) in dev["targets"]:
             m, out = report(name, dev, fw, fh)
             print(f"  verification: {dev['verified']} "
-                  f"({'RTL golden + sim' if dev['verified'] == 'rtl' else 'cycle model + synth_ecp5 fit check'})")
+                  f"({'RTL golden + sim' if dev['verified'] == 'rtl' else 'cycle model + synth_ecp5 fit check' if dev['verified'] == 'model+synth' else 'cycle model + scheduler tests'})")
+            if name == "vu37p" and (fw, fh) == (1920, 1080):
+                vu_fps = out[300.0]
+    # --- VCU128 decode roofline (bandwidth-bound, not compute-bound) ---
+    vu = DEVICES["vu37p"]
+    bpc = hbm_bytes_per_cycle(vu["mem_gbs"], 300.0)
+    print("\nVCU128 decode roofline (HBM-bound, not compute-bound):")
+    print(f"  HBM {vu['mem_gbs']:.0f} GB/s @ 300 MHz = {bpc:.0f} weight "
+          f"bytes/cycle; one MAC consumes one weight byte/cycle, so "
+          f"~{bpc:.0f} MACs/cycle saturate HBM")
+    print(f"  the 15x128 config has {vu['n_pe'] * vu['pe_mults']} "
+          f"MACs/cycle -- already above the saturation point, so the "
+          f"PE count is NOT scaled up for the VU37P")
+    for label, gbytes, boards in (("7B INT8", 7.0, 1),
+                                  ("13B INT4", 6.5, 1),
+                                  ("13B INT8", 13.0, 2)):
+        print(f"  {label}: "
+              f"{decode_roofline(vu['mem_gbs'], gbytes * 1e9):.1f} tok/s "
+              f"roofline ({'fits one board' if boards == 1 else 'needs 2 boards, 16 GB HBM'})")
+    if vu_fps is not None:
+        ok = ok and vu_fps >= 30.0
+        print(f"  vu37p 1080p @300 MHz: {vu_fps:.1f} fps "
+              f"({'MEETS 30fps' if vu_fps >= 30.0 else 'BELOW 30fps'})")
     print("\nMODEL CHECK:",
           "ALL OK" if ok else "FAILED (300MHz < 30fps)")
     return 0 if ok else 1

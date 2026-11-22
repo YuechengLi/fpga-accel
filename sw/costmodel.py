@@ -192,6 +192,21 @@ def tile_search(layer, f_clk_mhz=300.0, verbose=False):
     return best
 
 
+def device_mem_bandwidth_gbs(dev):
+    """Memory bandwidth (GB/s) for a device config, for the roofline.
+
+    VCU128 (vu37p) has HBM2 at 460 GB/s (sw/devices.py ``mem_gbs``);
+    every other device defaults to the ZU19EG PL DDR4 actual figure
+    (~27 GB/s, sw/dram.py). The ECP5 has no external DRAM (on-chip
+    EBR only) and does not use this path. tile_search above does not
+    call this: the MC engine is drain-limited (1 coeff/cycle), not
+    DRAM-limited, so the bandwidth only enters the roofline, never
+    the per-layer tile choice.
+    """
+    from dram import PL_DDR4_ACTUAL_GBS
+    return float(dev.get("mem_gbs", PL_DDR4_ACTUAL_GBS))
+
+
 def layer_report(layer, result):
     """One-line summary of the tile search for a layer."""
     b = result

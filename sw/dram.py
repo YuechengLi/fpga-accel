@@ -70,6 +70,9 @@ def weight_cfg_cycles(ncoeff):
 PL_DDR4_ACTUAL_GBS = 27.0   # plan §3 (theoretical 38.4)
 PL_DDR4_THEOR_GBS = 38.4
 PS_DDR4_ACTUAL_GBS = 13.0
+# VCU128 HBM2 (docs/vcu128-bringup.md): 460 GB/s planning number
+# (theoretical peak; measured efficiency is TBD on the board).
+HBM_ACTUAL_GBS = 460.0
 
 
 def vdma_bandwidth_gbs(h, w, channels, fps):
@@ -124,18 +127,21 @@ def dram_traffic(layers, h, w, fps, fused=True, in_ch=3, out_ch=3):
     }
 
 
-def arbitration_budget(vdma_in_gbs, vdma_out_gbs, ps_reserved_gbs=1.0):
+def arbitration_budget(vdma_in_gbs, vdma_out_gbs, ps_reserved_gbs=1.0,
+                       mem_gbs=PL_DDR4_ACTUAL_GBS):
     """Bandwidth left for the engine after VDMA (highest priority)
-    and a PS reserve (lowest priority). Returns (engine_GBs, ok)."""
-    engine = PL_DDR4_ACTUAL_GBS - vdma_in_gbs - vdma_out_gbs \
-        - ps_reserved_gbs
+    and a PS reserve (lowest priority). Returns (engine_GBs, ok).
+    Defaults are the ZU19EG PL DDR4 figure; pass
+    mem_gbs=HBM_ACTUAL_GBS for the VCU128."""
+    engine = mem_gbs - vdma_in_gbs - vdma_out_gbs - ps_reserved_gbs
     return engine, engine > 0
 
 
-def cut_point_budget(vdma_in_gbs, vdma_out_gbs, ps_reserved_gbs=1.0):
+def cut_point_budget(vdma_in_gbs, vdma_out_gbs, ps_reserved_gbs=1.0,
+                     mem_gbs=PL_DDR4_ACTUAL_GBS):
     """How many fusion cut points (each a full feature-map read+write)
     the remaining bandwidth affords, per plan §3.7. Returns the
     remaining GB/s for cut points."""
     engine, _ = arbitration_budget(vdma_in_gbs, vdma_out_gbs,
-                                   ps_reserved_gbs)
+                                   ps_reserved_gbs, mem_gbs)
     return engine

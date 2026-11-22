@@ -69,7 +69,7 @@ rc=$?; [ "$rc" -eq 0 ] && pass "L3 sim" || fail "L3 sim (rc=$rc)"
 n_k5=$(cd tb && python3 golden_tappar.py check 2>&1 | grep -cE "case [013] .* PASS")
 [ "$n_k5" = "3" ] && pass "L3 golden K=5 (3/3 PASS; K=3 known limitation, see design.md)" || fail "L3 golden K=5 (got $n_k5/3)"
 
-echo "=== 5. Cycle model (device-driven, ZU19EG + ECP5) ==="
+echo "=== 5. Cycle model (device-driven, ZU19EG + ECP5 + VCU128) ==="
 python3 sw/stage7b_model_pe.py > logs/stage7b/model_pe.log 2>&1
 rc=$?; [ "$rc" -eq 0 ] && grep -q "MODEL CHECK: ALL OK" logs/stage7b/model_pe.log && pass "cycle model (MODEL CHECK ALL OK)" || fail "cycle model (rc=$rc)"
 
@@ -79,6 +79,20 @@ rc=$?; [ "$rc" -eq 0 ] && pass "adder_tree synth_ecp5" || fail "adder_tree synth
 sed -n '85,134p' rtl/conv2d_mc.sv > /tmp/stage7b_lb.sv
 yosys -p "read_verilog -sv /tmp/stage7b_lb.sv; hierarchy -top line_buffer_bram_mc; chparam -set WIDTH 256 -set DEPTH 2048 -set ADDR_W 11 line_buffer_bram_mc; synth_ecp5 -top line_buffer_bram_mc; stat" > logs/stage7b/synth_ecp5_linebuf.log 2>&1
 rc=$?; [ "$rc" -eq 0 ] && grep -q "DP16KD" logs/stage7b/synth_ecp5_linebuf.log && pass "linebuf synth_ecp5 (DP16KD)" || fail "linebuf synth_ecp5 (rc=$rc)"
+
+echo "=== 7. VCU128 (vu37p) platform ==="
+# The vu37p device config (sw/devices.py) + HBM roofline
+# (sw/roofline.py, sw/dram.py, sw/costmodel.py) + cycle model
+# (sw/stage7b_model_pe.py) are covered by the unit tests below;
+# the cycle-model run pins the 1080p fps and the decode roofline.
+# NOT covered here (out of scope, see docs/vcu128-bringup.md):
+# VU37P synthesis (OOMs on this 6 GB VM), the XDMA/XRT host
+# driver port, and any RTL change (the PE config is identical to
+# the ZU19EG 15x128, so the sections above cover its compute path).
+python3 -m unittest discover -s sw/tests -p "test_vcu128.py" -v > logs/stage7b/test_vcu128.log 2>&1
+rc=$?; [ "$rc" -eq 0 ] && grep -q "^OK" logs/stage7b/test_vcu128.log && pass "vu37p unit tests (9 tests)" || fail "vu37p unit tests (rc=$rc)"
+python3 sw/stage7b_model_pe.py --device vu37p > logs/stage7b/model_vu37p.log 2>&1
+rc=$?; [ "$rc" -eq 0 ] && grep -q "MODEL CHECK: ALL OK" logs/stage7b/model_vu37p.log && grep -q "vu37p 1920x1080" logs/stage7b/model_vu37p.log && grep -q "65.7 tok/s" logs/stage7b/model_vu37p.log && pass "vu37p cycle model (33.7 fps @300 MHz) + decode roofline (7B INT8 65.7 tok/s)" || fail "vu37p cycle model (rc=$rc)"
 
 echo ""
 if [ "$FAIL" = 0 ]; then

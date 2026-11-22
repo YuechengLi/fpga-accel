@@ -29,6 +29,16 @@ ENGINE_PEAK_GMACS = ENGINE_DSP * F_CLK_MHZ / 1000.0  # 145.2
 ENGINES_FIT = DSP_TOTAL // ENGINE_DSP             # 4
 PL_DDR4_ACTUAL_GBS = 27.0
 
+# VCU128 (VU37P, docs/vcu128-bringup.md): 9,024 DSP x 300 MHz =
+# 2707.2 GMAC/s peak; HBM2 460 GB/s (8 GB, 32x 256-bit AXI3 ports).
+# The HBM roofline is the decode ceiling: decode is bandwidth-bound
+# (one weight byte per MAC per cycle), so the ridge point is far
+# lower than the DDR ridge and most layers are compute-bound on
+# this device instead.
+VU37P_DSP = 9024
+VU37P_PEAK_GMACS = VU37P_DSP * F_CLK_MHZ / 1000.0  # 2707.2
+HBM_ACTUAL_GBS = 460.0
+
 
 def model_macs(layers):
     """Total MACs/frame for a model (list of LayerShape-like dicts
@@ -42,14 +52,19 @@ def fps_at(macs_per_frame, gmacs):
     return gmacs * 1e9 / macs_per_frame
 
 
-def roofline_point(layers, fused_dram_bytes_per_frame):
+def roofline_point(layers, fused_dram_bytes_per_frame,
+                   mem_gbs=PL_DDR4_ACTUAL_GBS, peak_gmacs=PEAK_GMACS):
     """Arithmetic intensity (MACs per fused DRAM byte) and the
-    compute-vs-memory bound. Returns (intensity, bound) where bound
-    is 'compute' if the ridge point is below the intensity."""
+    compute-vs-memory bound. Returns (intensity, ridge, bound) where
+    bound is 'compute' if the ridge point is below the intensity.
+    Defaults are the ZU19EG (PL DDR4 27 GB/s, 590.4 GMAC/s peak);
+    pass mem_gbs=HBM_ACTUAL_GBS and peak_gmacs=VU37P_PEAK_GMACS for
+    the VCU128. Existing callers with no extra arguments are
+    unaffected."""
     macs = model_macs(layers)
     intensity = macs / max(1, fused_dram_bytes_per_frame)
     # Ridge point: where compute roof meets DRAM roof (MACs/byte).
-    ridge = PEAK_GMACS * 1e9 / (PL_DDR4_ACTUAL_GBS * 1e9)
+    ridge = peak_gmacs * 1e9 / (mem_gbs * 1e9)
     bound = "compute" if intensity >= ridge else "memory"
     return intensity, ridge, bound
 

@@ -40,6 +40,18 @@ PE sizing (derived in logs/stage7b/design.md, not assumed):
   * LFE5U-85F: 2 PEs x 64 mults = 128 multipliers (82% of 156). 64
     is the right size here: 2 PEs (not 1) so the multi-PE dispatch
     and merge are exercised, and TN=4 keeps small-N layers efficient.
+  * XCVU37P-2FSVH2892E (VCU128, Virtex UltraScale+ HBM): 15 PEs x
+    128 mults = 1920 DSPs -- the SAME PE config as the ZU19EG, NOT
+    scaled up. Decode is bandwidth-bound, not compute-bound: HBM2
+    at 460 GB/s delivers ~1,533 weight bytes/cycle at 300 MHz, so
+    ~1,500 MACs/cycle saturate it (one MAC consumes one weight byte
+    per cycle), and 1,920 MACs already exceed that. Extra DSP on
+    the VU37P is for wider prefill/GEMM work, not for decode.
+    1920 DSPs is 21.3% of the 9,024-DSP device. Memory is HBM2
+    (8 GB, 32x 256-bit AXI3 ports) instead of PL DDR4; the host link
+    is PCIe Gen4 x8 (slot 2) and there is no ARM PS (host via
+    XDMA/QDMA + XRT -- see docs/vcu128-bringup.md). Sources: AMD
+    VCU128 product brief / UG1302 (board), UG949 (HBM).
 """
 DEVICES = {
     "zu19eg": {
@@ -73,6 +85,28 @@ DEVICES = {
         "frame_tiles": (64, 32, 16, 8),
         "targets": [(640, 480), (320, 240)],
         "verified": "model+synth",  # cycle model + synth_ecp5 fit check
+    },
+    "vu37p": {
+        "name": "XCVU37P-2FSVH2892E (VCU128, Virtex UltraScale+ HBM)",
+        "vendor": "xilinx",
+        "dsp": 9024,
+        "lut": 2852000,
+        "bram_kbits": 72602,  # 70.9 Mb block RAM; +270 Mb UltraRAM
+        "clock_mhz": 300.0,
+        "clocks_mhz": (300.0, 360.0, 400.0),
+        "n_pe": 15,
+        "pe_mults": 128,
+        "tm": 16,
+        "tn": 8,
+        "frame_tiles": (64, 32, 16, 8),
+        "targets": [(1920, 1080)],
+        "mem": "HBM2",
+        "mem_gbs": 460.0,  # HBM2, 8 GB (UG949)
+        "host_link": "pcie-gen4-x8",  # desktop slot 2
+        "has_ps": False,  # no ARM PS; host via XDMA/QDMA + XRT
+        "verified": "model",  # cycle model + scheduler tests only
+        # (no VU37P synth on the 6 GB VM; no XRT driver port yet --
+        # see docs/vcu128-bringup.md)
     },
 }
 

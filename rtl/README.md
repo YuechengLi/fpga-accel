@@ -1315,7 +1315,14 @@ config (sw/devices.py). XCZU19EG-2 (iW-RainboW-G35D): 15x128, 300 MHz,
 small resolutions (640x480 -> 4.0 fps, 320x240 -> 16.5 fps), the
 FULL SRCNN pipeline at small scale (same compiler flow, same
 precision -- the parameterization scales the parallelism, never the
-feature set). The RTL is vendor-neutral (no Xilinx primitives;
+feature set). XCVU37P-2FSVH2892E (VCU128, Virtex UltraScale+ HBM):
+15x128, 300 MHz, 1080p30 target -- the SAME PE config as the ZU19EG,
+NOT scaled up: decode is bandwidth-bound (HBM 460 GB/s delivers
+~1,533 weight bytes/cycle at 300 MHz, so ~1,500 MACs/cycle saturate
+it and 1,920 MACs already exceed that), so the 1,920 DSPs are 21.3%
+of the VU37P's 9,024 DSPs; memory is HBM2 (8 GB) instead of PL DDR4
+and the host link is PCIe Gen4 x8 with no ARM PS (host via XDMA/QDMA
++ XRT -- see docs/vcu128-bringup.md). The RTL is vendor-neutral (no Xilinx primitives;
 BRAM/multipliers inferred); see the synth_ecp5 checks below.
 
 ### Files
@@ -1326,7 +1333,7 @@ BRAM/multipliers inferred); see the synth_ecp5 checks below.
   (associative table, count-based completion) + output emit.
 - rtl/srcnn_pipe_pe.sv -- top wrapper (config bus + tile-step program port).
 - sw/sched_pe.py -- scheduling pass (tile-step generation per layer/device).
-- sw/devices.py -- device configs (zu19eg, ecp5u85).
+- sw/devices.py -- device configs (zu19eg, ecp5u85, vu37p).
 - sw/emit.py emit_pe_program -- compiler streaming emission (PE assignments).
 - tb/golden_pe.py + tb/tb_pe_mac.sv -- PE golden + TB.
 - tb/tb_pe_array.sv + sw/run_pe_srcnn.py -- SRCNN chain driver (one wave
@@ -1367,6 +1374,17 @@ mode; dot requires TN=8 in the RTL). ECP5 640x480 -> 4.0 fps,
 320x240 -> 16.5 fps @100 MHz (MFU ~74.4%). Per-layer (128 config,
 300 MHz): L1 18.45 ms, L2 7.29 ms, L3 2.83 ms; ideal frame 8.57M
 cycles, frame 8.90M cycles (frame tile 64, edge x1.019).
+VCU128 (VU37P, log `logs/stage7b/model_vu37p.log`): same 15x128 PE
+config, so the same 33.7 fps @300 MHz, 40.5 @360, 45.0 @400 (MFU
+96.3%) at 21.3% of the VU37P's 9,024 DSPs. Decode roofline
+(HBM-bound, not compute-bound): HBM 460 GB/s = ~1,533 weight
+bytes/cycle at 300 MHz vs 1,920 MACs/cycle, so the PE count is NOT
+scaled up; 7B INT8 65.7 tok/s, 13B INT4 70.8 tok/s (both fit one
+board), 13B INT8 35.4 tok/s (needs 2 boards). Covered by
+`sw/tests/test_vcu128.py` (9 tests) in `tb/run_stage7b.sh` §7.
+NOT covered: VU37P synthesis (OOMs on the 6 GB VM -- desktop/Mac
+only), the XDMA/XRT host driver port (docs/vcu128-bringup.md), and
+any RTL change (none -- the PE config is identical to the ZU19EG's).
 
 #### Clock decision (STA, Nangate45, OpenSTA 2.2.0)
 

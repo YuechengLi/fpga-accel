@@ -13,10 +13,13 @@
 [PASS] L3 compile
 [PASS] L3 sim
 [PASS] L3 golden K=5 (3/3 PASS; K=3 known limitation, see design.md)
-=== 5. Cycle model (device-driven, ZU19EG + ECP5) ===
+=== 5. Cycle model (device-driven, ZU19EG + ECP5 + VCU128) ===
 [PASS] cycle model (MODEL CHECK ALL OK)
 === 6. synth_ecp5 (vendor neutrality) ===
 [PASS] adder_tree synth_ecp5
 [PASS] linebuf synth_ecp5 (DP16KD)
+=== 7. VCU128 (vu37p) platform ===
+[PASS] vu37p unit tests (9 tests)
+[PASS] vu37p cycle model (33.7 fps @300 MHz) + decode roofline (7B INT8 65.7 tok/s)
 
 === STAGE 7b RESULT: ALL PASS ===

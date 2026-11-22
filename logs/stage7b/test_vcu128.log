@@ -1,0 +1,14 @@
+test_costmodel_bandwidth (test_vcu128.TestVCU128.test_costmodel_bandwidth) ... ok
+test_cycle_model_vu37p (test_vcu128.TestVCU128.test_cycle_model_vu37p) ... ok
+test_decode_roofline (test_vcu128.TestVCU128.test_decode_roofline) ... ok
+test_dram_hbm_budget (test_vcu128.TestVCU128.test_dram_hbm_budget) ... ok
+test_roofline_hbm (test_vcu128.TestVCU128.test_roofline_hbm) ... ok
+test_scheduler_vu37p_l3_dot (test_vcu128.TestVCU128.test_scheduler_vu37p_l3_dot) ... ok
+test_vu37p_chain_replay_matches_golden (test_vcu128.TestVCU128.test_vu37p_chain_replay_matches_golden) ... ok
+test_vu37p_config_numbers (test_vcu128.TestVCU128.test_vu37p_config_numbers) ... ok
+test_zu19eg_ecp5u85_unchanged (test_vcu128.TestVCU128.test_zu19eg_ecp5u85_unchanged) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 1.218s
+
+OK

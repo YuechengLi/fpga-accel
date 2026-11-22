@@ -74,4 +74,23 @@ ecp5u85 320x240 (2 PEs x 64 = 128 DSPs, 82.1% of 156)
   @ 100 MHz: 16.5 fps (MFU 74.5%)
   verification: model+synth (cycle model + synth_ecp5 fit check)
 
+vu37p 1920x1080 (15 PEs x 128 = 1920 DSPs, 21.3% of 9024)
+  L1 9x9 1->64: M-tiles=128104 N-chunks=8 TK=27 K-chunks=3 27cy/step -> 5,534,093cy (18.45 ms)
+  L2 1x1 64->32: M-tiles=128104 N-chunks=4 TK=32 K-chunks=2 32cy/step -> 2,186,308cy (7.29 ms)
+  L3 5x5 32->1: M-tiles=127359 N-chunks=1 TK=32 K-chunks=25 4cy/step -> 849,060cy (2.83 ms)
+  frame tile 64 (510 tiles, edge x1.019); ideal 8,569,461cy, frame 8,898,357cy
+  dispatch: 1,664,607 (M-tile,N-chunk) tasks = 0.19/cycle (fine tile-step dispatch would be 0.85/cycle)
+  @ 300 MHz: 33.7 fps MEETS 30fps(MFU 96.3%)
+  @ 360 MHz: 40.5 fps MEETS 30fps(MFU 96.3%)
+  @ 400 MHz: 45.0 fps MEETS 30fps(MFU 96.3%)
+  verification: model (cycle model + scheduler tests)
+
+VCU128 decode roofline (HBM-bound, not compute-bound):
+  HBM 460 GB/s @ 300 MHz = 1533 weight bytes/cycle; one MAC consumes one weight byte/cycle, so ~1533 MACs/cycle saturate HBM
+  the 15x128 config has 1920 MACs/cycle -- already above the saturation point, so the PE count is NOT scaled up for the VU37P
+  7B INT8: 65.7 tok/s roofline (fits one board)
+  13B INT4: 70.8 tok/s roofline (fits one board)
+  13B INT8: 35.4 tok/s roofline (needs 2 boards, 16 GB HBM)
+  vu37p 1080p @300 MHz: 33.7 fps (MEETS 30fps)
+
 MODEL CHECK: ALL OK
