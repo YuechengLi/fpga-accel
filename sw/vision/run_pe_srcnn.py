@@ -54,11 +54,18 @@ def find_simcells():
     return None
 
 
+_COMPILED = False  # netlist/RTL compiled once per process (was: per layer)
+
+
 def run_tb():
-    """Compile + run tb_pe_array (in tb/). Returns (rc, log).
+    """Compile (once) + run tb_pe_array (in tb/). Returns (rc, log).
     Netlist mode compiles the parameter-accepting wrapper +
     the synthesized netlist + simcells.v instead of the RTL;
-    the TB and the golden check are unchanged."""
+    the TB and the golden check are unchanged.
+    NOTE: the gate-level netlist compile takes ~1.5 h on the Mac,
+    so it must run once, not once per layer. Each layer's vvp run
+    gets a 7200 s allowance (the 1200 s cap killed the L1 sim)."""
+    global _COMPILED
     if NETLIST:
         simcells = find_simcells()
         if simcells is None:
@@ -73,14 +80,16 @@ def run_tb():
     else:
         files = ["../rtl/common/pe_array.sv", "../rtl/common/pe_mac.sv",
                  "../rtl/common/pe_emit.sv", "tb_pe_array.sv"]
-    comp = subprocess.run(
-        ["iverilog", "-g2012", "-o", "tb_pe_array.vvp"] + files,
-        cwd=TB, capture_output=True, text=True)
-    if comp.returncode != 0:
-        return comp.returncode, "COMPILE FAILED:\n" + comp.stdout + comp.stderr
+    if not _COMPILED:
+        comp = subprocess.run(
+            ["iverilog", "-g2012", "-o", "tb_pe_array.vvp"] + files,
+            cwd=TB, capture_output=True, text=True)
+        if comp.returncode != 0:
+            return comp.returncode, "COMPILE FAILED:\n" + comp.stdout + comp.stderr
+        _COMPILED = True
     run = subprocess.run(
         ["vvp", "tb_pe_array.vvp"],
-        cwd=TB, capture_output=True, text=True, timeout=1200)
+        cwd=TB, capture_output=True, text=True, timeout=7200)
     return run.returncode, run.stdout + run.stderr
 
 
