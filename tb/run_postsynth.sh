@@ -124,6 +124,74 @@ echo "=== 3. pe_mac / pe_array post-synth (Mac Phase 3) ==="
 echo "[SKIP] pe_mac post-synth -- Mac Phase 3 (netlist OOMs on this VM)"
 echo "[SKIP] pe_array post-synth -- Mac Phase 3 (netlist OOMs on this VM)"
 
+# ---- Stage 7d (YOLOv8n + DNANet) modules ----
+# The 7d e2e drives six RTL modules besides the PE array: act
+# (sigmoid LUT), simplegate (SiLU / attention multiply), residual
+# (add -- the 7d driver runs it on the CPU, but the module is
+# still post-synth verified here), pool (MAX 2x2 / GAP),
+# upsample (nearest / bilinear) and concat. All six TBs
+# instantiate the DUT with DEFAULT parameters (no #() override),
+# so -- unlike adder_tree/frontend -- no parameter-accepting
+# wrapper is needed: the generic-synth netlist (default params
+# baked in) drops in place of the RTL. The golden vectors are
+# the Stage 3/4 goldens (golden_<mod>.py gen) and the check is
+# the same "GOLDEN CHECK PASSED" line.
+LOGDIR7D=logs/stage7d
+mkdir -p "$LOGDIR7D"
+run_ps_mod() {
+    # $1 = name, $2 = rtl file, $3 = tb file, $4 = golden script,
+    # $5 = vvp name. Netlist + logs live in logs/stage7d.
+    local name="$1" rtl="$2" tb="$3" golden="$4" vvp="$5"
+    local net="$LOGDIR7D/${name}_net.v"
+    echo "=== 7d post-synth: $name ==="
+    if [ -f "$net" ] && [ "$net" -nt "$rtl" ] \
+            && grep -q "^module ${name}(" "$net"; then
+        echo "[SKIP] $name synth (netlist exists, RTL unchanged)"
+        pass "$name synth (generic) (reused netlist)"
+        pass "$name netlist module name (reused netlist)"
+    else
+        timeout 1800 yosys -p "read_verilog -sv $rtl; synth -top $name; stat; write_verilog $net" \
+            > "$LOGDIR7D/synth_${name}.log" 2>&1
+        rc=$?
+        if [ "$rc" -eq 0 ]; then pass "$name synth (generic)"; else fail "$name synth (rc=$rc)"; fi
+        if grep -q "^module ${name}(" "$net"; then
+            pass "$name netlist module name"
+        else
+            fail "$name netlist module name"
+        fi
+        grep "Number of cells" "$LOGDIR7D/synth_${name}.log" | sed 's/^/    /'
+    fi
+    (cd tb && python3 "$golden" gen > "../$LOGDIR7D/vectors_${name}_ps.log" 2>&1)
+    rc=$?
+    if [ "$rc" -eq 0 ]; then pass "$name vectors gen"; else fail "$name vectors gen (rc=$rc)"; fi
+    # The TB reads vectors_<name>.txt from its own (tb/) directory
+    # and writes out_<name>.txt there; the golden check reads it
+    # from tb/ too. Compile the netlist (not the RTL) + simcells
+    # + the unchanged golden TB.
+    iverilog -g2012 -o "/tmp/${vvp}" "$net" \
+        /usr/share/yosys/simcells.v "tb/$tb" \
+        > "$LOGDIR7D/compile_${name}_ps.log" 2>&1
+    rc=$?
+    if [ "$rc" -eq 0 ]; then pass "$name post-synth compile"; else fail "$name post-synth compile (rc=$rc)"; fi
+    (cd tb && timeout 1800 vvp "/tmp/${vvp}" > "../$LOGDIR7D/vvp_${name}_ps.log" 2>&1)
+    rc=$?
+    if [ "$rc" -ne 0 ]; then fail "$name post-synth sim (rc=$rc)"; fi
+    (cd tb && python3 "$golden" check > "../$LOGDIR7D/check_${name}_ps.log" 2>&1)
+    rc=$?
+    if grep -q "GOLDEN CHECK PASSED" "$LOGDIR7D/check_${name}_ps.log" && [ "$rc" -eq 0 ]; then
+        pass "$name post-synth golden"
+    else
+        fail "$name post-synth golden (rc=$rc)"
+        tail -5 "$LOGDIR7D/check_${name}_ps.log"
+    fi
+}
+run_ps_mod act       rtl/vision/act.sv        tb_act.sv        golden_act.py        act_ps.vvp
+run_ps_mod simplegate rtl/vision/simplegate.sv tb_simplegate.sv golden_simplegate.py sg_ps.vvp
+run_ps_mod residual  rtl/vision/residual.sv   tb_residual.sv   golden_residual.py   res_ps.vvp
+run_ps_mod pool      rtl/vision/pool.sv       tb_pool.sv       golden_pool.py       pool_ps.vvp
+run_ps_mod upsample  rtl/vision/upsample.sv   tb_upsample.sv   golden_upsample.py   up_ps.vvp
+run_ps_mod concat    rtl/vision/concat.sv     tb_concat.sv     golden_concat.py     concat_ps.vvp
+
 echo
 echo "=== POSTSYNTH RESULT: $([ "$FAIL" -eq 0 ] && echo "ALL PASS" || echo "FAILURES (see above)") ==="
 echo "PASS=$PASS FAIL=$FAIL"

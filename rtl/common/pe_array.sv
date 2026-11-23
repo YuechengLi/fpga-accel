@@ -81,7 +81,7 @@ module pe_array #(
     input  logic [TK_MAX*TN*16-1:0] ts_b_flat,
     input  logic [15:0] ts_mtile,
     input  logic [7:0]  ts_nchunk,
-    input  logic [5:0]  ts_n_kchunk,
+    input  logic [7:0]  ts_n_kchunk,
     // Completed-output stream (one (M-tile, N-chunk) per pulse).
     output logic        out_valid,
     output logic [15:0] out_mtile,
@@ -102,7 +102,7 @@ module pe_array #(
     logic signed [TM*TN*32-1:0] pe_partial [0:N_PE-1];
     logic [15:0] pe_mtile [0:N_PE-1];
     logic [7:0]  pe_nchunk [0:N_PE-1];
-    logic [5:0]  pe_n_kchunk [0:N_PE-1];
+    logic [7:0]  pe_n_kchunk [0:N_PE-1];
     logic [3:0]  pe_shift [0:N_PE-1];
     logic [1:0]  pe_act [0:N_PE-1];
     logic [15:0] pe_slope [0:N_PE-1];
@@ -199,8 +199,8 @@ module pe_array #(
     logic [15:0] mg_mtile [0:N_MERGE-1];
     logic [7:0]  mg_nchunk [0:N_MERGE-1];
     logic signed [31:0] mg_sum [0:N_MERGE-1][0:N_ACC-1];
-    logic [5:0]  mg_count [0:N_MERGE-1];
-    logic [5:0]  mg_n_kchunk [0:N_MERGE-1];
+    logic [7:0]  mg_count [0:N_MERGE-1];
+    logic [7:0]  mg_n_kchunk [0:N_MERGE-1];
     logic [3:0]  mg_shift [0:N_MERGE-1];
     logic [1:0]  mg_act [0:N_MERGE-1];
     logic [15:0] mg_slope [0:N_MERGE-1];
@@ -322,9 +322,20 @@ module pe_array #(
             // (A PE's done is a 1-cycle pulse; its partial is valid
             // in that cycle. Multiple PEs may complete the same cycle;
             // each is merged into its entry independently.)
+            // done_count counts ALL completions in the cycle, added
+            // once. A per-PE non-blocking += would undercount:
+            // every iteration reads the old value, so only the last
+            // write wins when two PEs complete together (Stage 7d:
+            // the YOLO C49 layer read back 572 vs 576 steps).
+            begin : merge_count
+                integer n_done;
+                n_done = 0;
+                for (int p = 0; p < N_PE; p++)
+                    if (pe_done[p]) n_done = n_done + 1;
+                done_count <= done_count + n_done;
+            end
             for (int p = 0; p < N_PE; p++) begin
                 if (pe_done[p]) begin
-                    done_count <= done_count + 1'b1;
                     // Find the entry for this (mtile, nchunk).
                     begin : merge_one
                         integer m;

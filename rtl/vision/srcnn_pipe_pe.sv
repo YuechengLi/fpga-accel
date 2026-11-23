@@ -61,7 +61,7 @@ module srcnn_pipe_pe #(
     input  logic [TK_MAX*TN*16-1:0] ts_b_flat,
     input  logic [15:0] ts_mtile,
     input  logic [7:0]  ts_nchunk,
-    input  logic [5:0]  ts_n_kchunk,
+    input  logic [7:0]  ts_n_kchunk,
     // Completed-output blocks.
     output logic        out_valid,
     output logic [15:0] out_mtile,

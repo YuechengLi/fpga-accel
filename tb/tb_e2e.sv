@@ -46,7 +46,7 @@ module tb_e2e;
     logic [TK_MAX*TN*16-1:0] ts_b_flat = '0;
     logic [15:0] ts_mtile = 16'd0;
     logic [7:0]  ts_nchunk = 8'd0;
-    logic [5:0]  ts_n_kchunk = 6'd0;
+    logic [7:0]  ts_n_kchunk = 8'd0;
     logic        out_valid;
     logic [15:0] out_mtile;
     logic [7:0]  out_nchunk;
@@ -183,7 +183,7 @@ module tb_e2e;
                     ts_sign_out = signout_v[0];
                     ts_mtile    = mtile_v[15:0];
                     ts_nchunk   = nchunk_v[7:0];
-                    ts_n_kchunk = nkchunk_v[5:0];
+                    ts_n_kchunk = nkchunk_v[7:0];
                     for (n = 0; n < TN; n++) begin
                         code = $fscanf(fvec, "%d", tmp);
                         ts_bias_flat[n*32 +: 32] = tmp;

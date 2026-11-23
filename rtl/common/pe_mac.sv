@@ -280,7 +280,33 @@ module pe_mac #(
                     end
                 end
                 ST_DONE: begin
-                    state <= ST_IDLE;
+                    // A new step may be assigned in the cycle the PE
+                    // completes: busy drops with done, so the
+                    // dispatcher sees the PE as free and may pulse
+                    // start while the PE is still in ST_DONE. Accept
+                    // it here (same init as ST_IDLE) instead of
+                    // dropping it. ST_DONE used to ignore start, so
+                    // a step dispatched in that cycle never ran
+                    // (Stage 7d: the YOLO C49 layer lost 4 of 576
+                    // steps -- 572 done pulses, data off by up to
+                    // 24). The merge already captured the finished
+                    // partial in the done cycle, so re-initialising
+                    // the accumulators here is safe.
+                    busy <= 1'b0;
+                    if (start) begin
+                        tk_groups <= tk >> 3;
+                        k_cnt <= '0;
+                        n_cnt <= '0;
+                        g_cnt <= '0;
+                        for (int m = 0; m < TM; m++)
+                            for (int n = 0; n < TN; n++)
+                                acc[m*TN + n] <= first_k ?
+                                    bias_flat[n*32 +: 32] : 32'sd0;
+                        state <= ST_RUN;
+                        busy  <= 1'b1;
+                    end else begin
+                        state <= ST_IDLE;
+                    end
                 end
                 default: begin
                     state <= ST_IDLE;

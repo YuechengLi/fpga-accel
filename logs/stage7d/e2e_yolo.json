@@ -1,0 +1,2749 @@
+{
+  "C0": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      64,
+      64,
+      16
+    ],
+    "wall_s": 201.7,
+    "kind": "conv2d",
+    "tag": "2048 steps"
+  },
+  "C0_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      64,
+      64,
+      16
+    ],
+    "wall_s": 2.9,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C0_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      64,
+      64,
+      16
+    ],
+    "wall_s": 4.1,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C1": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      32,
+      32,
+      32
+    ],
+    "wall_s": 462.3,
+    "kind": "conv2d",
+    "tag": "6144 steps"
+  },
+  "C1_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      32,
+      32,
+      32
+    ],
+    "wall_s": 1.3,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C1_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      32,
+      32,
+      32
+    ],
+    "wall_s": 2.0,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C2a": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      32,
+      32,
+      16
+    ],
+    "wall_s": 14.6,
+    "kind": "conv2d",
+    "tag": "128 steps"
+  },
+  "C2b": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      32,
+      32,
+      16
+    ],
+    "wall_s": 13.6,
+    "kind": "conv2d",
+    "tag": "128 steps"
+  },
+  "C2a_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      32,
+      32,
+      16
+    ],
+    "wall_s": 0.7,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C2a_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      32,
+      32,
+      16
+    ],
+    "wall_s": 1.0,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C2b_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      32,
+      32,
+      16
+    ],
+    "wall_s": 0.7,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C2b_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      32,
+      32,
+      16
+    ],
+    "wall_s": 1.0,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C4": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      32,
+      32,
+      16
+    ],
+    "wall_s": 77.8,
+    "kind": "conv2d",
+    "tag": "768 steps"
+  },
+  "C4_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      32,
+      32,
+      16
+    ],
+    "wall_s": 1.0,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C4_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      32,
+      32,
+      16
+    ],
+    "wall_s": 1.4,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C5": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      32,
+      32,
+      16
+    ],
+    "wall_s": 102.1,
+    "kind": "conv2d",
+    "tag": "768 steps"
+  },
+  "C5_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      32,
+      32,
+      16
+    ],
+    "wall_s": 1.0,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C5_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      32,
+      32,
+      16
+    ],
+    "wall_s": 1.7,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "c2f2_m0_add": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      32,
+      32,
+      16
+    ],
+    "wall_s": 0.0,
+    "kind": "residual",
+    "tag": "CPU"
+  },
+  "c2f2_cat": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      32,
+      32,
+      48
+    ],
+    "wall_s": 3.5,
+    "kind": "concat",
+    "tag": "3 inputs"
+  },
+  "C3": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      32,
+      32,
+      32
+    ],
+    "wall_s": 57.1,
+    "kind": "conv2d",
+    "tag": "512 steps"
+  },
+  "C3_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      32,
+      32,
+      32
+    ],
+    "wall_s": 1.9,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C3_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      32,
+      32,
+      32
+    ],
+    "wall_s": 3.1,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C6": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 665.0,
+    "kind": "conv2d",
+    "tag": "4608 steps"
+  },
+  "C6_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 0.8,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C6_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 1.1,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C7a": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 13.0,
+    "kind": "conv2d",
+    "tag": "128 steps"
+  },
+  "C7b": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 13.5,
+    "kind": "conv2d",
+    "tag": "128 steps"
+  },
+  "C7a_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.4,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C7a_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.6,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C7b_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.4,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C7b_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.5,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C9": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 58.1,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C9_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.4,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C9_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.6,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C10": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 50.5,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C10_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.4,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C10_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.5,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "c2f4_m0_add": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.0,
+    "kind": "residual",
+    "tag": "CPU"
+  },
+  "C11": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 66.6,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C11_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.4,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C11_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.5,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C12": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 25.5,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C12_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.4,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C12_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.5,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "c2f4_m1_add": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.0,
+    "kind": "residual",
+    "tag": "CPU"
+  },
+  "c2f4_cat": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      128
+    ],
+    "wall_s": 2.1,
+    "kind": "concat",
+    "tag": "4 inputs"
+  },
+  "C8": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 55.6,
+    "kind": "conv2d",
+    "tag": "512 steps"
+  },
+  "C8_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 0.7,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C8_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 1.0,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C13": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      128
+    ],
+    "wall_s": 475.7,
+    "kind": "conv2d",
+    "tag": "4608 steps"
+  },
+  "C13_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      128
+    ],
+    "wall_s": 0.4,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C13_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      128
+    ],
+    "wall_s": 0.6,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C14a": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 11.0,
+    "kind": "conv2d",
+    "tag": "128 steps"
+  },
+  "C14b": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 11.5,
+    "kind": "conv2d",
+    "tag": "128 steps"
+  },
+  "C14a_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C14a_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C14b_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C14b_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C16": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 48.9,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C16_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C16_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C17": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 25.9,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C17_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C17_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "c2f6_m0_add": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.0,
+    "kind": "residual",
+    "tag": "CPU"
+  },
+  "C18": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 56.1,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C18_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C18_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C19": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 16.0,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C19_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C19_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "c2f6_m1_add": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.0,
+    "kind": "residual",
+    "tag": "CPU"
+  },
+  "c2f6_cat": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      256
+    ],
+    "wall_s": 1.1,
+    "kind": "concat",
+    "tag": "4 inputs"
+  },
+  "C15": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      128
+    ],
+    "wall_s": 49.3,
+    "kind": "conv2d",
+    "tag": "512 steps"
+  },
+  "C15_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      128
+    ],
+    "wall_s": 0.4,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C15_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      128
+    ],
+    "wall_s": 0.6,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C20": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      256
+    ],
+    "wall_s": 295.1,
+    "kind": "conv2d",
+    "tag": "4608 steps"
+  },
+  "C20_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      256
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C20_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      256
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C21a": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 4.3,
+    "kind": "conv2d",
+    "tag": "128 steps"
+  },
+  "C21b": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 4.1,
+    "kind": "conv2d",
+    "tag": "128 steps"
+  },
+  "C21a_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.1,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C21a_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.2,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C21b_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.1,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C21b_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.2,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C23": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 14.7,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C23_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.1,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C23_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.2,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C24": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 17.8,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C24_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.1,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C24_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.2,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "c2f8_m0_add": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.0,
+    "kind": "residual",
+    "tag": "CPU"
+  },
+  "c2f8_cat": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      384
+    ],
+    "wall_s": 0.3,
+    "kind": "concat",
+    "tag": "3 inputs"
+  },
+  "C22": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      256
+    ],
+    "wall_s": 16.1,
+    "kind": "conv2d",
+    "tag": "384 steps"
+  },
+  "C22_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      256
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C22_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      256
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C25": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 5.8,
+    "kind": "conv2d",
+    "tag": "128 steps"
+  },
+  "C25_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.1,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C25_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.2,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "sppf_m1": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.0,
+    "kind": "max_pool2d",
+    "tag": "CPU (SPPF 5x5)"
+  },
+  "sppf_m2": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.0,
+    "kind": "max_pool2d",
+    "tag": "CPU (SPPF 5x5)"
+  },
+  "sppf_m3": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.0,
+    "kind": "max_pool2d",
+    "tag": "CPU (SPPF 5x5)"
+  },
+  "sppf_cat": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      512
+    ],
+    "wall_s": 0.6,
+    "kind": "concat",
+    "tag": "4 inputs"
+  },
+  "C26": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      256
+    ],
+    "wall_s": 51.1,
+    "kind": "conv2d",
+    "tag": "512 steps"
+  },
+  "C26_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      256
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C26_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      256
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "up10": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      256
+    ],
+    "wall_s": 0.3,
+    "kind": "upsample",
+    "tag": "mode nearest"
+  },
+  "cat11": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      384
+    ],
+    "wall_s": 0.8,
+    "kind": "concat",
+    "tag": "2 inputs"
+  },
+  "C27a": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 16.7,
+    "kind": "conv2d",
+    "tag": "384 steps"
+  },
+  "C27b": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 16.9,
+    "kind": "conv2d",
+    "tag": "384 steps"
+  },
+  "C27a_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C27a_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C27b_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C27b_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C29": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 24.9,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C29_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C29_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C30": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 18.9,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C30_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C30_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "c2f12_cat": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      192
+    ],
+    "wall_s": 0.7,
+    "kind": "concat",
+    "tag": "3 inputs"
+  },
+  "C28": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      128
+    ],
+    "wall_s": 18.2,
+    "kind": "conv2d",
+    "tag": "384 steps"
+  },
+  "C28_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      128
+    ],
+    "wall_s": 0.4,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C28_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      128
+    ],
+    "wall_s": 0.5,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "up13": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      128
+    ],
+    "wall_s": 0.5,
+    "kind": "upsample",
+    "tag": "mode nearest"
+  },
+  "cat14": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      192
+    ],
+    "wall_s": 1.4,
+    "kind": "concat",
+    "tag": "2 inputs"
+  },
+  "C31a": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 25.5,
+    "kind": "conv2d",
+    "tag": "384 steps"
+  },
+  "C31b": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 26.2,
+    "kind": "conv2d",
+    "tag": "384 steps"
+  },
+  "C31a_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.4,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C31a_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.5,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C31b_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.4,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C31b_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.5,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C33": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 42.4,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C33_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.4,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C33_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.5,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C34": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 24.6,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C34_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.4,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C34_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      32
+    ],
+    "wall_s": 0.5,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "c2f15_cat": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      96
+    ],
+    "wall_s": 1.2,
+    "kind": "concat",
+    "tag": "3 inputs"
+  },
+  "C32": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 32.8,
+    "kind": "conv2d",
+    "tag": "384 steps"
+  },
+  "C32_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 0.7,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C32_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 1.1,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C35": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 210.0,
+    "kind": "conv2d",
+    "tag": "2304 steps"
+  },
+  "C35_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C35_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "cat17": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      192
+    ],
+    "wall_s": 0.4,
+    "kind": "concat",
+    "tag": "2 inputs"
+  },
+  "C36a": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 12.0,
+    "kind": "conv2d",
+    "tag": "192 steps"
+  },
+  "C36b": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 11.7,
+    "kind": "conv2d",
+    "tag": "192 steps"
+  },
+  "C36a_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C36a_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C36b_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C36b_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C38": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 38.0,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C38_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C38_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C39": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 18.9,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C39_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C39_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "c2f18_cat": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      192
+    ],
+    "wall_s": 0.6,
+    "kind": "concat",
+    "tag": "3 inputs"
+  },
+  "C37": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      128
+    ],
+    "wall_s": 25.8,
+    "kind": "conv2d",
+    "tag": "384 steps"
+  },
+  "C37_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      128
+    ],
+    "wall_s": 0.4,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C37_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      128
+    ],
+    "wall_s": 0.6,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C40": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 135.2,
+    "kind": "conv2d",
+    "tag": "2304 steps"
+  },
+  "C40_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.1,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C40_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.2,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "cat20": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      384
+    ],
+    "wall_s": 0.2,
+    "kind": "concat",
+    "tag": "2 inputs"
+  },
+  "C41a": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 7.4,
+    "kind": "conv2d",
+    "tag": "192 steps"
+  },
+  "C41b": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 7.4,
+    "kind": "conv2d",
+    "tag": "192 steps"
+  },
+  "C41a_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.1,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C41a_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.2,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C41b_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.1,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C41b_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.2,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C43": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 25.7,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C43_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.1,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C43_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.2,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C44": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 19.8,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C44_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.1,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C44_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      128
+    ],
+    "wall_s": 0.2,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "c2f21_cat": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      384
+    ],
+    "wall_s": 0.3,
+    "kind": "concat",
+    "tag": "3 inputs"
+  },
+  "C42": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      256
+    ],
+    "wall_s": 16.8,
+    "kind": "conv2d",
+    "tag": "384 steps"
+  },
+  "C42_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      256
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C42_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      256
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C45": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 206.9,
+    "kind": "conv2d",
+    "tag": "2304 steps"
+  },
+  "C45_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 0.7,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C45_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 1.0,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C46": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 93.8,
+    "kind": "conv2d",
+    "tag": "2304 steps"
+  },
+  "C46_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 0.7,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C46_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 1.0,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "det_box0": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      64
+    ],
+    "wall_s": 25.8,
+    "kind": "conv2d",
+    "tag": "256 steps"
+  },
+  "C51": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      80
+    ],
+    "wall_s": 257.3,
+    "kind": "conv2d",
+    "tag": "2880 steps"
+  },
+  "C51_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      80
+    ],
+    "wall_s": 0.9,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C51_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      80
+    ],
+    "wall_s": 1.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C52": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      80
+    ],
+    "wall_s": 180.0,
+    "kind": "conv2d",
+    "tag": "3840 steps"
+  },
+  "C52_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      16,
+      16,
+      80
+    ],
+    "wall_s": 0.9,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C52_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      80
+    ],
+    "wall_s": 1.4,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "det_cls0": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      16,
+      16,
+      80
+    ],
+    "wall_s": 45.6,
+    "kind": "conv2d",
+    "tag": "640 steps"
+  },
+  "C47": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 68.0,
+    "kind": "conv2d",
+    "tag": "1152 steps"
+  },
+  "C47_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C47_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C48": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 31.2,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C48_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C48_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "det_box1": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      64
+    ],
+    "wall_s": 7.2,
+    "kind": "conv2d",
+    "tag": "64 steps"
+  },
+  "C53": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      80
+    ],
+    "wall_s": 85.0,
+    "kind": "conv2d",
+    "tag": "1440 steps"
+  },
+  "C53_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      80
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C53_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      80
+    ],
+    "wall_s": 0.3,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C54": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      80
+    ],
+    "wall_s": 50.2,
+    "kind": "conv2d",
+    "tag": "960 steps"
+  },
+  "C54_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      8,
+      8,
+      80
+    ],
+    "wall_s": 0.2,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C54_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      80
+    ],
+    "wall_s": 0.4,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "det_cls1": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      8,
+      8,
+      80
+    ],
+    "wall_s": 10.9,
+    "kind": "conv2d",
+    "tag": "160 steps"
+  },
+  "C49": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      64
+    ],
+    "wall_s": 19.7,
+    "kind": "conv2d",
+    "tag": "576 steps"
+  },
+  "C49_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      64
+    ],
+    "wall_s": 0.1,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C49_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      64
+    ],
+    "wall_s": 0.1,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C50": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      64
+    ],
+    "wall_s": 9.3,
+    "kind": "conv2d",
+    "tag": "144 steps"
+  },
+  "C50_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      64
+    ],
+    "wall_s": 0.1,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C50_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      64
+    ],
+    "wall_s": 0.1,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "det_box2": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      64
+    ],
+    "wall_s": 2.2,
+    "kind": "conv2d",
+    "tag": "16 steps"
+  },
+  "C55": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      80
+    ],
+    "wall_s": 24.0,
+    "kind": "conv2d",
+    "tag": "720 steps"
+  },
+  "C55_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      80
+    ],
+    "wall_s": 0.1,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C55_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      80
+    ],
+    "wall_s": 0.1,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "C56": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      80
+    ],
+    "wall_s": 12.7,
+    "kind": "conv2d",
+    "tag": "240 steps"
+  },
+  "C56_silu_sig": {
+    "max_err_funcsim": 0,
+    "budget": 1,
+    "shape": [
+      4,
+      4,
+      80
+    ],
+    "wall_s": 0.1,
+    "kind": "act",
+    "tag": "pwl (budget <=1)"
+  },
+  "C56_silu": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      80
+    ],
+    "wall_s": 0.1,
+    "kind": "simplegate",
+    "tag": ""
+  },
+  "det_cls2": {
+    "max_err_funcsim": 0,
+    "budget": 0,
+    "shape": [
+      4,
+      4,
+      80
+    ],
+    "wall_s": 3.2,
+    "kind": "conv2d",
+    "tag": "40 steps"
+  },
+  "final": {
+    "n_rtl": 0,
+    "n_torch": 5,
+    "rtl": [],
+    "torch": [
+      [
+        8.663166046142578,
+        48.169212341308594,
+        36.65938186645508,
+        107.88207244873047,
+        0.7464247345924377,
+        0.0
+      ],
+      [
+        -0.2000274658203125,
+        26.959327697753906,
+        125.307861328125,
+        86.7664794921875,
+        0.5791524052619934,
+        5.0
+      ],
+      [
+        107.07119750976562,
+        34.424835205078125,
+        127.76730346679688,
+        102.4010009765625,
+        0.533632218837738,
+        0.0
+      ],
+      [
+        34.571556091308594,
+        45.35498046875,
+        54.96491241455078,
+        101.9031982421875,
+        0.4569036364555359,
+        0.0
+      ],
+      [
+        0.050209999084472656,
+        67.0569076538086,
+        12.476334571838379,
+        104.14203643798828,
+        0.3632839322090149,
+        0.0
+      ]
+    ]
+  }
+}
